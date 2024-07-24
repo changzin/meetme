@@ -4,10 +4,9 @@ import Member from '../views/admin/Member.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 
-
 import MainPage from '../views/MainPage.vue'
+import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
-
 
 const routes = [
   {
@@ -39,10 +38,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
+    path:'/login',
+    name:'userLogin',
+    component: userLogin
+  }
     path: '/tempview',
     name: 'TempView',
     component: TempView
-  },
+  }
 ]
 
 const router = createRouter({
