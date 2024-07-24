@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import TempView from '../views/TempView.vue'
 import MainPage from '../views/MainPage.vue'
+import TempView from '../views/TempView.vue'
 
 const routes = [
   {
@@ -27,7 +27,7 @@ const routes = [
     path: '/tempview',
     name: 'TempView',
     component: TempView
-  }
+  },
 
 ]
 
