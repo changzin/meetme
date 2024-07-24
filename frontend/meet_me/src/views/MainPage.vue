@@ -1,47 +1,19 @@
 <template>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeetMe</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>오늘의 인기 ✨</h1>
-    <div class="container">
-        <div class="card">
-            <img src="" alt="우기">
-            <div class="info">
-                <a href="" target="_blank">우기, 20</a>
-                <div class="actions">
-                    <button><img src="" alt="메시지"></button>
-                    <button><img src="" alt="좋아요"></button>
-                </div>
-            </div>
-            <div class="tags">
-                <div class="tag">취미/미술</div>
-                <div class="tag">외모/키</div>
-                <div class="tag">이야기를 잘 들어줘요</div>
-            </div>
-        </div>
-        <div class="card">
-            <img src="" alt="우기">
-            <div class="info">
-                <a href="" target="_blank">우기, 20</a>
-                <div class="actions">
-                    <button><img src="" alt="메시지"></button>
-                    <button><img src="" alt="좋아요"></button>
-                </div>
-            </div>
-            <div class="tags">
-                <div class="tag">취미/미술</div>
-                <div class="tag">외모/키</div>
-                <div class="tag">이야기를 잘 들어줘요</div>
-            </div>
-        </div>
+<div class="container">
+    <div class="header">MEETME</div>
+    <dlv>
+        <div class="main_header">오늘의 인기<img class="main_header_img" src="/A.png"></div>
+    </dlv>
+    <div class="img_a">
+        <img class="main_img" src="/B.png">
+        <a class="img_name" href="https://example.com">
+            이름
+        </a>
     </div>
-</body>
-</html>
+    <div class="img_a">
+    <img class="main_img" src="/C.png">
+    </div>
+</div>
 </template>
   
 <script>
@@ -49,3 +21,43 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.container {
+    width: 600px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.header{
+    padding: 0 0 27px 0;
+    font-size: 22px;
+    /*border: 11px solid #000000; */
+}
+.main_header{
+    display: flex;
+    align-items: center;
+    padding: 0 0 20px 20px;
+    font-size: 24px;
+}
+div.main_header_img{
+    margin-right: 7px;
+}
+img.main_img{
+    width: 568px;
+    height: 580px;
+    border-radius: 10px;
+}
+.img_a{
+    padding: 0 16px 30px 16px;
+    position: relative;
+
+}
+
+.img_name{
+    position: absolute;
+    left: 36px;
+    top: 417px;
+    bottom: 169px;
+}
+</style>

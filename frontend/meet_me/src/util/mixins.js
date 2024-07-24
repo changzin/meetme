@@ -14,7 +14,6 @@ export default{
                 data: data
             })
             .catch(e=>{
-                console.log(url);
                 console.error(e);
             })).data;
 
