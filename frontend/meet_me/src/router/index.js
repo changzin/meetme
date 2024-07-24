@@ -41,7 +41,8 @@ const routes = [
     path:'/login',
     name:'userLogin',
     component: userLogin
-  }
+  },
+  {
     path: '/tempview',
     name: 'TempView',
     component: TempView
