@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import Member from '../views/admin/Member.vue'
+
+import MyPage from '../views/mypage/MyPage.vue'
+
 import MainPage from '../views/MainPage.vue'
+import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
 
 const routes = [
@@ -9,11 +14,20 @@ const routes = [
     name: 'home',
     component: HomeView
   },
-
+  {
+    path: '/admin/member',
+    name: 'member',
+    component: Member
+  },
   {
     path: '/mainpage',
     name: 'MainPage',
     component: MainPage
+  },
+  {
+    path: '/mypage',
+    name: 'MyPage',
+    component: MyPage
   },
   {
     path: '/about',
@@ -24,11 +38,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
+    path:'/login',
+    name:'userLogin',
+    component: userLogin
+  },
+  {
     path: '/tempview',
     name: 'TempView',
     component: TempView
-  },
-
+  }
 ]
 
 const router = createRouter({
