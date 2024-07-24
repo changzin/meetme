@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+
+import MyPage from '../views/mypage/MyPage.vue'
+
+
 import MainPage from '../views/MainPage.vue'
 import TempView from '../views/TempView.vue'
+
 
 const routes = [
   {
@@ -16,6 +21,12 @@ const routes = [
     component: MainPage
   },
   {
+
+    path: '/mypage',
+    name: 'MyPage',
+    component: MyPage
+  },
+  {
     path: '/about',
     name: 'about',
     // route level code-splitting
@@ -28,6 +39,7 @@ const routes = [
     name: 'TempView',
     component: TempView
   },
+
 
 ]
 
