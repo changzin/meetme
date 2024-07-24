@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <div class="header-container">
+    <div class="header-container">
       <div class="header-content">
         <img src="/icon/header/headerIcon.svg" alt="Logo" class="logo" />
         <div class="menu-item">추천페이지</div>
@@ -8,7 +8,7 @@
         <div class="menu-item">채팅</div>
         <div class="menu-item">마이페이지</div>
       </div>
-    </div> -->
+    </div>
     <div class="footer-container">
       <div class="footer-content">
         <!-- 메인 아이콘 -->
@@ -183,52 +183,52 @@ export default {
   border-top: none;
 }
 
-/* .footer-container {
-  display: none; 
-} */
-
 .footer-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: fixed;
-  bottom: 15px;
-  left: 10px;
-  right: 10px;
-  width: 98%;
-  height: 46px;
-  margin: 0 auto;
-  border: 1px solid #dedede;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(30px);
-  box-shadow: 0px 4px 20px rgba(81, 81, 81, 0.14);
-}
-
-.footer-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.footer-container .menu-item {
-  width: auto;
-  padding: 10px;
-  text-align: center;
-  border-top: none;
-  display: flex;
-  justify-content: center; /* 수평 중앙 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
-}
-
-.footer-icon {
-  width: 24px; /* 적절한 크기로 아이콘 조정 */
-  height: 24px;
+  display: none;
 }
 
 @media (max-width: 768px) {
   .header-container {
     display: none; /* 모바일 화면에서는 숨김 */
+  }
+
+  .footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    bottom: 15px;
+    left: 10px;
+    right: 10px;
+    width: 98%;
+    height: 46px;
+    margin: 0 auto;
+    border: 1px solid #dedede;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(30px);
+    box-shadow: 0px 4px 20px rgba(81, 81, 81, 0.14);
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .footer-container .menu-item {
+    width: auto;
+    padding: 10px;
+    text-align: center;
+    border-top: none;
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+  }
+
+  .footer-icon {
+    width: 24px; /* 적절한 크기로 아이콘 조정 */
+    height: 24px;
   }
 }
 </style>
