@@ -117,7 +117,7 @@ export default {
     width: 90px;
     height: 90px;
     border-radius: 100px;
-    padding: 20px;
+    margin: 20px;
     justify-content: start;
 }
 
@@ -127,7 +127,7 @@ export default {
 }
 
 .name {
-    
+    font-weight: 500;
 }
 
 .live {
