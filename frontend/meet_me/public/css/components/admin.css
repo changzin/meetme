@@ -1,0 +1,51 @@
+.admin_header {
+    margin-top: 25px;  
+}
+
+.admin_search_form {
+    margin-top: 42px;
+}
+
+.admin_table_div {
+    margin-top: 15px;
+    box-shadow: 0px 0px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 965px;
+}
+.admin_table{
+    width: 965px;
+    border-collapse: collapse;
+    font-size:14px;
+    border-radius: 8px;
+    border-style: hidden;
+    box-shadow: 0 0 0 1px #ABAAAA;
+}
+
+.admin_pagination_box {
+    height: 30px;
+    display:flex;
+    margin-top: 146px;
+}
+
+.admin_pagination_box :not(:first-child){
+    margin-left:16px;  
+}
+
+.admin_search_form{
+    border: 1px solid #ABAAAA;
+    height:36px;
+    width:250px;
+    font-size:12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.admin_search_form .search_input{
+    margin-left: 10px;
+    outline: none;
+    border: none;
+}
+.admin_search_form .search_icon{
+    margin-left: 10px;
+}
