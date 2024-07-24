@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import Member from '../views/admin/Member.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 
@@ -14,14 +15,17 @@ const routes = [
     name: 'home',
     component: HomeView
   },
-
+  {
+    path: '/admin/member',
+    name: 'member',
+    component: Member
+  },
   {
     path: '/mainpage',
     name: 'MainPage',
     component: MainPage
   },
   {
-
     path: '/mypage',
     name: 'MyPage',
     component: MyPage
@@ -39,8 +43,6 @@ const routes = [
     name: 'TempView',
     component: TempView
   },
-
-
 ]
 
 const router = createRouter({
