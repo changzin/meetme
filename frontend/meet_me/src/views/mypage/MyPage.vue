@@ -14,7 +14,7 @@
                     </div>
                     <div class="button">
                         <button class="edit">
-                            <a href="/">
+                            <a href="/mypageedit">
                             <img src="/icon/mypage/main/edit.svg">
                             </a>
                         </button>
@@ -63,11 +63,11 @@
                 </div>
             </div>
         </div>
+        <MeetHeader />
     </div>
 </template>
 <script>
 export default {	
-    components:{},
     data() {
         return {
             sampleData : ''
@@ -92,6 +92,7 @@ export default {
     margin: 0 auto;
     justify-content: center;
     box-sizing: border-box;
+    min-width: 600px;
 }
 
 .safe_zone {
@@ -107,7 +108,7 @@ export default {
 .profile_box {
     height: 130px;
     background-color: FFFFFF;
-    box-shadow: 0px 0px 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     display: flex;
     margin-bottom: 20px;
@@ -117,7 +118,7 @@ export default {
     width: 90px;
     height: 90px;
     border-radius: 100px;
-    padding: 20px;
+    margin: 20px;
     justify-content: start;
 }
 
@@ -127,7 +128,7 @@ export default {
 }
 
 .name {
-    
+    font-weight: 500;
 }
 
 .live {
@@ -150,7 +151,7 @@ export default {
 
 .mypage_box {
     background-color: FFFFFF;
-    box-shadow: 0px 0px 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     margin-bottom: 20px;
     padding: 15px;
