@@ -8,6 +8,8 @@ import MyPage from '../views/mypage/MyPage.vue'
 import MainPage from '../views/MainPage.vue'
 import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
+import ReactiveWeb from '../views/ReactiveWeb.vue'
+
 
 
 const routes = [
@@ -53,6 +55,11 @@ const routes = [
     path: '/tempview',
     name: 'TempView',
     component: TempView
+  },
+  {
+    path: '/reactiveweb',
+    name: 'ReactiveWeb',
+    component: ReactiveWeb
   }
 ]
 
