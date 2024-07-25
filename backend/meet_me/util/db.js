@@ -18,9 +18,16 @@ exports.getConn = async()=>{
 
 // 쿼리문을 합쳐서 
 exports.db = async (conn, query, param = []) => {
-    return await conn.query(query, param, function(err, result){
-        if (err)
-            return err;
-        return result;
-    });
+    try{
+        const result = await conn.query(query, param, function(err, result){
+            return result;
+        });
+        return result[0];
+    }
+    catch(err){
+        err.status = 500;
+        err.message = "DB 에러입니다";
+        throw err;
+    }
+    
 }
