@@ -3,8 +3,8 @@
       <div class="header-container">
         <div class="header-content">
           <img src="/icon/header/headerIcon.svg" alt="Logo" class="logo" />
-          <div class="menu-item">회원 관리</div>
-          <div class="menu-item" @click="this.$router.push()">현황 분석</div>
+          <div class="menu-item" @click="this.$router.push({name: 'member'})">회원 관리</div>
+          <div class="menu-item" @click="this.$router.push({name: 'analysis'})">현황 분석</div>
           <div class="menu-item">로그아웃</div>
         </div>
       </div>
@@ -186,7 +186,7 @@
     display: none;
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 1500px) {
     .header-container {
       display: none; /* 모바일 화면에서는 숨김 */
     }

@@ -187,7 +187,7 @@ export default {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .header-container {
     display: none; /* 모바일 화면에서는 숨김 */
   }
