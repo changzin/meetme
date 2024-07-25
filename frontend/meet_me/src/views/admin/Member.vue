@@ -6,9 +6,9 @@
             <div class="admin_header_text">회원 관리</div>
             <div class="admin_mobile_row">
                 <div class="admin_search_div">
-                    <form class="admin_search_form">
-                        <img src="/icon/admin/search.svg" class="search_icon">
-                        <input type="text" class="search_input" placeholder="이메일, 닉네임으로 검색">
+                    <form class="admin_search_form" @submit.prevent="search()">
+                        <img src="/icon/admin/search.svg" class="search_icon" @click="search">
+                        <input type="text" class="search_input" placeholder="이메일, 닉네임으로 검색" v-model="keyword">
                     </form>
                 </div>
             </div>
@@ -26,29 +26,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="tr_gray">
-                                <td>1</td>
-                                <td>sa123@naver.com</td>
-                                <td>nickname1</td>
-                                <td>10,000,000</td>
-                                <td>2</td>
+                            <tr :class="{tr_gray: (index%2==0), tr_white: (index%2==1) }"
+                                 v-for="(user, index) in userList" :key="index">
+                                <td>{{index+1 + (page-1)*10}}</td>
+                                <td>{{user.user_email}}</td>
+                                <td>{{user.user_nickname}}</td>
+                                <td>{{(user.user_payment) ? user.user_payment : 0}}</td>
+                                <td>{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
                                 <td>
                                     <div class="block_buttons">
-                                        <div class="block_button_active">Y</div>
-                                        <div class="block_button_inactive">N</div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="tr_white">
-                                <td>번호</td>
-                                <td>이메일</td>
-                                <td>닉네임</td>
-                                <td>총 결제금액</td>
-                                <td>신고</td>
-                                <td>
-                                    <div class="block_buttons">
-                                        <button class="block_button_active">Y</button>
-                                        <div class="block_button_inactive">N</div>
+                                        <div :class="{block_button_active: (user.user_block=='T'), 
+                                            block_button_inactive: (user.user_block=='F') }" @click="blockUser(user)">Y</div>
+                                        <div :class="{block_button_active: (user.user_block=='F'), 
+                                            block_button_inactive: (user.user_block=='T') }" @click="unBlockUser(user)">N</div>
                                     </div>
                                 </td>
                             </tr>
@@ -58,20 +48,20 @@
             </div>
             <div class="admin_web_inner_flex">
                 <div class="admin_pagination_box">
+                    <div :class="{button_hidden: (page-2 < 1)}" class="pagination_button_inactive" @click="goToPage(page-2)">
+                        {{page-2}}
+                    </div>
+                    <div :class="{button_hidden: (page-1 < 1)}" class="pagination_button_inactive" @click="goToPage(page-1)">
+                        {{page-1}}
+                    </div>
                     <div class="pagination_button_active">
-                        1
+                        {{page}}
                     </div>
-                    <div class="pagination_button_inactive">
-                        1
+                    <div :class="{button_hidden: (page+1 > maxPage)}" class="pagination_button_inactive" @click="goToPage(page+1)">
+                        {{page+1}}
                     </div>
-                    <div class="pagination_button_inactive">
-                        1
-                    </div>
-                    <div class="pagination_button_inactive">
-                        1
-                    </div>
-                    <div class="pagination_button_inactive">
-                        1
+                    <div :class="{button_hidden: (page+2 > maxPage)}" class="pagination_button_inactive" @click="goToPage(page+2)">
+                        {{page+2}}
                     </div>
                 </div>
             </div>
@@ -84,7 +74,81 @@
 export default {
     data() {
         return {
+            userList: [],
+            page: 1,
+            maxPage: 1,
+            offset: 10,
+            keyword: "",
+            prevKeyword: "",
         }
+    },
+    methods: {
+        async getUserList(){
+            try{
+                await this.$router.push({name: 'member', query: {page: this.page, keyword: this.prevKeyword, offset: this.offset}});
+
+                this.page = this.$route.query.page;
+                this.prevKeyword = this.$route.query.keyword;
+                this.offset = this.$route.query.offset;
+                this.page = (!this.page) ? 1 : Number(this.page);
+                this.prevKeyword = (!this.prevKeyword) ? "" : this.prevKeyword;
+                this.offset = (!this.offset) ? 10 : this.offset;
+
+                let requestBody = {
+
+                };
+                let result = await this.$api(`/user/list?page=${this.page}&keyword=${this.prevKeyword}&offset=${this.offset}`, requestBody, "POST");
+                this.userList = result.userList;
+                this.maxPage = result.maxPage;
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
+        async search(){
+            this.prevKeyword = this.keyword;
+            this.page = 1;
+            await this.getUserList();
+        },
+        async goToPage(targetPage){
+            this.page = targetPage;
+            await this.getUserList();
+        },
+            // 유저 차단 
+    async blockUser(user){
+      try{
+        const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user.user_id}, "POST");
+        if (result.status == 200){
+          user.user_block = "T";
+        }
+        else{
+          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+        }
+      } 
+      catch(err){
+        console.error(err);
+        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
+    },
+    // 유저 차단 해제
+    async unBlockUser(user){
+      try{
+        const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user.user_id}, "POST");
+        if (result.status == 200){
+          user.user_block = "F";
+        }
+        else{
+          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+      }
+    },
+    },
+    async created(){
+        await this.getUserList();
     }
 }
 </script>
@@ -114,6 +178,7 @@ tbody tr:hover{
 
 
 .pagination_button_active{
+    cursor: pointer;
     background-color: #5C09E3;
     color: #FFFFFF;
     width:30px;
@@ -126,6 +191,7 @@ tbody tr:hover{
 }
 
 .pagination_button_inactive{
+    cursor: pointer;
     background-color: #D9D9D9;
     color: #FFFFFF;
     width:30px;
@@ -138,6 +204,7 @@ tbody tr:hover{
 }
 
 .block_button_active{
+    cursor: pointer;
     background-color: #5C09E3;
     color: #FFFFFF;
     width:40px;
@@ -151,6 +218,7 @@ tbody tr:hover{
 }
 
 .block_button_inactive{
+    cursor: pointer;
     background-color: #D9D9D9;
     color: #FFFFFF;
     width:40px;
@@ -201,7 +269,9 @@ tbody tr:last-child td:first-child{
 tbody tr:last-child td:last-child{
     border-bottom-right-radius: 8px;
 }
-
+.button_hidden{
+    visibility: hidden;
+}
 @media (max-width: 1200px) {
   tr :nth-child(4), tr :nth-child(5){
     display: none;
