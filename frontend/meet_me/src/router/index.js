@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
+import Analysis from '../views/admin/analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 
 import MainPage from '../views/MainPage.vue'
 import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
+
 
 const routes = [
   {
@@ -18,6 +20,11 @@ const routes = [
     path: '/admin/member',
     name: 'member',
     component: Member
+  },
+  {
+    path: '/admin/analysis',
+    name: 'analysis',
+    component: Analysis
   },
   {
     path: '/mainpage',
