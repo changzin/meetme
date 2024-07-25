@@ -31,10 +31,19 @@
 
 
   --white_main: #ffffff;
-
-
-
    --box-shadow_purple_main: 1px 4px 10px rgba(92, 9, 227, 0.12); 
+
+
+    /* 그라데이션 변수 */
+  --gradient-start: #497AF5;
+  --gradient-end: #884AFB;
+  --gradient: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+
+
+   /* 그라데이션 변수 + 80% */
+  --gradient-start: rgba(73, 122, 245, 0.8);
+  --gradient-end: rgba(136, 74, 251, 0.8);
+  --gradient80: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
 }
 
 #app {

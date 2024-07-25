@@ -160,7 +160,12 @@
           />User
         </div>
       </div>
+     
+
     </div>
+     <div class="temp">
+        gfdgdg
+      </div>
   </div>
 </template>
   
@@ -187,6 +192,17 @@ export default {
 
 
 <style scoped>
+
+.temp {
+  background: var(--gradient);
+  /* box-shadow: var(--gradient); */
+  width: 300px;
+  height: 70px;
+  border-radius: 10px;
+  color: white;
+}
+
+
 .tempDiv {
   width: 600px;
   margin: 100px auto;
