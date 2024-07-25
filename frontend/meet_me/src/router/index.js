@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
-import Analysis from '../views/admin/analysis.vue'
+import Analysis from '../views/admin/Analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 
