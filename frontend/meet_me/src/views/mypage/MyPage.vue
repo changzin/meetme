@@ -70,9 +70,9 @@
 export default {	
     data() {
         return {
-            sampleData : ''
         };
     },
+
     beforeCreate() {},
     created() {},
     beforeMount() {},
@@ -81,6 +81,7 @@ export default {
     updated() {},
     beforeUnmount() {},
     unmounted() {},
+    methods: {}
 
 }
 </script>

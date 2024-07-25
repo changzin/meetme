@@ -17,8 +17,8 @@
                     <p class="logintext">로그인</p> 
                 </button>
                 <div class="option" >
-                    <img src="/icon/login/checkbox.svg" class="icon_login" @click="checkbox_vitalization = false;">
-                    <img src="/icon/login/checkbox_on.svg" class="icon_login" v-if="checkbox_vitalization">
+                    <img src="/icon/login/checkbox.svg" class="icon_login" >
+                    <img src="/icon/login/checkbox_on.svg" class="icon_login">
                     <p class="option1">로그인 상태 유지</p>
                     <p class="option2">회원가입</p>
                     <p class="option3">비밀번호를 잊으셨나요?</p>
@@ -46,7 +46,7 @@
 export default {
     data(){
         return{
-            checkBox_vitalization:true,
+            
         }
     }
 }
@@ -60,7 +60,7 @@ export default {
         border:1px solid red;
         display: grid;
         align-content: center;
-        background-color: #888888;
+        /* background-color: #888888; */
         padding: 0px;
      }
      .cardbox{
@@ -135,7 +135,7 @@ export default {
         border-width: 0px;
         border-radius: 8px;
         margin-bottom: 8px;
-        background-image: linear-gradient(to top right,#497af5,#884afb );
+        background-image: linear-gradient(to right,#497af5 ,#884afb);
      }
      
 /* img */
