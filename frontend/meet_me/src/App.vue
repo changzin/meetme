@@ -1,13 +1,15 @@
 <template>
   <nav>
     <router-link to="/">Home</router-link> |
-
     <router-link to="/about">About</router-link> |
-    <router-link to="/mypage">MyPage</router-link>
+    <router-link to="/mypage">MyPage</router-link>  |
 
     <router-link to="/tempview">TempView</router-link> |
-    <router-link to="/about">About</router-link>
-
+    <router-link to="/about">About</router-link>  |
+    <router-link to="/reactiveweb">ReactiveWeb</router-link>   |
+    <router-link to="/modal">Modal</router-link>    |
+    <router-link to="/selectmodal">SelectModal</router-link>  
+    |
   </nav>
   <router-view />
 </template>
@@ -22,7 +24,17 @@
   
   --purple_main: #5c09e3;
   --purple_sub: #ddbffc;
-  --purple_sub_light: :#EBEBFF;
+  --purple_sub_light: #EBEBFF;
+
+  --grey_main: #EFEFF0;
+  --grey_sub_dark: #A2A2A5;
+
+
+  --white_main: #ffffff;
+
+
+
+   --box-shadow_purple_main: 1px 4px 10px rgba(92, 9, 227, 0.12); 
 }
 
 #app {
