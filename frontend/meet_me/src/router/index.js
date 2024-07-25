@@ -10,6 +10,8 @@ import MainPage from '../views/MainPage.vue'
 import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
 
+import ChatRoom from '../views/chat/ChatRoom.vue'
+import ChatList from '../views/chat/ChatList.vue'
 
 const routes = [
   {
@@ -59,6 +61,16 @@ const routes = [
     path: '/mypageedit',
     name: 'MyPageEdit',
     component: MyPageEdit
+  },
+  {
+    path : '/ChatRoom',
+    name:'Chatroom',
+    component: ChatRoom,
+  },
+  {
+    path : '/chatlist',
+    name:'Chatlist',
+    component: ChatList,
   }
 ]
 
