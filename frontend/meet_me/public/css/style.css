@@ -1,3 +1,11 @@
 @import './components/sample.css';
 @import './components/admin.css';
 /* 여기에.. */
+
+.safety_zone{
+    width: 600px;
+    margin: 0 auto;
+}
+.web_body{
+    margin: 0 auto;
+}
