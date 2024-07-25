@@ -4,53 +4,57 @@
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
-            <div class="admin_search_div">
-                <form class="admin_search_form">
-                    <img src="/icon/admin/search.svg" class="search_icon">
-                    <input type="text" class="search_input" placeholder="이메일, 닉네임으로 검색">
-                </form>
+            <div class="admin_mobile_row">
+                <div class="admin_search_div">
+                    <form class="admin_search_form">
+                        <img src="/icon/admin/search.svg" class="search_icon">
+                        <input type="text" class="search_input" placeholder="이메일, 닉네임으로 검색">
+                    </form>
+                </div>
             </div>
-            <div class="admin_table_div">
-                <table class="admin_table">
-                    <thead>
-                        <tr class="admin_table_thead">
-                            <td>번호</td>
-                            <td>이메일</td>
-                            <td>닉네임</td>
-                            <td>총 결제금액</td>
-                            <td>신고</td>
-                            <td>차단</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="tr_gray">
-                            <td>1</td>
-                            <td>sa123@naver.com</td>
-                            <td>nickname1</td>
-                            <td>10,000,000</td>
-                            <td>2</td>
-                            <td>
-                                <div class="block_buttons">
-                                    <div class="block_button_active">Y</div>
-                                    <div class="block_button_inactive">N</div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="tr_white">
-                            <td>번호</td>
-                            <td>이메일</td>
-                            <td>닉네임</td>
-                            <td>총 결제금액</td>
-                            <td>신고</td>
-                            <td>
-                                <div class="block_buttons">
-                                    <div class="block_button_active">Y</div>
-                                    <div class="block_button_inactive">N</div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="admin_mobile_row">
+                <div class="admin_table_div">
+                    <table class="admin_table">
+                        <thead>
+                            <tr class="admin_table_thead">
+                                <td>번호</td>
+                                <td>이메일</td>
+                                <td>닉네임</td>
+                                <td>총 결제금액</td>
+                                <td>신고</td>
+                                <td>차단</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="tr_gray">
+                                <td>1</td>
+                                <td>sa123@naver.com</td>
+                                <td>nickname1</td>
+                                <td>10,000,000</td>
+                                <td>2</td>
+                                <td>
+                                    <div class="block_buttons">
+                                        <div class="block_button_active">Y</div>
+                                        <div class="block_button_inactive">N</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="tr_white">
+                                <td>번호</td>
+                                <td>이메일</td>
+                                <td>닉네임</td>
+                                <td>총 결제금액</td>
+                                <td>신고</td>
+                                <td>
+                                    <div class="block_buttons">
+                                        <button class="block_button_active">Y</button>
+                                        <div class="block_button_inactive">N</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="admin_web_inner_flex">
                 <div class="admin_pagination_box">
@@ -143,6 +147,7 @@ tbody tr:hover{
     display: flex;
     justify-content: center;
     align-items: center;
+    border:0px solid black;
 }
 
 .block_button_inactive{
@@ -171,29 +176,56 @@ tbody tr:hover{
     justify-content: end;
 }
 
-.admin_table_thead :first-child{
+.admin_table_thead td:first-child{
     width: 120px;
 }
-.admin_table_thead :nth-child(2){
+.admin_table_thead td:nth-child(2){
     width: 241px;
 }
-.admin_table_thead :nth-child(3){
+.admin_table_thead td:nth-child(3){
     width: 183px;
 }
-.admin_table_thead :nth-child(4){
+.admin_table_thead td:nth-child(4){
     width: 150px;
 }
-.admin_table_thead :nth-child(5){
+.admin_table_thead td:nth-child(5){
     width: 150px;
 }
-.admin_table_thead :nth-child(6){
+.admin_table_thead td:nth-child(6){
     width: 121px;
 }
 
-tbody :last-child :first-child{
+tbody tr:last-child td:first-child{
     border-bottom-left-radius: 8px;
 }
-tbody :last-child :last-child{
+tbody tr:last-child td:last-child{
     border-bottom-right-radius: 8px;
+}
+
+@media (max-width: 1200px) {
+  tr :nth-child(4), tr :nth-child(5){
+    display: none;
+  }
+  table{
+    width:453px;
+  }
+  .admin_table_div{
+    width:453px;
+  }
+  .web_body{
+    min-width: 600px;
+    width: 600px;
+  }
+  .admin_header_text{
+    max-width: 600px;
+  }
+  .admin_search_div{
+    margin-right:73px;
+  }
+  .admin_mobile_row{
+    width:600px;
+    display:flex;
+    justify-content: center;
+  }
 }
 </style>

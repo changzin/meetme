@@ -19,7 +19,7 @@
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
-
+  
   --purple_main: #5c09e3;
   --purple_sub: #ddbffc;
   --purple_sub_light: :#EBEBFF;
