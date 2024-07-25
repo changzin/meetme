@@ -2,18 +2,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
 import Analysis from '../views/admin/analysis.vue'
-
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
-
 import MainPage from '../views/MainPage.vue'
-import userLogin from '../views/nouser/userLogin.vue'
+import UserLogin from '../views/nouser/UserLogin.vue'
 import TempView from '../views/TempView.vue'
+import SignUpTerms from '../views/nouser/SignUpTerms.vue'
+import SignUp from '../views/nouser/SignUp.vue'
+import EmailCheck from '../views/nouser/EmailCheck.vue'
+import Profile_Input from '../views/profile/Profile_Input.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
-
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
-
 
 const routes = [
   {
@@ -51,8 +51,30 @@ const routes = [
   },
   {
     path:'/login',
-    name:'userLogin',
-    component: userLogin
+    name:'UserLogin',
+    component: UserLogin
+  },
+  {
+    path:'/terms',
+    name:'terms',
+    component: SignUpTerms
+  },
+  {
+    path:'/signup',
+    name:'signup',
+    component: SignUp
+  },
+  {
+    path:'/emailcheck',
+    name:'emailcheck',
+    component: EmailCheck
+
+  },
+  {
+    path:'/profile',
+    name:'profile',
+    component:Profile_Input
+
   },
   {
     path: '/tempview',

@@ -28,9 +28,41 @@
      }
      div.subtitle{
         margin-top: 46px;
-        margin-left: 30px;
+        margin-left: 40px;
         display: flex;
         align-items: center;
+        font-size: 20px;
+        padding: 0px;
+     }
+     div.termsbox{
+      /* margin-top: 20px; */
+      
+      margin-left: 40px;
+      /* width: 510px; */
+      height: 24px;
+      display: flex;
+      /* align-items: center; */
+      padding: 0px;
+     }
+     div.clausetext{
+      font-size: 16px;
+      color: #111111;
+      margin-left: 35px;
+      width: 200px;
+      
+     }
+     div.termstext{
+      width: 30px;
+      font-size: 16px;
+      /* text-align: center; */
+      color: var(--purple_main)
+     }
+     img.termsicon{
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      /* margin-left: 100px; */
+      /* margin-right: 100px; */
      }
 
      button.loginbutton{
@@ -43,14 +75,27 @@
         margin-bottom: 8px;
      }
      img.checkbox{
-        margin-left: 410px;
+        margin-left: 390px;
         width: 24px;
         height: 24px;
+        margin-right: 30px;
      }
      p.subtext{
         font-size: 12px;
         margin-left: 5px;
         text-align: center;
+     }
+     hr.subline{
+      margin-top: 20px;
+      width: 508px;
+      color: #e0e0e0;
+     }
+     
+     img.termscheckbox{
+        margin-left: auto;
+        width: 24px;
+        height: 24px;
+        margin-right: 60px;
      }
     
 </style>
@@ -70,8 +115,53 @@
                 <p class="subtext">회원가입 전,Meet Me 약관들을 확인해주세요</p>
                 <div class="subtitle">
                 전체동의
-                <img src="/user.svc" class="checkbox">
-                </div>
+                <img src="/icon/login/checkbox.svg" class="checkbox" >
+               </div>
+               <hr class="subline">
+               <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">필수</div>
+                  <div class="clausetext">이용약관 동의</div>
+                  <div></div>
+                     <img src="/icon/signup/i.svg" class="termsicon">
+                  
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">필수</div>
+                  <div class="clausetext">개인정보 수집 및 이용 동의 </div>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">필수</div>
+                  <div class="clausetext">위치기반 서비스 약관 동의 </div>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">필수</div>
+                  <div class="clausetext">종교정보 수집 동의 </div>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <!-- <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">필수</div>
+                  <div class="clausetext">개인정보 수집 및 이용 동의</div>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <div class="termsbox" style="margin-bottom: 28px;">
+                  <div class="termstext">선택</p>
+                  < class="clausetext">위치기반 서비스 약관 동의</p>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div>
+               <div class="termsbox" style="margin-bottom: 46px;">
+                  <p class="termstext">선택</p>
+                  <p class="clausetext">종교 정보 수집 동의</p>
+                  <img src="/icon/signup/i.svg" class="termsicon">
+                  <img src="/icon/signup/checkbox.svg" class="termscheckbox" > 
+               </div> -->
                 <button type="button" class="loginbutton">
                     동의하고 다음 단계로 진행하기
                 </button>
