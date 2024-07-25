@@ -11,6 +11,8 @@ import userLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 
+import Modal from '../components/Modal.vue'
+import SelectModal from '../components/SelectModal.vue'
 
 
 const routes = [
@@ -66,6 +68,16 @@ const routes = [
     path: '/mypageedit',
     name: 'MyPageEdit',
     component: MyPageEdit
+  },
+  {
+    path: '/modal',
+    name: 'Modal',
+    component: Modal
+  },
+  {
+    path: '/selectmodal',
+    name: 'SelectModal',
+    component: SelectModal
   }
 ]
 
