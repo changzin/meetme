@@ -5,6 +5,7 @@ import Analysis from '../views/admin/analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
+import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 
 import MainPage from '../views/MainPage.vue'
 import userLogin from '../views/nouser/userLogin.vue'
@@ -59,7 +60,13 @@ const routes = [
     path: '/mypageedit',
     name: 'MyPageEdit',
     component: MyPageEdit
-  }
+  },
+  {
+    path: '/profilegrade',
+    name: 'ProfileGrade',
+    component: ProfileGrade
+  },
+  
 ]
 
 const router = createRouter({
