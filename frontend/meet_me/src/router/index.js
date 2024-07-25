@@ -4,6 +4,7 @@ import Member from '../views/admin/Member.vue'
 import Analysis from '../views/admin/analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
+import MyPageEdit from '../views/mypage/MyPageEdit.vue'
 
 import MainPage from '../views/MainPage.vue'
 import userLogin from '../views/nouser/userLogin.vue'
@@ -60,6 +61,11 @@ const routes = [
     path: '/reactiveweb',
     name: 'ReactiveWeb',
     component: ReactiveWeb
+  },
+  {
+    path: '/mypageedit',
+    name: 'MyPageEdit',
+    component: MyPageEdit
   }
 ]
 

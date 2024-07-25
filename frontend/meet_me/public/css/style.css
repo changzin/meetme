@@ -3,6 +3,7 @@
 /* 여기에.. */
 
 .safety_zone{
+    min-width: 600px;
     width: 600px;
     margin: 0 auto;
 }
