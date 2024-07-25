@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div class="safe_zone">
+    <div class="safety_zone">
+        <div class="container">
             <div class="mypage_container">
                 <div class="profile_box">
                     <img class="mini_profile" src="/model.jpg">
@@ -88,17 +88,9 @@ export default {
 <style scoped>
 
 .container {
-    width: 600px;
-    margin: 0 auto;
-    justify-content: center;
-    box-sizing: border-box;
-    min-width: 600px;
-}
-
-.safe_zone {
     padding: 0 16px 0 16px;
     margin: 0 12px 0 12px;
-
+    
 }
 
 .mypage_container {
@@ -107,7 +99,7 @@ export default {
 
 .profile_box {
     height: 130px;
-    background-color: FFFFFF;
+    background-color: #FFFFFF;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     display: flex;
@@ -150,7 +142,7 @@ export default {
 }
 
 .mypage_box {
-    background-color: FFFFFF;
+    background-color: #FFFFFF;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     margin-bottom: 20px;
@@ -162,6 +154,7 @@ export default {
     align-items: center;
     display: flex;
     cursor: pointer;
+    background-color: #ffffff;
 }
 
 .button_icon {
