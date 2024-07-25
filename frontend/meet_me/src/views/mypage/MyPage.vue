@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div class="safe_zone">
+    <div class="safety_zone">
+        <div class="container">
             <div class="mypage_container">
                 <div class="profile_box">
                     <img class="mini_profile" src="/model.jpg">
@@ -14,7 +14,7 @@
                     </div>
                     <div class="button">
                         <button class="edit">
-                            <a href="/">
+                            <a href="/mypageedit">
                             <img src="/icon/mypage/main/edit.svg">
                             </a>
                         </button>
@@ -63,11 +63,11 @@
                 </div>
             </div>
         </div>
+        <MeetHeader />
     </div>
 </template>
 <script>
 export default {	
-    components:{},
     data() {
         return {
         };
@@ -79,16 +79,9 @@ export default {
 <style scoped>
 
 .container {
-    width: 600px;
-    margin: 0 auto;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-.safe_zone {
     padding: 0 16px 0 16px;
     margin: 0 12px 0 12px;
-
+    
 }
 
 .mypage_container {
@@ -97,8 +90,8 @@ export default {
 
 .profile_box {
     height: 130px;
-    background-color: FFFFFF;
-    box-shadow: 0px 0px 10px;
+    background-color: #FFFFFF;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     display: flex;
     margin-bottom: 20px;
@@ -108,7 +101,7 @@ export default {
     width: 90px;
     height: 90px;
     border-radius: 100px;
-    padding: 20px;
+    margin: 20px;
     justify-content: start;
 }
 
@@ -118,7 +111,7 @@ export default {
 }
 
 .name {
-    
+    font-weight: 500;
 }
 
 .live {
@@ -140,8 +133,8 @@ export default {
 }
 
 .mypage_box {
-    background-color: FFFFFF;
-    box-shadow: 0px 0px 10px;
+    background-color: #FFFFFF;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     border-radius: 10px;
     margin-bottom: 20px;
     padding: 15px;
@@ -152,6 +145,7 @@ export default {
     align-items: center;
     display: flex;
     cursor: pointer;
+    background-color: #ffffff;
 }
 
 .button_icon {
