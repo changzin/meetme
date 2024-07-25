@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="mypage_box">
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'ProfileGrade'})">
                         <img class="button_icon" src="/icon/mypage/main/user.svg">
                         <div class="button_icon">
                             프로필 등급
@@ -72,7 +72,17 @@ export default {
         return {
         };
     },
+
+    beforeCreate() {},
+    created() {},
+    beforeMount() {},
+    mounted() {},
+    beforeUpdate() {},
+    updated() {},
+    beforeUnmount() {},
+    unmounted() {},
     methods: {}
+
 }
 </script>
 
@@ -103,6 +113,7 @@ export default {
     border-radius: 100px;
     margin: 20px;
     justify-content: start;
+    object-fit: cover;
 }
 
 .name_title {

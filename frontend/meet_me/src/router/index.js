@@ -4,6 +4,10 @@ import Member from '../views/admin/Member.vue'
 import Analysis from '../views/admin/analysis.vue'
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
+
+import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+
+
 import MainPage from '../views/MainPage.vue'
 import UserLogin from '../views/nouser/UserLogin.vue'
 import TempView from '../views/TempView.vue'
@@ -92,6 +96,13 @@ const routes = [
     component: MyPageEdit
   },
   {
+
+    path: '/profilegrade',
+    name: 'ProfileGrade',
+    component: ProfileGrade
+  },
+  {
+
     path: '/modal',
     name: 'Modal',
     component: Modal
@@ -101,6 +112,7 @@ const routes = [
     name: 'SelectModal',
     component: SelectModal
   }
+
 ]
 
 const router = createRouter({
