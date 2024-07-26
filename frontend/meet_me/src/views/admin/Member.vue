@@ -1,7 +1,8 @@
 <template>
 <div class="web_body">
     <AdminHeader />
-    <MemberReportModal />
+    <MemberReportModal :data="this.reportData"/>
+    <MemberPayModal :data="this.payData"/>
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
@@ -32,8 +33,8 @@
                                 <td>{{index+1 + (page-1)*10}}</td>
                                 <td>{{user.user_email}}</td>
                                 <td>{{user.user_nickname}}</td>
-                                <td>{{(user.user_payment) ? user.user_payment : 0}}</td>
-                                <td @click="viewReportModal">{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
+                                <td @click="viewPayModal(user.user_id)">{{(user.user_payment) ? user.user_payment : 0}}</td>
+                                <td @click="viewReportModal(user.user_id)">{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
                                 <td>
                                     <div class="block_buttons">
                                         <div :class="{block_button_active: (user.user_block=='T'), 
@@ -81,6 +82,8 @@ export default {
             offset: 10,
             keyword: "",
             prevKeyword: "",
+            reportData: {},
+            payData:{}
         }
     },
     methods: {
@@ -118,7 +121,7 @@ export default {
             // 유저 차단 
         async blockUser(user){
             try{
-                const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user.user_id}, "POST");
+                const result = await this.$api(`/user/block`, {user_id: user.user_id}, "POST");
                 if (result.status == 200){
                 user.user_block = "T";
                 }
@@ -134,7 +137,7 @@ export default {
         // 유저 차단 해제
         async unBlockUser(user){
             try{
-                const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user.user_id}, "POST");
+                const result = await this.$api(`/user/unblock`, {user_id: user.user_id}, "POST");
                 if (result.status == 200){
                 user.user_block = "F";
                 }
@@ -147,8 +150,22 @@ export default {
                 alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
             }
         },
-        viewReportModal(){
+        async viewReportModal(user_id){
+            let requestBody = {
+                user_id: user_id
+            }
+            let result = await this.$api("/user/report", requestBody, "POST");
+            this.reportData = result;
             this.$store.commit("setModalOn");
+        },
+        async viewPayModal(user_id){
+            let requestBody = {
+                user_id: user_id
+            }
+            let result = await this.$api("/user/payment", requestBody, "POST");
+            this.payData = result;
+            console.log(this.$store.state.modalOn2);
+            this.$store.commit("setModalOn2");
         }
 
     },

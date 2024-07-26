@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="this.$store.state.modalOn"
+      v-if="this.$store.state.modalOn2"
       class="modal-overlay"
       @click="handleOverlayClick"
     >
@@ -25,10 +25,10 @@
                 </thead>
                 <tbody class="admin_modal_table_body">
                     <tr :class="{tr_gray: (index%2==0), tr_white: (index%2==1) }"
-                          v-for="(report, index) in data.reportList" :key="index">
-                        <td>{{report.user_nickname}}</td>
+                          v-for="(report, index) in data.paymentList" :key="index">
+                        <td>{{report.payment_price}}</td>
                         <td>
-                            {{report.report_content}}
+                            {{report.payment_code}}
                         </td>
                     </tr>
                 </tbody>
@@ -47,9 +47,9 @@ export default {
       type:Object,
       default: function(){
                 return {
-                  reportList: [
+                  paymentList: [
                     {
-                      user_nickname: "#",
+                      user_id1: "#",
                       report_content: "#",
                     }
                   ]
@@ -62,13 +62,13 @@ export default {
   },
   methods: {
     x_click() {
-      this.$store.commit("setModalOff");
+      this.$store.commit("setModalOff2");
     },
 
     handleOverlayClick(event) {
       // 모달 팝업이 아닌 영역을 클릭한 경우 모달을 닫음
       if (!this.$refs.modalPopup.contains(event.target)) {
-        this.$store.commit("setModalOff");
+        this.$store.commit("setModalOff2");
       }
     },
   },
