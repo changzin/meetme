@@ -1,6 +1,7 @@
 <template>
 <div class="web_body">
     <AdminHeader />
+    <MemberReportModal />
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
@@ -32,7 +33,7 @@
                                 <td>{{user.user_email}}</td>
                                 <td>{{user.user_nickname}}</td>
                                 <td>{{(user.user_payment) ? user.user_payment : 0}}</td>
-                                <td>{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
+                                <td @click="viewReportModal">{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
                                 <td>
                                     <div class="block_buttons">
                                         <div :class="{block_button_active: (user.user_block=='T'), 
@@ -115,37 +116,41 @@ export default {
             await this.getUserList();
         },
             // 유저 차단 
-    async blockUser(user){
-      try{
-        const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user.user_id}, "POST");
-        if (result.status == 200){
-          user.user_block = "T";
+        async blockUser(user){
+            try{
+                const result = await this.$api(`http://localhost:9090/user/block`, {user_id: user.user_id}, "POST");
+                if (result.status == 200){
+                user.user_block = "T";
+                }
+                else{
+                alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+                }
+            } 
+            catch(err){
+                console.error(err);
+                alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+            }
+        },
+        // 유저 차단 해제
+        async unBlockUser(user){
+            try{
+                const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user.user_id}, "POST");
+                if (result.status == 200){
+                user.user_block = "F";
+                }
+                else{
+                alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+                }
+            }
+            catch(err){
+                console.error(err);
+                alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+            }
+        },
+        viewReportModal(){
+            this.$store.commit("setModalOn");
         }
-        else{
-          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
-        }
-      } 
-      catch(err){
-        console.error(err);
-        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
-      }
-    },
-    // 유저 차단 해제
-    async unBlockUser(user){
-      try{
-        const result = await this.$api(`http://localhost:9090/user/unblock`, {user_id: user.user_id}, "POST");
-        if (result.status == 200){
-          user.user_block = "F";
-        }
-        else{
-          alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
-        }
-      }
-      catch(err){
-        console.error(err);
-        alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
-      }
-    },
+
     },
     async created(){
         await this.getUserList();

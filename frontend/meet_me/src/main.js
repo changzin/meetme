@@ -11,6 +11,7 @@ import GChart from 'vue-google-charts'
 // Components
 import MeetHeader from './components/MeetHeader.vue';
 import AdminHeader from './components/AdminHeader.vue';
+import MemberReportModal from './components/MemberReportModal.vue'
 
 const app = createApp(App);
 
@@ -22,6 +23,7 @@ app.use(GChart, {});
 
 app.component('MeetHeader', MeetHeader);
 app.component('AdminHeader', AdminHeader);
+app.component('MemberReportModal', MemberReportModal);
 
 
 // createApp(App).use(router).mount('#app')

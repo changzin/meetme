@@ -18,11 +18,10 @@
 }
 
 .admin_pagination_box {
-    height: 50px;
+    height: 30px;
     display:flex;
     margin-top: 146px;
     width:214px;
-    margin-bottom:30px;
 }
 
 .admin_pagination_box :not(:first-child){

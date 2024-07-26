@@ -12,6 +12,7 @@
     |
     <router-link to="/mainpage">mainpage</router-link>  |
   </nav>
+  
   <router-view />
 </template>
 
