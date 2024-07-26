@@ -79,8 +79,8 @@ export default {
 
 .main_image{
     width: 568px;
-    min-width: 570px;
-    height: 600px;
+    min-width: 568px;
+    height: 700px;
     display: flex;
     padding: 0 8px 0 8px;
     border-radius: 10px;
@@ -88,14 +88,14 @@ export default {
 }
 
 img{
+    min-width: 540px;
     width: 568px;
-
-    height: 600px;
+    height: 700px;
     display: block;
     margin: 0 8px 0 8px;
     object-fit: cover;
     border-radius: 10px;
-
+    
 }
 
 .prev_button {
@@ -138,5 +138,6 @@ img{
     background-color: #F1EFF6;
     padding: 20px;
     text-align: left;
+    margin: 0 auto;
 }
 </style>
