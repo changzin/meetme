@@ -4,9 +4,6 @@ import Member from '../views/admin/Member.vue'
 
 import Analysis from '../views/admin/Analysis.vue'
 
-
-import Analysis from '../views/admin/analysis.vue'
-
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
