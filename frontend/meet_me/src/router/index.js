@@ -23,7 +23,7 @@ import Profile_Input from '../views/profile/Profile_Input.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
-
+import User_Character from '../views/profile/User_Character.vue'
 const routes = [
   {
     path: '/',
@@ -84,6 +84,11 @@ const routes = [
     name:'profile',
     component:Profile_Input
 
+  },
+  {
+    path: '/character',
+    name:'character',
+    component:User_Character
   },
   {
     path: '/tempview',

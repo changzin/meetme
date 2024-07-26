@@ -5,17 +5,17 @@
                 <div class="title">
                     MEET ME
                 </div>
-                <div class="input_box" style="margin-bottom: 20px;">
+                <form class="input_box" style="margin-bottom: 20px;">
                         <img src="icon/login/user.svg" class="icon">
                         <input type="text" class="input_text" placeholder="이메일">
-                </div>
-                <div class="input_box">
+                </form>
+                <form class="input_box">
                     <img src="/icon/login/password.svg" class="icon" >
                     <input type="password" class="input_text" placeholder="비밀번호">
-                </div>
-                <button type="button" class="login_button">
-                    <p class="login_text">로그인</p> 
-                </button>
+                </form>
+                <input type="submit" class="login_button" value="로그인">
+                    
+                
                 <div class="option" >
                     <img src="/icon/login/checkbox.svg" class="icon_login" >
                     <img src="/icon/login/checkbox_on.svg" class="icon_login">
@@ -51,13 +51,10 @@ export default {
     }
 }
 </script>
-<style >
+<style scoped>
 /* div */
     .container0{
         width: 600px;
-        /* height: 879px; */
-        /* margin:0 auto;  */
-        border:1px solid red;
         display: grid;
         align-content: center;
         /* background-color: #888888; */
@@ -136,6 +133,9 @@ export default {
         border-radius: 8px;
         margin-bottom: 8px;
         background-image:var(--gradient);
+        color:#FFFFFF;
+        font-size: 20px;
+        text-align: center;
      }
      
 /* img */
