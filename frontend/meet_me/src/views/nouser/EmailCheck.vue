@@ -13,7 +13,7 @@
                     이메일 인증 후 프로필을 등록하시면 첫 가입 보상 300코인과 활동을 시작할 수 있어요.<br/>우리 같이 연애해요 ^^
                 </div>
             </div>
-            <button type="button" class="loginbutton" style="margin-bottom: 324px;">
+            <button type="button" class="nextbutton" style="margin-bottom: 438px;">
                 이메일 인증 후 프로필 등록하기
             </button>
         </div>
@@ -39,10 +39,9 @@ export default {
 <style scoped>
     .container0 {
     width: 600px;
-    border: 1px solid red;
     display: grid;
     align-content: center;
-    background-color: #888888;
+    
     }
 
     .cardbox {
@@ -91,5 +90,15 @@ export default {
         text-align: start;
         color: #BBAFC8;
     }
+    .nextbutton {
+    color: #FFFFFF;
+    background-image: var(--gradient);
+    margin-top: 20px;
+    width: 508px;
+    height: 60px;
+    font-size: 20px;
+    border-width: 0;
+    border-radius: 8px;
+}
 
 </style> 
