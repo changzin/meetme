@@ -2,7 +2,7 @@
     <div class="container0">
         <MeetHeader />
         <div class="search">
-            <div class="search_icon"></div>
+            <div class="search_icon"><img src="../../../public/icon/chat/search.svg"></div>
             <input class="search_box" type="text" placeholder="검색" />
         </div>    
         <div class="container_chat">
@@ -102,7 +102,7 @@
 <script>
 
 </script>
-<style scope>
+<style scoped>
        /* font */
        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
         div{
@@ -115,24 +115,32 @@
         }
         
         /* div */
+        
         div.container0{
             width: 600px;
             height: 100vh;
             margin:0 auto; 
+            padding-left: 15px;
+            padding-right: 15px;
             /* border:1px solid red; */
-            display: flex; /* 그리드 대신 플렉스를 사용 */
-            flex-direction: column; /* 세로 방향으로 아이템 정렬 */
-            justify-content: flex-start; /* 상단으로 정렬 */   
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
             border: none;
-            padding-bottom: 60px;
-            background: none;
-        }
-        div.search{
-            border-radius: 5px;
             background: white;
+            border-radius: 10px;
+            box-sizing: border-box;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
+            
+        }
+        
+        div.search{
+            border-radius: 10px;
+            background: white;
+            /* border: 1px solid blue; */
         }
         .search_box{
-            width: 548px;
+            width: 520px;
             height: 45px;
             margin-top : 10px;
             margin-left: 26px;
@@ -157,7 +165,9 @@
             height: 100vh;
             overflow: scroll; 
             background: white;
-            /* border:4px solid green */
+            /* border:4px solid green; */
+            border-radius: 0px 0px 10px 10px;
+            padding-bottom: 60px;
         }
         div.container_chat::-webkit-scrollbar {
         display: none;
@@ -194,7 +204,7 @@
         }
         div.chat_contnet_chat{
             /* border: 1px solid red; */
-            max-width: 350px;
+            max-width: 300px;
             white-space: nowrap; 
             overflow: hidden;
             text-overflow:ellipsis
@@ -208,12 +218,14 @@
 
         /* 아이콘 */
         .search_icon{
+            display: grid;
+            align-content: center;
             width: 16px;
             height: 16px;
             position: relative;
             left:45px;
             top:42px;
-            background-color: aqua;
+            /* background-color: aqua; */
         }
 
         /* 이미지 */

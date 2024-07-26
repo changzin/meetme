@@ -1,12 +1,13 @@
-<template>
+<template> 
     <div class="container0">
-      <MeetHeader />
+      <MeetHeader  class="header_font" />
+      <ChatModal />
         <div class="container_top">
           <div class="box_name">
             <div class="container_top_content">
-              <div class="back_icon"><img src="../../../public/icon/chat/back.svg"></div>
+              <div class="back_icon" @click="this.$router.push({path: '/chatlist/'})"><img src="../../../public/icon/chat/back.svg"></div>
               <div class="top_name">상대방1</div>
-              <div class="out_icon"><img src="../../../public/icon/chat/out.svg"></div>
+              <div class="out_icon" @click="chatModal()"><img src="../../../public/icon/chat/out.svg"></div>
             </div>
           </div>
         </div>
@@ -31,6 +32,8 @@
                   <div class="left_name_hidden">상대방</div>
                   <div class="middle_left_content2">
                     <div class="box_content_left">
+                      안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
+                      안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
                       안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
                     </div>
                     <div class="time">오후 10:29</div>
@@ -80,12 +83,12 @@
                     다시놀자
                   </div>
                 </div>
-              </div>
+              </div>              
           </div> 
         </div>
         <div class="container_bottom">
           <div class="container_bottom_box">
-            <div class="gallery_icon"></div>
+            <div class="gallery_icon"><img src="../../../public/icon/chat/gallery.svg"></div>
             <input class="box_chat" placeholder="메시지를 입력하세요" />
             <div class="send_icon"><img src="../../../public/icon/chat/send.svg"></div>
           </div>
@@ -93,6 +96,18 @@
       </div>
   </template>  
 <script>
+
+export default {
+  data(){
+    return {
+    }
+  },
+  methods: {
+    chatModal(){
+      this.$store.commit("setModalOn");
+    }      
+  },
+}
 
 </script>
 <style scoped>
@@ -107,6 +122,9 @@
     }
     input::placeholder{
         font-family: 'Noto Sans KR', sans-serif;
+    }
+    .header_font{
+      font-size: 16px;
     }
     .top_name{
         font-size: 16px;
@@ -131,8 +149,10 @@
       display: flex; /* 그리드 대신 플렉스를 사용 */
       flex-direction: column; /* 세로 방향으로 아이템 정렬 */
       justify-content: flex-start; /* 상단으로 정렬 */
-      border: none; 
-      background: none;
+      /* border: 1px solid red; */
+      border-radius: 10px;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
+      
      }
      div.container_top{
         /* border: 4px solid green; */
@@ -147,13 +167,13 @@
                 
      }
      div.container_white{
-      background: white;
+      background: white; 
       /* border: 1px solid red; */
      }
      div.container_middle{
         margin-left: 25px;
         margin-right: 25px;
-        max-height: 760PX;
+        height: 770px;
         overflow: scroll;
         /* border: 1px solid green; */
      }
@@ -220,6 +240,7 @@
         justify-content: center;
         align-items: center;
         height: 75px;
+        border-radius: 0px 0px 10px 10px;
      }
 
      /* box */
@@ -229,6 +250,7 @@
         display: grid;
         align-items: center;
         word-break: break-all;
+        border-radius: 10px 10px 0px 0px;
      }
      .box_content_left{
         width: auto;
@@ -334,3 +356,4 @@
     }
   
 </style>
+
