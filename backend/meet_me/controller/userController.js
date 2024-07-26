@@ -152,3 +152,85 @@ exports.userUnblock = async(req, res)=>{
         conn.release();
     }
 }
+
+exports.userReport = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `SELECT 
+                    user.user_nickname, report.report_content 
+                FROM 
+                    report, user 
+                WHERE 
+                    user.user_id = report.user_id1 AND user_id2=? ORDER BY report_create_date`;
+        result = await db(conn, query, [userId]);
+
+        responseBody = {
+            status: 200,
+            reportList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+exports.userPayment = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `SELECT 
+                    payment_price, payment_code
+                FROM 
+                    payment
+                WHERE 
+                    user_id=? ORDER BY payment_create_date`;
+        result = await db(conn, query, [userId]);
+
+        responseBody = {
+            status: 200,
+            paymentList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
