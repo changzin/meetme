@@ -7,13 +7,20 @@ const store = createStore({
         return {
             user: {
                 user_id: ''
-            }
+            },
+            modalOn: false
         }
     },
     mutations: {
         user(state, data){
             state.user = data;
-        }
+        },
+        setModalOn(state) {
+            state.modalOn = true;
+          },
+        setModalOff(state) {
+            state.modalOn = false;
+        },
     },
     getters: {
         getUser: ()=>{

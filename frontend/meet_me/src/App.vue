@@ -11,6 +11,7 @@
     <router-link to="/selectmodal">SelectModal</router-link>  
     |
   </nav>
+  
   <router-view />
 </template>
 
