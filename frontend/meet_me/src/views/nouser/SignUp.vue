@@ -10,32 +10,30 @@
                 <div class="sub_title">
                     이메일
                 </div>
-                <div class="input_box" style="margin-bottom: 20px;">
+                <form class="input_box" style="margin-bottom: 20px;">
                     <img src="icon/login/user.svg" class="icon">
                     <input type="text" class="input_text" placeholder="이메일">
-                </div>
+                </form>
             </div>
             <div class="box">
                 <div class="sub_title">
                     비밀번호
                 </div>
-                <div class="input_box" style="margin-bottom: 20px;">
+                <form class="input_box" style="margin-bottom: 20px;">
                     <img src="/icon/login/password.svg" class="icon">
                     <input type="password" class="input_text" placeholder="비밀번호">
-                </div>
+                </form>
             </div>
             <div class="box">
                 <div class="sub_title">
                     비밀번호 확인
                 </div>
-                <div class="input_box" style="margin-bottom: 20px;">
+                <form class="input_box" style="margin-bottom: 20px;">
                     <img src="/icon/login/password.svg" class="icon">
                     <input type="password" class="input_text" placeholder="비밀번호 확인">
-                </div>
+                </form>
             </div>
-            <button type="button" class="next_button" style="margin-bottom: 324px;">
-                이메일 인증하러 가기
-            </button>
+            <input type="submit" class="next_button" style="margin-bottom: 324px;" value="이메일 인증하러 가기">
         </div>
     </div>
 </div>
