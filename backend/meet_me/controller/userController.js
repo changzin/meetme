@@ -81,13 +81,12 @@ exports.userBlock = async(req, res)=>{
         let responseBody = {};
         
         const userId = req.body.user_id;
-        console.log(userId);
         query = 'UPDATE user SET user_block="T" WHERE user_id=?';
         result = await db(conn, query, [userId]);
 
         // changedRows는 바뀐 행 개수이다.
         // 하나 이상 바뀌거나 0개 바뀌었다면 에러를 던짐 -> 아래의 catch문이 400 에러로 응답한다.    
-        if (result.changedRows != 1){
+        if (result.affectedRows != 1){
             throw Error("차단을 할 유저를 찾을 수 없습니다.");
         }    
 
@@ -128,7 +127,7 @@ exports.userUnblock = async(req, res)=>{
         query = 'UPDATE user SET user_block="F" WHERE user_id=?';
         result = await db(conn, query, [userId]);
 
-        if (result.changedRows != 1){
+        if (result.affectedRows != 1){
             throw Error("잘못된 요청입니다.");
         }        
 
@@ -152,4 +151,86 @@ exports.userUnblock = async(req, res)=>{
     finally{
         conn.release();
     }
+}
+
+exports.userReport = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `SELECT 
+                    user.user_nickname, report.report_content 
+                FROM 
+                    report, user 
+                WHERE 
+                    user.user_id = report.user_id1 AND user_id2=? ORDER BY report_create_date`;
+        result = await db(conn, query, [userId]);
+
+        responseBody = {
+            status: 200,
+            reportList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+exports.userPayment = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `SELECT 
+                    payment_price, payment_code
+                FROM 
+                    payment
+                WHERE 
+                    user_id=? ORDER BY payment_create_date`;
+        result = await db(conn, query, [userId]);
+
+        responseBody = {
+            status: 200,
+            paymentList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
 }

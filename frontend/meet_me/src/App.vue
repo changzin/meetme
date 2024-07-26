@@ -10,7 +10,9 @@
     <router-link to="/modal">Modal</router-link>    |
     <router-link to="/selectmodal">SelectModal</router-link>  
     |
+    <router-link to="/mainpage">mainpage</router-link>  |
   </nav>
+  
   <router-view />
 </template>
 

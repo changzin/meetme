@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
+
 import Analysis from '../views/admin/Analysis.vue'
+
+
+import Analysis from '../views/admin/analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
@@ -10,7 +14,7 @@ import SendHeart from '../views/mypage/SendHeart.vue'
 
 
 import MainPage from '../views/MainPage.vue'
-import UserLogin from '../views/nouser/UserLogin.vue'
+import UserLogin from '../views/nouser/userLogin.vue'
 import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
