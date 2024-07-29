@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
-import Analysis from '../views/admin/AdminAnalysis.vue'
+import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
@@ -16,7 +16,7 @@ import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
 
 import MainPage from '../views/MainPage.vue'
-import LoginUser from '../views/nouser/UserLogin.vue'
+import LoginUser from '../views/nouser/LoginUser.vue'
 import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
@@ -28,6 +28,8 @@ import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
 import UserFeature from '../views/profile/UserFeature.vue'
 
+import RecommendList from '../views/RecommendList.vue'
+import ProfileDetail from '../views/profile/ProfileDetail.vue'
 
 const routes = [
   {
@@ -42,8 +44,8 @@ const routes = [
   },
   {
     path: '/admin/analysis',
-    name: 'analysis',
-    component: Analysis
+    name: 'adminanalysis',
+    component: AdminAnalysis
   },
   {
     path: '/mainpage',
