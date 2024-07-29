@@ -18,11 +18,10 @@
 }
 
 .admin_pagination_box {
-    height: 50px;
+    height: 30px;
     display:flex;
     margin-top: 146px;
     width:214px;
-    margin-bottom:30px;
 }
 
 .admin_pagination_box :not(:first-child){
@@ -59,4 +58,27 @@
     color: #111111;
     margin-top:25px;
     font-weight: 500;
+}
+
+.admin_modal_table{
+    margin-top:30px;
+    width: 100%;
+    box-shadow: 0px 4px 14px 10px rgba(170, 170, 170, 0.25);
+    border-collapse: collapse;
+    font-size:14px;
+    border-radius: 8px;
+    border-style: hidden;
+}
+
+.admin_modal_table_thead td:first-child{
+    width: 183px;
+}
+.admin_modal_table_thead td:nth-child(2){
+    max-width: 350px;
+}
+
+.admin_modal_table_body tr td:nth-child(2){
+    width: 350px;
+    word-break: break-all;
+    padding: 10px 40px;
 }

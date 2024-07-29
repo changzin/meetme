@@ -1,21 +1,21 @@
 <template>
 <div class="container container0">
         <div class="row justify-content-center">
-            <div class="cardbox row justify-content-center">
+            <div class="card_box row justify-content-center">
                 <div class="title">
                     MEET ME
                 </div>
-                <div class="inputbox" style="margin-bottom: 20px;">
+                <form class="input_box" style="margin-bottom: 20px;">
                         <img src="icon/login/user.svg" class="icon">
-                        <input type="text" class="inputtext" placeholder="이메일">
-                </div>
-                <div class="inputbox">
+                        <input type="text" class="input_text" placeholder="이메일">
+                </form>
+                <form class="input_box">
                     <img src="/icon/login/password.svg" class="icon" >
-                    <input type="text" class="inputtext" placeholder="비밀번호">
-                </div>
-                <button type="button" class="loginbutton">
-                    <p class="logintext">로그인</p> 
-                </button>
+                    <input type="password" class="input_text" placeholder="비밀번호">
+                </form>
+                <input type="submit" class="login_button" value="로그인">
+                    
+                
                 <div class="option" >
                     <img src="/icon/login/checkbox.svg" class="icon_login" >
                     <img src="/icon/login/checkbox_on.svg" class="icon_login">
@@ -28,13 +28,13 @@
                     <span>또는 다음으로 로그인</span>
                     <hr>
                 </div>
-                <div class="dummylogin1" style="margin-top: 14px;">
+                <div class="dummy_login1" style="margin-top: 14px;">
                     카카오로그인
                 </div>
-                <div class="dummylogin2" style="margin-top: 10px">
+                <div class="dummy_login2" style="margin-top: 10px">
                     네이버로그인
                 </div>
-                <div class="dummylogin3" style="margin-top: 10px;" >
+                <div class="dummy_login3" style="margin-top: 10px;" >
                     구글로그인
                 </div>
             </div>
@@ -51,19 +51,16 @@ export default {
     }
 }
 </script>
-<style >
+<style scoped>
 /* div */
     .container0{
         width: 600px;
-        /* height: 879px; */
-        /* margin:0 auto;  */
-        border:1px solid red;
         display: grid;
         align-content: center;
         /* background-color: #888888; */
         padding: 0px;
      }
-     .cardbox{
+     .card_box{
         margin-top: 30px;
         margin-bottom: 80px;
         width: 568px;
@@ -83,7 +80,7 @@ export default {
         padding: 0px;
 
      }
-     .inputbox{
+     .input_box{
         border-radius: 8px;
         border:1px solid #D2D2D2;
         width: 346px;
@@ -92,7 +89,7 @@ export default {
         align-items: center;
         padding: 0px;
      }
-     .inputbox input::placeholder{
+     .input_box input::placeholder{
         color:#9e9e9e;
      }
      .option{
@@ -103,14 +100,14 @@ export default {
         padding: 0px;
 
      }
-     .dummylogin1{
+     .dummy_login1{
         display: flex;
         align-items: center;
         width: 346px;
         height: 40px;
         border: 1px solid black;
     }
-    .dummylogin2{
+    .dummy_login2{
         margin-top: 10px;
         display: flex;
         align-items: center;
@@ -118,7 +115,7 @@ export default {
         height: 40px;
         border: 1px solid black;
     }
-    .dummylogin3{
+    .dummy_login3{
         display: flex;
         align-items: center;
         width: 346px;
@@ -127,7 +124,7 @@ export default {
         margin-bottom: 80px;
     }
 /* button */
-     .loginbutton{
+     .login_button{
         margin-top: 20px;
         width: 346px;
         height: 48px;
@@ -135,7 +132,10 @@ export default {
         border-width: 0px;
         border-radius: 8px;
         margin-bottom: 8px;
-        background-image: linear-gradient(to right,#497af5 ,#884afb);
+        background-image:var(--gradient);
+        color:#FFFFFF;
+        font-size: 20px;
+        text-align: center;
      }
      
 /* img */
@@ -151,7 +151,7 @@ export default {
         /* margin-right: 5px; */
      }
 /* input */
-     .inputtext{
+     .input_text{
         width:90%;
         height: 80%;
         font-size: 14px;
@@ -162,7 +162,7 @@ export default {
         outline: none;
         padding: 0px;
      }
-     .inputtext::value{
+     .input_text::value{
         color: #888888;
      }
 /* p */
@@ -183,7 +183,7 @@ export default {
         color: #555555;
 
      }
-     .logintext{
+     .login_text{
         color:#FFFFFF;
         font-size: 20px;
         text-align: center;

@@ -5,6 +5,14 @@
                 프로필 등급
             </div>
             <div class="main_image">
+                <div class="image_tab">
+                    <div :class="{number2: index == 0, number: index != 0}"></div>
+                    <div :class="{number2: index == 1, number: index != 1}"></div>
+                    <div :class="{number2: index == 2, number: index != 2}"></div>
+                    <div :class="{number2: index == 3, number: index != 3}"></div>
+                    <div :class="{number2: index == 4, number: index != 4}"></div>
+                    <div :class="{number2: index == 5, number: index != 5}"></div>
+                </div>
                 <div class="prev_button" @click="count(-1)">
                 </div>
                 <div class="next_button" @click="count(1)">
@@ -13,14 +21,16 @@
             </div>
             <div class="profile_info">
                 <div class="introduce">
-                    안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~ 안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~
+                    <div class="grade">
+                        현재 등급 : 다이아몬드
+                    </div>
+                    <div class="notice">
+                        회원님의 매력을 측정해 더 높은 점수에 도전해보세요.
+                    </div>
                 </div>
-                <div class="name">
-                    장원영입니다,23
-                </div>
-                <div class="live">
-                    서울특별시
-                </div>
+            </div>
+            <div class="class_button">
+                <span class="class">새로 측정하기</span>
             </div>
         </div>
         <MeetHeader />
@@ -79,23 +89,57 @@ export default {
 
 .main_image{
     width: 568px;
-    min-width: 570px;
-    height: 600px;
+    min-width: 568px;
+    height: 700px;
     display: flex;
     padding: 0 8px 0 8px;
     border-radius: 10px;
     position: relative;
 }
 
-img{
-    width: 568px;
+.image_tab {
+    margin-top: 5px;
+    width: 150px;
+    height: 18px;
+    background-color: rgba(183, 67, 67, 0);
+    border-radius: 100px;
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 3;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px;
+}
 
-    height: 600px;
+.number {
+    width: 20px;
+    height: 2px;
+    border-radius: 100px;
+    background-color: slategrey;
+    display: flex;
+    justify-content: space-between;
+}
+
+.number2 {
+    width: 20px;
+    height: 2px;
+    border-radius: 100px;
+    background-color: rgb(252, 252, 252);
+    display: flex;
+    justify-content: space-between;
+}
+
+img{
+    min-width: 540px;
+    width: 568px;
+    height: 700px;
     display: block;
     margin: 0 8px 0 8px;
     object-fit: cover;
     border-radius: 10px;
-
 }
 
 .prev_button {
@@ -120,23 +164,43 @@ img{
     margin: 15px;
 }
 
-.profile_info .name {
-    font-size: 24px;
-    text-align: start;
-    font-weight: 700;
-}
-
-.profile_info .live {
-    font-size: 16px;
-    text-align: start;
-    font-weight: 500;
-    padding-bottom: 10px;
-}
-
 .introduce {
     border-radius: 10px;
     background-color: #F1EFF6;
-    padding: 20px;
     text-align: left;
+    margin: 0 auto;
+    height: 106px;
+    padding: 20px;
 }
+
+.grade {
+
+    font-weight: 500;
+
+}
+
+.notice {
+
+    font-size: 14px;
+    color: #9D88B3;
+    padding-top: 20px;
+
+}
+
+.class_button {
+    border-radius: 10px;
+    width: 540px;
+    height: 60px;
+    margin: 0 auto;
+    background-image: linear-gradient(to right,#497af5 ,#884afb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.class {
+    color: #F1EFF6;
+}
+
 </style>

@@ -3,18 +3,17 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/mypage">MyPage</router-link>  |
-
     <router-link to="/tempview">TempView</router-link> |
     <router-link to="/about">About</router-link>  |
     <router-link to="/reactiveweb">ReactiveWeb</router-link>   |
     <router-link to="/modal">Modal</router-link>    |
-    <router-link to="/selectmodal">SelectModal</router-link>  
-    |
+    <router-link to="/selectmodal">SelectModal</router-link>  |
     <router-link to="/mainpage">mainpage</router-link>  |
     <router-link to="/recommendlist">RecommendList</router-link>  |
     <router-link to="/profiledetail">ProfileDetail</router-link>  |
     <router-link to="/sendstory">SendStory</router-link>  |
   </nav>
+  
   <router-view />
 </template>
 

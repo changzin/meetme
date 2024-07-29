@@ -36,13 +36,13 @@
                             스토어
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'SendHeart'})">
                         <img class="button_icon" src="/icon/mypage/main/heart.svg">
                         <div class="button_icon">
                             보낸 좋아요
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'Qna'})">
                         <img class="button_icon" src="/icon/mypage/main/letter.svg">
                         <div class="button_icon">
                             자주 묻는 질문
@@ -89,9 +89,8 @@ export default {
 <style scoped>
 
 .container {
+    min-width: 600px;
     padding: 0 16px 0 16px;
-    margin: 0 12px 0 12px;
-    
 }
 
 .mypage_container {
