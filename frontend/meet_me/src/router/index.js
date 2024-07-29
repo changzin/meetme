@@ -11,6 +11,7 @@ import Qna from '../views/mypage/Qna.vue'
 
 
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+import SendStory from '../views/mypage/SendStory.vue'
 
 import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
@@ -22,10 +23,15 @@ import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
 import Profile_Input from '../views/profile/Profile_Input.vue'
+import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
+
+import RecommendList from '../views/RecommendList.vue'
+
 import User_Character from '../views/profile/User_Character.vue'
+
 
 const routes = [
   {
@@ -130,6 +136,21 @@ const routes = [
     path: '/selectmodal',
     name: 'SelectModal',
     component: SelectModal
+  },
+  {
+    path: '/recommendlist',
+    name: 'RecommendList',
+    component: RecommendList
+  },
+  {
+    path: '/profiledetail',
+    name: 'ProfileDetail',
+    component: ProfileDetail
+  },
+  {
+    path: '/sendstory',
+    name: 'SendStory',
+    component: SendStory
   },
   {
     path: '/sendheart',
