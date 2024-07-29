@@ -87,7 +87,7 @@ export default {
     },
     methods: {
         toggleGender(gender){
-        this.activeGender = gender;
+          this.activeGender = gender;
        }
     }
 }
@@ -292,7 +292,4 @@ export default {
         align-content: center;
         color: var(--purple_main);
     }
-
-
-    
 </style>

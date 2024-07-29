@@ -81,6 +81,7 @@ exports.userBlock = async(req, res)=>{
         let responseBody = {};
         
         const userId = req.body.user_id;
+      
         query = 'UPDATE user SET user_block="T" WHERE user_id=?';
         result = await db(conn, query, [userId]);
 

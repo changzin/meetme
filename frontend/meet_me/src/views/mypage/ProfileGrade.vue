@@ -140,7 +140,6 @@ img{
     margin: 0 8px 0 8px;
     object-fit: cover;
     border-radius: 10px;
-    
 }
 
 .prev_button {
