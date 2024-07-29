@@ -41,7 +41,6 @@ export default {
     width: 600px;
     display: grid;
     align-content: center;
-    
     }
 
     .cardbox {
@@ -90,6 +89,7 @@ export default {
         text-align: start;
         color: #BBAFC8;
     }
+    
     .nextbutton {
     color: #FFFFFF;
     background-image: var(--gradient);

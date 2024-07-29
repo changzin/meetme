@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
-
 import Analysis from '../views/admin/Analysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
@@ -11,8 +10,13 @@ import SendHeart from '../views/mypage/SendHeart.vue'
 import Qna from '../views/mypage/Qna.vue'
 
 
+import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+
+import ChatRoom from '../views/chat/ChatRoom.vue'
+import ChatList from '../views/chat/ChatList.vue'
+
 import MainPage from '../views/MainPage.vue'
-import UserLogin from '../views/nouser/userLogin.vue'
+import UserLogin from '../views/nouser/UserLogin.vue'
 import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
@@ -21,6 +25,7 @@ import Profile_Input from '../views/profile/Profile_Input.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
+import User_Character from '../views/profile/User_Character.vue'
 
 const routes = [
   {
@@ -75,13 +80,16 @@ const routes = [
     path:'/emailcheck',
     name:'emailcheck',
     component: EmailCheck
-
   },
   {
     path:'/profile',
     name:'profile',
     component:Profile_Input
-
+  },
+  {
+    path: '/character',
+    name:'character',
+    component:User_Character
   },
   {
     path: '/tempview',
@@ -99,13 +107,21 @@ const routes = [
     component: MyPageEdit
   },
   {
-
+    path : '/ChatRoom',
+    name:'Chatroom',
+    component: ChatRoom,
+  },
+  {
+    path : '/chatlist',
+    name:'Chatlist',
+    component: ChatList,
+  },
+  {
     path: '/profilegrade',
     name: 'ProfileGrade',
     component: ProfileGrade
   },
   {
-
     path: '/modal',
     name: 'Modal',
     component: Modal

@@ -167,7 +167,6 @@ export default {
             console.log(this.$store.state.modalOn2);
             this.$store.commit("setModalOn2");
         }
-
     },
     async created(){
         await this.getUserList();

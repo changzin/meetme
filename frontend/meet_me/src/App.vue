@@ -3,13 +3,11 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/mypage">MyPage</router-link>  |
-
     <router-link to="/tempview">TempView</router-link> |
     <router-link to="/about">About</router-link>  |
     <router-link to="/reactiveweb">ReactiveWeb</router-link>   |
     <router-link to="/modal">Modal</router-link>    |
-    <router-link to="/selectmodal">SelectModal</router-link>  
-    |
+    <router-link to="/selectmodal">SelectModal</router-link>  |
     <router-link to="/mainpage">mainpage</router-link>  |
   </nav>
   

@@ -67,9 +67,7 @@
                     </button>
                 </div>
 
-                <button type="button" class="next_button" style="margin-bottom: 275px;">
-                    동의하고 다음 단계로 진행하기
-                </button>
+                <input type="submit" class="next_button" style="margin-bottom: 275px;" value="동의하고 다음 단계로 진행하기">
             </div>
         </div>
     </div>
@@ -98,7 +96,6 @@ export default {
 <style scoped>
     .container0 {
     width: 600px;
-    
     display: grid;
     align-content: center;
     
