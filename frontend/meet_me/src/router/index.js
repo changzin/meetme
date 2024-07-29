@@ -8,22 +8,21 @@ import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 import SendHeart from '../views/mypage/SendHeart.vue'
 
 
-import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 
 import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
 
 import MainPage from '../views/MainPage.vue'
-import UserLogin from '../views/nouser/UserLogin.vue'
+import LoginUser from '../views/nouser/LoginUser.vue'
 import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
-import Profile_Input from '../views/profile/Profile_Input.vue'
+import ProfileInput from '../views/profile/ProfileInput.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
-import User_Character from '../views/profile/User_Character.vue'
+import UserFeature from '../views/profile/UserFeature.vue'
 
 const routes = [
   {
@@ -61,8 +60,8 @@ const routes = [
   },
   {
     path:'/login',
-    name:'UserLogin',
-    component: UserLogin
+    name:'loginuser',
+    component: LoginUser
   },
   {
     path:'/terms',
@@ -82,12 +81,12 @@ const routes = [
   {
     path:'/profile',
     name:'profile',
-    component:Profile_Input
+    component:ProfileInput
   },
   {
-    path: '/character',
-    name:'character',
-    component:User_Character
+    path: '/feature',
+    name:'userfeature',
+    component:UserFeature
   },
   {
     path: '/tempview',
