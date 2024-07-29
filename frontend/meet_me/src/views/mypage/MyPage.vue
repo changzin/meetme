@@ -36,7 +36,7 @@
                             스토어
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'SendHeart'})">
                         <img class="button_icon" src="/icon/mypage/main/heart.svg">
                         <div class="button_icon">
                             보낸 좋아요
@@ -89,9 +89,9 @@ export default {
 <style scoped>
 
 .container {
+    min-width: 600px;
     padding: 0 16px 0 16px;
-    margin: 0 12px 0 12px;
-    
+    justify-content: center;
 }
 
 .mypage_container {

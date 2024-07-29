@@ -157,6 +157,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 999;
 }
 
 .header-content {
@@ -185,6 +186,7 @@ export default {
 
 .footer-container {
   display: none;
+  z-index: 999;
 }
 
 @media (max-width: 1200px) {

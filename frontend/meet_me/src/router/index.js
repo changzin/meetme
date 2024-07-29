@@ -4,6 +4,9 @@ import Member from '../views/admin/Member.vue'
 import Analysis from '../views/admin/Analysis.vue'
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
+import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+import SendHeart from '../views/mypage/SendHeart.vue'
+
 
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 
@@ -20,6 +23,7 @@ import Profile_Input from '../views/profile/Profile_Input.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
+import User_Character from '../views/profile/User_Character.vue'
 
 const routes = [
   {
@@ -74,13 +78,16 @@ const routes = [
     path:'/emailcheck',
     name:'emailcheck',
     component: EmailCheck
-
   },
   {
     path:'/profile',
     name:'profile',
     component:Profile_Input
-
+  },
+  {
+    path: '/character',
+    name:'character',
+    component:User_Character
   },
   {
     path: '/tempview',
@@ -113,7 +120,6 @@ const routes = [
     component: ProfileGrade
   },
   {
-
     path: '/modal',
     name: 'Modal',
     component: Modal
@@ -122,6 +128,11 @@ const routes = [
     path: '/selectmodal',
     name: 'SelectModal',
     component: SelectModal
+  },
+  {
+    path: '/sendheart',
+    name: 'SendHeart',
+    component: SendHeart
   }
 
 ]
