@@ -6,6 +6,7 @@ import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
 
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+import SendStory from '../views/mypage/SendStory.vue'
 
 
 import MainPage from '../views/MainPage.vue'
@@ -15,9 +16,11 @@ import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
 import Profile_Input from '../views/profile/Profile_Input.vue'
+import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
+import RecommendList from '../views/RecommendList.vue'
 
 const routes = [
   {
@@ -111,6 +114,21 @@ const routes = [
     path: '/selectmodal',
     name: 'SelectModal',
     component: SelectModal
+  },
+  {
+    path: '/recommendlist',
+    name: 'RecommendList',
+    component: RecommendList
+  },
+  {
+    path: '/profiledetail',
+    name: 'ProfileDetail',
+    component: ProfileDetail
+  },
+  {
+    path: '/sendstory',
+    name: 'SendStory',
+    component: SendStory
   }
 
 ]
