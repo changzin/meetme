@@ -22,7 +22,7 @@
             <div class="next_button" @click="count(1)">
             </div>
             <img :src="user_image[index]" @click="count(1)">  
-            <div class="name" @click="this.$router.push({ name:'MyPageEdit'})">장원영,23
+            <div class="name" @click="this.$router.push({ name:'ProfileDetail'})">장원영,23
             </div>
             <div class="category">
                 <div class="category_A">마마마마마마마마마마마
@@ -47,8 +47,51 @@
             </div>
         </div>
     </div>
-        <MeetHeader />
+    <div class="next_img">
     </div>
+
+    <div class="main_image">
+        <div class="image_tab">
+            <div :class="{number2: index == 0, number: index != 0}"></div>
+            <div :class="{number2: index == 1, number: index != 1}"></div>
+            <div :class="{number2: index == 2, number: index != 2}"></div>
+            <div :class="{number2: index == 3, number: index != 3}"></div>
+            <div :class="{number2: index == 4, number: index != 4}"></div>
+            <div :class="{number2: index == 5, number: index != 5}"></div>
+        </div>
+        <div class="prev_button" @click="count(-1)">
+        </div>
+        <div class="next_button" @click="count(1)">
+        </div>
+        <img :src="user_image[index]" @click="count(1)">  
+        <div class="name" @click="this.$router.push({ name:'MyPageEdit'})">장원영,23
+        </div>
+        <div class="category">
+            <div class="category_A">마마마마마마마마마마마
+            </div>
+            <div class="category_B">러키비키
+            </div>
+            <div class="category_C">유머감각이 있어요
+            </div>
+            <div class="category_D">러키비키
+            </div>
+        </div>
+        <div class="action_btn_container">
+            <div>
+                <img src="/icon/main_recommend/airplane.svg" class="airplane" @click="this.$router.push({ name:'MyPageEdit'})">
+            </div>
+            <div>
+                <img src="/icon/main_recommend/heart.svg" class="heart">
+            </div>
+            <div>
+                <img src="/icon/main_recommend/delete.svg" class="delete">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="next_img">
+</div>
+        <MeetHeader />
 </template>
 <script>
 
@@ -106,6 +149,7 @@ export default {
 .mian_title{
     padding: 16px 0 16px 0;
     font-size: 22px;
+    font-weight: bold;
 }
 .title_img{
     width: 20px;
@@ -256,6 +300,9 @@ export default {
 }
 .delete{
     cursor: pointer;
+}
+.next_img{
+    padding: 41px;
 }
 
 
