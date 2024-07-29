@@ -16,12 +16,12 @@
                         <span v-if="matching_status == 0">매칭 신청</span>
                         <span v-if="matching_status == 1">매칭 취소</span>
                     </div>
+                </div>
                     <button class="trash">
                         <a href="/mypageedit">
                         <img src="/icon/mypage/like/trash.svg">
                         </a>
                     </button>
-                </div>
             </div>
         </div>
         <MeetHeader />
@@ -61,8 +61,8 @@ export default {
 <style scoped>
 
 .container {
+    min-width: 600px;
     padding: 0 16px 0 16px;
-    margin: 0 12px 0 12px;
     
 }
 
@@ -131,6 +131,8 @@ export default {
 .trash {
     border-color: #9d88b300;
     background-color: #9d88b300;
+    padding-bottom: 5px;
+    
 }
 
 </style>

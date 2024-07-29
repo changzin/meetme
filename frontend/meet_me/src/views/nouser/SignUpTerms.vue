@@ -95,7 +95,7 @@ export default {
 
       
 
-<style>
+<style scoped>
     .container0 {
     width: 600px;
     

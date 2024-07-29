@@ -8,6 +8,7 @@ import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 import SendHeart from '../views/mypage/SendHeart.vue'
+import Qna from '../views/mypage/Qna.vue'
 
 
 import MainPage from '../views/MainPage.vue'
@@ -118,6 +119,11 @@ const routes = [
     path: '/sendheart',
     name: 'SendHeart',
     component: SendHeart
+  },
+  {
+    path: '/qna',
+    name: 'Qna',
+    component: Qna
   }
 
 ]
