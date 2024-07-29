@@ -42,7 +42,7 @@
                             보낸 좋아요
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'Qna'})">
                         <img class="button_icon" src="/icon/mypage/main/letter.svg">
                         <div class="button_icon">
                             자주 묻는 질문
@@ -91,7 +91,6 @@ export default {
 .container {
     min-width: 600px;
     padding: 0 16px 0 16px;
-    justify-content: center;
 }
 
 .mypage_container {
