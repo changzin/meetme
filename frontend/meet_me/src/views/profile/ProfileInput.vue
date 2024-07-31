@@ -17,30 +17,41 @@
                             </button>
                         </div>
                     </div>
-                    <div class="age">
-                        <div class="sub_title2">나이</div>
-                        <div class="age_input_box">
-                            <input type="number" class="age_input" >
-                            <span class="flxed_text">세</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="sub_title3">
                     필수 입력
                 </div>
+                <!-- 몸무게 -->
+               
                 <div class="container_essential">
+                    <div class="select_box">
+                        <label for="number" class="box_tag">나이</label>
+                        <input type="number" class="box_input"  value="나이">
+                        <label class="box_end">세</label>
+                    </div>
                     <div class="select_box">
                         <label for="text" class="box_tag">연봉</label>
                          <input type="number" class="box_input" value="연봉">
                          <label for="text" class="box_end">만원</label>
                     </div>
+                    <div class="select_box">
+                        <label for="number" class="box_tag">키</label>
+                        <input type="number" class="box_input" value="키">
+                        <label for="nubmer" class="box_end">cm</label>
+                    </div>
+                    <div class="select_box">
+                        <label for="number" class="box_tag">몸무게</label>
+                        <input type="number" v-model="wheit_Value" class="box_input" value="몸무게" @input="validate" />
+                        <label for="number" class="box_end">kg</label>
+                    </div>
+                    
                    
                     
                     <!-- v-if isVisible isEnabled 상태 구성 백단에서 불러온 데이터를 셀렉트에 넣기
                     @click 으로 선택되면 isEnabled 활성화 보라색으로 변환 @click 이 풀릴시 isVisible로 변환 -->
                     <!-- 최종 선택된 데이터를 다음 버튼 클릭시 포스트로 서버에 전송 dB에 insert시킴 -->
 
-                    <!-- 선택된 상태 -->
+                    <!-- MBTI -->
                     <select name="MBTI"  class="select_dropdown_button"  v-model="select_mbti" @blur="enable_mbti()" @change="handle_mbti_change($event)" :class="{'visible_dropdown_button' : !is_mbti_enabled}">
                         <option v-if="!is_mbti_enabled"  class="dropdown_item" value="none" selected  disabled hidden>MBTI</option>
                         <option  class="dropdown_item" value="ESFJ" >ESFJ</option>
@@ -65,7 +76,7 @@
                     
                     
                     
-                    <!-- 선택된 상태 -->
+                    <!-- 혈액형 -->
                     <select name="blood_type" class="select_dropdown_button"  v-model="select_blood_type" @blur="enable_blood_type()" @change="handle_blood_type_change($event)" :class="{'visible_dropdown_button' : !is_blood_type_enabled}">
                         <option class="dropdown_item" value="none" selected disabled hidden>혈액형</option>
                         <option class="dropdown_item" value="A">A</option>
@@ -74,14 +85,10 @@
                         <option class="dropdown_item" value="AB">AB</option>
                     </select>
                         
-                    <!-- 선택된 상태 -->
-                    <select class="select_dropdown_button">
-                        <option class="dropdown_item" value="none" selected disabled hidden>문신</option>
-                        <option class="dropdown_item" value="yes_tartoo">문신 허용</option>
-                        <option class="dropdown_item" value="none_tartoo">문신 안됨</option>
-                    </select>
+                    
+                    
 
-                    <!-- 선택된 상태 -->
+                    <!-- 종교 -->
                     <select name="religion" class="select_dropdown_button"  v-model="select_religion_type" @blur="enable_religion_type()" @change="handle_religion_change($event)" :class="{'visible_dropdown_button' : !is_religion_enabled}">
                         <option v-if="!is_religion_enabled" class="dropdown_item" value="none" selected disabled hidden>종교</option>
                         <option class="dropdown_item" value="atheism">무교</option>
@@ -91,7 +98,7 @@
                         <option class="dropdown_item" value="etc.">기타</option>
                     </select>
 
-                    <!-- 선택된 상태 -->
+                    <!-- 주량 -->
                     <select class="select_dropdown_button">
                         <option class="dropdown_item" value="none" selected disabled hidden>주량</option>
                         <option class="dropdown_item" value="drinking">~1병</option>
@@ -99,20 +106,24 @@
                         <option class="dropdown_item" value="drinking">2병~</option>
                         <option class="dropdown_item" value="drinking">3병~</option>
                     </select>
+                    <!-- 흡연 -->
+                    <select class="select_dropdown_button">
+                        <option class="dropdown_item" value="none" selected disabled hidden>흡연</option>
+                        <option class="dropdown_item" value="yes_tartoo">흡연</option>
+                        <option class="dropdown_item" value="none_tartoo">비흡연</option>
+                    </select>
+                    <!-- 문신 -->
+                    <select class="select_dropdown_button">
+                        <option class="dropdown_item" value="none" selected disabled hidden>문신</option>
+                        <option class="dropdown_item" value="yes_tartoo">문신 허용</option>
+                        <option class="dropdown_item" value="none_tartoo">문신 안됨</option>
+                    </select>
+
+                    
+                    
 
                     <!-- 선택된 상태 -->
-                    <div class="select_box">
-                        <label for="number" class="box_tag">키</label>
-                        <input type="number" class="box_input" value="키">
-                        <label for="nubmer" class="box_end">cm</label>
-                    </div>
-
-                    <!-- 선택된 상태 -->
-                    <div class="select_box">
-                        <label for="number" class="box_tag">몸무게</label>
-                        <input type="number" v-model="wheit_Value" class="box_input" value="몸무게" @input="validate" />
-                        <label for="number" class="box_end">kg</label>
-                    </div>
+                    
                 </div>
 
 
@@ -152,10 +163,12 @@ export default {
             is_mbti_enabled : false,
             is_blood_type_enabled : false,
             is_religion_enabled : false,
+            is_tartoo_enabled : false,
             // isVisalbed : true,
             select_mbti: 'none', //초기 값
             select_blood_type :'none',
             select_religion_type :'none',
+            select_tartoo_type: 'none',
         };
     },
     computed:{
@@ -204,6 +217,17 @@ export default {
         this.select_religion_type = event.target.value;
         console.log('Current religion:', this.select_religion_type); // 콘솔에 현재 MBTI 출력
         this.is_religion_enabled = true;
+       },
+       //
+       enable_tartoo_type(){
+        this.is_tartoo_enabled = false;
+        // this.isEnabled = true;
+        console.log("isEnabled" +" "+ this.is_religion_enabled);
+       },
+       handle_tartoo_change(event){
+        this.select_tartoo_type = event.target.value;
+        console.log('Current religion:', this.select_tartoo_type); // 콘솔에 현재 MBTI 출력
+        this.is_tartoo_enabled = true;
        },
        
     }
