@@ -18,6 +18,12 @@
                 <div class="next_button" @click="count(1)">
                 </div>
                 <img :src="user_image[index]" @click="count(1)">
+                <div class="report">
+                    <img src="/icon/main_recommend/report.svg" @click="this.$router.push({ name:'SelectModal'})" class="icon_report" >
+                </div>
+                <div class="block">
+                    <img src="/icon/main_recommend/block.svg" @click="this.$router.push({ name:'SelectModal'})" class="icon_block">
+                </div>
         </div>
         <div class="user_name">
             장원영,23
@@ -43,7 +49,14 @@
             특징
         </div>
         <div class="point_box">
-
+            <div class="point_box_A">뭐든 잘먹어요</div>
+            <div class="point_box_A">패션 샌스가 좋아요</div>
+            <div class="point_box_A">대화를 잘해요</div>
+            <div class="point_box_A">요리를 잘해요</div>
+            <div class="point_box_A">혼자 잘놀아요</div>
+            <div class="point_box_A">유머 감각이 있어요</div>
+            <div class="point_box_A">표현을 잘해요</div>
+            <div class="point_box_A">웃음이 많아요</div>
         </div>
     </div>
     <MeetHeader />
@@ -212,23 +225,26 @@ export default {
 }
 .information_box .information_A{
     position: absolute;
-    padding-left: 199px;
+    /*padding-left: 199px;*/
+    left: 199px;
 }
 .information_box .information_B{
     position: absolute;
-    padding-top: 49px;
+    top: 49px;
 }
 .information_box .information_C{
     position: absolute;
-    padding: 48px 0 0 198px;
+    top: 48px;
+    left: 199px;
 }
 .information_box .information_D{
     position: absolute;
-    padding-top: 88px;
+    top: 97px;
 }
 .information_box .information_E{
     position: absolute;
-    padding: 88px 0 0 197px
+    top: 97px;
+    left: 199px;
 }
 .point{
     font-size: 16px;
@@ -236,4 +252,48 @@ export default {
     padding: 0 0 10px 30px;
     font-weight: bold;
 }
+/*.point_box{
+    width: 570px;
+    height: 100px;
+    margin-top: 12px;
+    margin-left: 27px;
+}
+.point_box .point_box_A{
+    text-align: left;
+    border: #64BAAA 1px;
+}*/
+.point_box {
+    display: flex;
+    gap: 5px;
+    margin-top: 12px;
+    margin-left: 27px;
+    flex-wrap: wrap;
+  }
+  
+  
+  .point_box_A {
+    border-radius: 8px;
+    border: 1px solid #64BAAA;
+    background-color: white;
+    color: #64BAAA;
+    padding: 10px 20px 10px 20px;
+    font-size: 14px;
+}
+.report{
+    position: absolute;
+    left: 491px;
+    z-index: 2;
+    top: 10px;
+  }
+
+  .icon_report:hover {
+    cursor: pointer;
+  }
+  .block{
+    position: absolute;
+    left: 529px;
+    z-index: 2;
+    top: 10px;
+  }
+
 </style>

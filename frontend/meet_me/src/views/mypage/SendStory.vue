@@ -63,7 +63,8 @@ export default {
     box-sizing: border-box; /* 패딩과 테두리를 포함한 박스 크기 계산 */
     outline: none; /* 포커스 시 외곽선 제거 */
     border-radius: 6px;
-}
+    padding: 10px;
+    }
 .story_send_container{
     text-align: center;
 }
