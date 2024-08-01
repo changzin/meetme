@@ -16,6 +16,7 @@
     "firebase": "^10.12.2",
     "vue": "^3.2.13",
     "vue-cookies": "^1.8.4",
+    "vue-cropperjs": "^5.0.0",
     "vue-google-charts": "^1.1.0",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.2",
@@ -44,7 +45,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "vue/multi-word-component-names" : 0
+      "vue/multi-word-component-names": 0
     }
   },
   "browserslist": [
