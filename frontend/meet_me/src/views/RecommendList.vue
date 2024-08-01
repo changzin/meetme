@@ -1,101 +1,64 @@
 <template>
     <div class="safety_zone">
         <div class="container">
-                <div class="title" >
-                    오늘의 추천
-                    <img class="title_img" src="/icon/main_recommend/fier.svg">
-                </div>
-    
-            <div class="main_image">
-                <div class="image_tab">
-                    <div :class="{number2: index == 0, number: index != 0}"></div>
-                    <div :class="{number2: index == 1, number: index != 1}"></div>
-                    <div :class="{number2: index == 2, number: index != 2}"></div>
-                    <div :class="{number2: index == 3, number: index != 3}"></div>
-                    <div :class="{number2: index == 4, number: index != 4}"></div>
-                    <div :class="{number2: index == 5, number: index != 5}"></div>
-                </div>
-                <div class="prev_button" @click="count(-1)">
-                </div>
-                <div class="next_button" @click="count(1)">
-                </div>
-                <img :src="user_image[index]" @click="count(1)">  
-                <div class="name" @click="this.$router.push({ name:'ProfileDetail'})">장원영,23
-                </div>
-                <div class="category">
-                    <div class="category_A">마마마마마마마마마마마
+            <div class="title">
+                오늘의 추천
+                <img class="title_img" src="/icon/main_recommend/fier.svg">
+            </div>
+            <div v-if="results.length>0">
+                <div class="main_image next_img" v-for="(user,i) in results" :key="i">
+                    <div class="image_tab">
+                        <div :class="{number2: index == 0, number: index != 0}"></div>
+                        <div :class="{number2: index == 1, number: index != 1}"></div>
+                        <div :class="{number2: index == 2, number: index != 2}"></div>
+                        <div :class="{number2: index == 3, number: index != 3}"></div>
+                        <div :class="{number2: index == 4, number: index != 4}"></div>
+                        <div :class="{number2: index == 5, number: index != 5}"></div>
                     </div>
-                    <div class="category_B">러키비키
+                    <div class="prev_button" @click="count(-1)">
                     </div>
-                    <div class="category_C">유머감각이 있어요
+                    <div class="next_button" @click="count(1)">
                     </div>
-                    <div class="category_D">러키비키
+                    <img :src="user_image[index]" @click="count(1)">
+                    <div class="name" @click="this.$router.push({ name:'ProfileDetail'})">
+                        {{user.user_nickname}} , {{ user.user_age }}
                     </div>
-                </div>
-                <div class="action_btn_container">
-                    <div>
-                        <img src="/icon/main_recommend/airplane.svg" class="airplane" @click="this.$router.push({ name:'MyPageEdit'})">
+                    <div class="category">
+                        <div class="category_A" v-if="user.user_feature_value[0]">{{user.user_feature_value[0]}}
+                            
+                        </div>
+                        <div class="category_B" v-if="user.user_feature_value[1]">{{user.user_feature_value[1]}}
+                        </div>
+                        <div class="category_C" v-if="user.user_feature_value[2]">{{user.user_feature_value[2]}}
+                        </div>
+                        <div class="category_D" v-if="user.user_feature_value[3]">{{user.user_feature_value[3]}}
+                        </div>
                     </div>
-                    <div>
-                        <img src="/icon/main_recommend/heart.svg" class="heart">
-                    </div>
-                    <div>
-                        <img src="/icon/main_recommend/delete.svg" class="delete">
+                    <div class="action_btn_container">
+                        <div>
+                            <img src="/icon/main_recommend/airplane.svg" class="airplane"
+                                @click="this.$router.push({ name:'MyPageEdit'})">
+                        </div>
+                        <div>
+                            <img src="/icon/main_recommend/heart.svg" class="heart">
+                        </div>
+                        <div>
+                            <img src="/icon/main_recommend/delete.svg" class="delete">
+                        </div>
                     </div>
                 </div>
             </div>
-        <div class="next_img">
-        </div>
-
-        <div class="main_image">
-            <div class="image_tab">
-                <div :class="{number2: index == 0, number: index != 0}"></div>
-                <div :class="{number2: index == 1, number: index != 1}"></div>
-                <div :class="{number2: index == 2, number: index != 2}"></div>
-                <div :class="{number2: index == 3, number: index != 3}"></div>
-                <div :class="{number2: index == 4, number: index != 4}"></div>
-                <div :class="{number2: index == 5, number: index != 5}"></div>
-            </div>
-            <div class="prev_button" @click="count(-1)">
-            </div>
-            <div class="next_button" @click="count(1)">
-            </div>
-            <img :src="user_image[index]" @click="count(1)">  
-            <div class="name" @click="this.$router.push({ name:'MyPageEdit'})">장원영,23
-            </div>
-            <div class="category">
-                <div class="category_A">마마마마마마마마마마마
-                </div>
-                <div class="category_B">러키비키
-                </div>
-                <div class="category_C">유머감각이 있어요
-                </div>
-                <div class="category_D">러키비키
-                </div>
-            </div>
-            <div class="action_btn_container">
-                <div>
-                    <img src="/icon/main_recommend/airplane.svg" class="airplane" @click="this.$router.push({ name:'MyPageEdit'})">
-                </div>
-                <div>
-                    <img src="/icon/main_recommend/heart.svg" class="heart">
-                </div>
-                <div>
-                    <img src="/icon/main_recommend/delete.svg" class="delete">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="next_img">
-    </div>
         <MeetHeader />
         </div>
-    </template>
+    </div>
+</template>
     <script>
     
     export default {	
         data() {
             return {
+                // recommendList: [],
+                results:[],
                 sampleData : '',
                 user_image : [
                     "/model3.png",
@@ -112,7 +75,9 @@
         beforeCreate() {},
         created() {},
         beforeMount() {},
-        mounted() {},
+        mounted() {
+            this.getRecommendList();
+        },
         beforeUpdate() {},
         updated() {},
         beforeUnmount() {},
@@ -125,9 +90,23 @@
                 }else if(this.index < 0) {
                     return this.index = 5;
                 }
+            },
+            
+            async getRecommendList(){
+                try{
+                    let requestBody = {
+                    };
+                    const result = await this.$api(`/recommend/list`, requestBody , "POST");
+                    this.recommendList = result;
+                    this.results = result.results;
+                }
+                catch(err){
+                    console.error(err);
             }
         }
+        
     }
+}
     </script>
     <style scoped>
     .container {
@@ -299,7 +278,7 @@
         cursor: pointer;
     }
     .next_img{
-        padding: 41px;
+        margin-bottom: 41px;
     }
     
     
