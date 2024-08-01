@@ -24,6 +24,7 @@ import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
 
 import ProfileInput from '../views/profile/ProfileInput.vue'
+import ProfileIdol from '../views/profile/ProfileIdol.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
@@ -90,6 +91,11 @@ const routes = [
     path:'/profile',
     name:'profile',
     component:ProfileInput
+  },
+  {
+    path:'/profile/idol',
+    name:'idol',
+    component:ProfileIdol
   },
   {
     path: '/feature',
