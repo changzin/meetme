@@ -22,7 +22,7 @@ import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
-
+import LoginBridge from '../views/nouser/LoginBridge.vue'
 import ProfileInput from '../views/profile/ProfileInput.vue'
 import ProfileIdol from '../views/profile/ProfileIdol.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
@@ -166,8 +166,12 @@ const routes = [
     path: '/qna',
     name: 'Qna',
     component: Qna
+  },
+  {
+    path: '/loginbridge',
+    name: 'LoginBridge',
+    component: LoginBridge
   }
-
 ]
 
 const router = createRouter({
