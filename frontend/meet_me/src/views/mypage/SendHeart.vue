@@ -4,23 +4,23 @@
             <div class="title">
                 보낸 좋아요
             </div>
-            <div class="profile_box" v-for="(like, i) in index" :key="i">
+            <div class="profile_box" v-for="(heart, i) in heartData" :key="i">
                 <img class="mini_profile" src="/model.jpg">
                 <div class="name_title">
                     <div class="status">
-                        원영이에게 좋아요를 보냈습니다.
+                        {{heart.user_nickname}}에게 좋아요를 보냈습니다.
                     </div>
                 </div>
-                <div class="button" @click="matching()">
-                    <div :class="{matching_button: matching_status == 0, matching_cencel: matching_status == 1}">
-                        <span v-if="matching_status == 0">매칭 신청</span>
-                        <span v-if="matching_status == 1">매칭 취소</span>
+                <div class="button">
+                    <div class="matching_button" v-if="(!heart.matching)" @click="sendMatching(heart.user_id)">
+                        매칭신청
+                    </div>
+                    <div class="matching_cencel" v-if="(heart.matching)" @click="deleteMatching(heart.user_id)">
+                        매칭취소
                     </div>
                 </div>
-                    <button class="trash">
-                        <a href="/mypageedit">
+                    <button class="trash" @click="deleteHeart(heart.user_id)">
                         <img src="/icon/mypage/like/trash.svg">
-                        </a>
                     </button>
             </div>
         </div>
@@ -32,12 +32,15 @@ export default {
     data() {
         return {
             sampleData : '',
-            index: 5,
-            matching_status: 0,
+            matching_status: {},
+            activeHeart : [],
+            heartData : [],
         };
     },
     beforeCreate() {},
-    created() {},
+    async created() {
+        await this.getHeart();
+    },
     beforeMount() {},
     mounted() {},
     beforeUpdate() {},
@@ -45,15 +48,33 @@ export default {
     beforeUnmount() {},
     unmounted() {},
     methods: {
-        matching(){
-            if(this.matching_status == 0){
-                this.matching_status += 1
-                return this.matching_status;
-            }else if(this.matching_status == 1){
-                this.matching_status -= 1
-                return this.matching_status == 0;
-            }   
-            
+        async sendMatching(user_id2){
+            try{
+                await this.$api(`/user/sendmatching`, {user_id: 1, user_id2}, "POST");
+                await this.getHeart();
+            }catch(err){
+                alert('매칭신청이 중복 되었습니다.');
+            }
+        },
+        async getHeart(){
+            const result = await this.$api(`/user/getheart`, {user_id: 1},"POST");
+            this.heartData = result.heart;
+        },
+        async deleteMatching(user_id2){
+            try{
+                await this.$api(`/user/deletematching`, {user_id: 1, user_id2}, "POST");
+                await this.getHeart();
+            }catch(err){
+                alert('매칭취소가 실패 했습니다.')
+            }
+        },
+        async deleteHeart(user_id2){
+            try{
+                await this.$api(`/user/deleteheart`, {user_id: 1, user_id2}, "POST");
+                await this.getHeart();
+            }catch(err){
+                alert('좋아요 삭제 실패');
+            }
         }
     }
 }
@@ -63,7 +84,13 @@ export default {
 .container {
     min-width: 600px;
     padding: 0 16px 0 16px;
-    
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 30px 0 15px 0;
+    margin: 0;
 }
 
 .mypage_container {

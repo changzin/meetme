@@ -17,12 +17,12 @@
                 </div>
                 <div class="next_button" @click="count(1)">
                 </div>
-                <img :src="user_image[index]" @click="count(1)">  
+                <img :src="userImage[index]" @click="count(1)">  
             </div>
             <div class="profile_info">
                 <div class="introduce">
                     <div class="grade">
-                        현재 등급 : 다이아몬드
+                        현재 등급 : {{userData.user_grade_value}}
                     </div>
                     <div class="notice">
                         회원님의 매력을 측정해 더 높은 점수에 도전해보세요.
@@ -41,20 +41,16 @@ export default {
     data() {
         return {
             sampleData : '',
-            user_image : [
-                "/model3.png",
-                "/model.jpg",
-                "/model2.jpg",
-                "/model5.jpg",
-                "/model6.jpg",
-                "/images.jpg"
-            ],
-            index: 0
+            userImage : [],
+            index: 0,
+            userData: {}
         };
         
     },
     beforeCreate() {},
-    created() {},
+    async created() {
+        this.getUser();
+    },
     beforeMount() {},
     mounted() {},
     beforeUpdate() {},
@@ -69,6 +65,17 @@ export default {
             }else if(this.index < 0) {
                 return this.index = 5;
             }
+        },
+        async getUser() {
+            try{
+                const result = await this.$api(`/user/profileinfo`, {user_id: 1}, "POST");
+                this.userData = result.user;
+                this.userImage = result.user.user_image_paths;
+                console.log(this.userData)
+                console.log(this.userImage)
+            }catch(err){
+                console.log(err);
+            }
         }
     }
 }
@@ -81,7 +88,7 @@ export default {
 }
 
 .title {
-    font-size: 24;
+    font-size: 24px;
     font-weight: 700;
     padding: 30px 0 15px 0;
     margin: 0;
