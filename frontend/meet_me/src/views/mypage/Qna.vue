@@ -139,6 +139,8 @@ export default {
 }
 
 .down_img {
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     margin-left: auto;

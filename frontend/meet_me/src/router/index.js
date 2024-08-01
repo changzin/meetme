@@ -7,9 +7,11 @@ import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
 import SendHeart from '../views/mypage/SendHeart.vue'
 import Qna from '../views/mypage/Qna.vue'
+
 import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 
 import SendStory from '../views/mypage/SendStory.vue'
+
 
 import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
@@ -22,6 +24,7 @@ import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
 import LoginBridge from '../views/nouser/LoginBridge.vue'
 import ProfileInput from '../views/profile/ProfileInput.vue'
+import ProfileIdol from '../views/profile/ProfileIdol.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
@@ -88,6 +91,11 @@ const routes = [
     path:'/profile',
     name:'profile',
     component:ProfileInput
+  },
+  {
+    path:'/profile/idol',
+    name:'idol',
+    component:ProfileIdol
   },
   {
     path: '/feature',

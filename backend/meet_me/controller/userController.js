@@ -172,7 +172,7 @@ exports.userReport = async(req, res)=>{
                     report, user 
                 WHERE 
                     user.user_id = report.user_id1 AND user_id2=? ORDER BY report_create_date`;
-        result = await db(conn, query, [userId]);
+        result = await db(conn, query,[userId]);
 
         responseBody = {
             status: 200,
