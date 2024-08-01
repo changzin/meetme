@@ -2,7 +2,7 @@
     <div class="container0">
         <div class="card_box">
             <div class="container_top">
-                <div class="tilte">프로필 입력</div>
+                <div class="title">프로필 입력</div>
             </div>
             <div class="container_middle">
                 <div class="container_gen_age">
@@ -17,60 +17,130 @@
                             </button>
                         </div>
                     </div>
-                    <div class="age">
-                        <div class="sub_title2">나이</div>
-                        <div class="age_input_box">
-                            <input type="number" class="age_input" >
-                            <span class="flxed_text">세</span>
-                        </div>
-                    </div>
                 </div>
-                <div class="sub_title2">
+                <div class="sub_title3">
                     필수 입력
                 </div>
+                
+                <!-- 입력 -->
                 <div class="container_essential">
-                    <div class="select_box">
-                        <label for="text" class="box_tag">연봉</label>
-                         <input type="number" class="box_input" value="연봉">
-                         <label for="text" class="box_end">만원</label>
+                    <!-- 나이 -->
+                     <div class="select_box" :class="{'select_box': activeInput ==='age' ,'visible_select_box' : activeInput !== 'age'  }">
+                        <label for="age" :class="{'box_tag': activeInput ==='age' ,'visible_box_tag' : activeInput !== 'age'  }" >나이</label>
+                        <input id="age" type="number" @focus="setActive('age')" @blur="clearActive">
+                        <label for="age" :class="{'box_end': activeInput ==='age' ,'visible_box_end' : activeInput !== 'age'  }">세</label>
+                    </div>  
+
+                    <!-- 연봉 -->
+                    <div class="select_box" :class="{'select_box': activeInput ==='annual_income' ,'visible_select_box' : activeInput !== 'annual_income'  }">
+                        <label for="annual_income" :class="{'box_tag': activeInput ==='annual_income' ,'visible_box_tag' : activeInput !== 'annual_income'  }" >연봉</label>
+                        <input id="annual_income" type="number" @focus="setActive('annual_income')" @blur="clearActive">
+                        <label for="annual_income" :class="{'box_end': activeInput ==='annual_income' ,'visible_box_end' : activeInput !== 'annual_income'  }">만원</label>
+                    </div> 
+
+                    <!-- 키 -->
+                    <div class="select_box" :class="{'select_box': activeInput ==='height' ,'visible_select_box' : activeInput !== 'height'  }">
+                        <label for="height" :class="{'box_tag': activeInput ==='height' ,'visible_box_tag' : activeInput !== 'height'  }" >키</label>
+                        <input id="height" type="number" @focus="setActive('height')" @blur="clearActive">
+                        <label for="height" :class="{'box_end': activeInput ==='height' ,'visible_box_end' : activeInput !== 'height'  }">cm</label>
                     </div>
-                   
                     
-                        <!-- <span>MBTI</span> -->
-                     <div class="dropdown"> 
-                        <button class="dropdown_toggle"></button>
-                        <ul class="dropdown_menu">
-                            <li class="dropdown_item">ESFJ</li>
-                            <li class="dropdown_item" >ISFP</li>
-                            <li class="dropdown_item" >ESTP</li>
-                            <li class="dropdown_item">ISFJ</li>
-                            <li class="dropdown_item">ISFJ</li>
-                        </ul>
+                    <!-- 몸무게 -->
+                    <div class="select_box" :class="{'select_box': activeInput ==='weight' ,'visible_select_box' : activeInput !== 'weight'  }">
+                        <label for="weight" :class="{'box_tag': activeInput ==='weight' ,'visible_box_tag' : activeInput !== 'weight'  }" >몸무게</label>
+                        <input id="weight" type="number" @focus="setActive('weight')" @blur="clearActive">
+                        <label for="weight" :class="{'box_end': activeInput ==='weight' ,'visible_box_end' : activeInput !== 'weight'  }">kg</label>
                     </div> 
                     
-                    <div class="dropdown">박스</div>
-                    <div class="dropdown">박스</div>
-                    <div class="dropdown">박스</div>
-                    <div class="dropdown">박스</div>
-                    <div class="select_box">
-                        <label for="text" class="box_tag">키</label>
-                         <input type="number" class="box_input" value="키">
-                         <label for="text" class="box_end">cm</label>
-                    </div>
-                    <div class="select_box">
-                        <label for="text" class="box_tag">몸무게</label>
-                         <input type="number" class="box_input" value="몸무게">
-                         <label for="text" class="box_end">kg</label>
-                        </div>
+                   
+                    
+                    <!-- v-if isVisible isEnabled 상태 구성 백단에서 불러온 데이터를 셀렉트에 넣기
+                    @click 으로 선택되면 isEnabled 활성화 보라색으로 변환 @click 이 풀릴시 isVisible로 변환 -->
+                    <!-- 최종 선택된 데이터를 다음 버튼 클릭시 포스트로 서버에 전송 dB에 insert시킴 -->
+
+                    <!-- MBTI -->
+                    <select name="MBTI"  class="select_dropdown_button" @focus="setActive('MBTI')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'MBTI', 'visible_dropdown_button':activeInput !== 'MBTI'}">
+                        <option  class="dropdown_item" value="none" selected  disabled hidden>MBTI</option>
+                        <option  class="dropdown_item" value="ESFJ" >ESFJ</option>
+                        <option  class="dropdown_item" value="ESFP">ESFP</option>
+                        <option  class="dropdown_item" value="ESTJ">ESTJ</option>
+                        <option  class="dropdown_item" value="ESTP">ESTP</option>
+                        <option  class="dropdown_item" value="ENFJ">ENFJ</option>
+                        <option  class="dropdown_item" value="ENFP">ENFP</option>
+                        <option  class="dropdown_item" value="ENTJ">ENTJ</option>
+                        <option  class="dropdown_item" value="ENTP">ENTP</option>
+                        <option  class="dropdown_item" value="ISFJ">ISFJ</option>
+                        <option  class="dropdown_item" value="ISFP">ISFP</option>
+                        <option  class="dropdown_item" value="ISTJ">ISTJ</option>
+                        <option  class="dropdown_item" value="ISTP">ISTP</option>
+                        <option  class="dropdown_item" value="INFJ">INFJ</option>
+                        <option  class="dropdown_item" value="INFP">INFP</option>
+                        <option  class="dropdown_item" value="INTJ">INTJ</option>
+                        <option  class="dropdown_item" value="INTP">INTP</option>
+                    </select>
+
+                    <!-- 혈액형 -->
+                    <select name="blood_type"  class="select_dropdown_button" @focus="setActive('blood_type')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'MBTI', 'visible_dropdown_button':activeInput !== 'blood_type'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>혈액형</option>
+                        <option class="dropdown_item" value="A">A</option>
+                        <option class="dropdown_item" value="B">B</option>
+                        <option class="dropdown_item" value="O">O</option>
+                        <option class="dropdown_item" value="AB">AB</option>
+                    </select>
+                        
+                    <!-- 종교 -->
+                    <select name="religion"  class="select_dropdown_button" @focus="setActive('religion')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'religion', 'visible_dropdown_button':activeInput !== 'religion'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>종교</option>
+                        <option class="dropdown_item" value="atheism">무교</option>
+                        <option class="dropdown_item" value="Christian">기독교</option>
+                        <option class="dropdown_item" value="buddhism">불교</option>
+                        <option class="dropdown_item" value="Catholic">천주교</option>
+                        <option class="dropdown_item" value="etc.">기타</option>
+                    </select>
+
+                    <!-- 주량 -->
+                    <select name="drinking"  class="select_dropdown_button" @focus="setActive('drinking')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'drinking', 'visible_dropdown_button':activeInput !== 'drinking'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>주량</option>
+                        <option class="dropdown_item" value="drinking">~1병</option>
+                        <option class="dropdown_item" value="drinking">1병~</option>
+                        <option class="dropdown_item" value="drinking">2병~</option>
+                        <option class="dropdown_item" value="drinking">3병~</option>
+                    </select>
+
+                    <!-- 흡연 -->
+                    <select name="smoke"  class="select_dropdown_button" @focus="setActive('smoke')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'smoke', 'visible_dropdown_button':activeInput !== 'smoke'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>흡연 여부</option>
+                        <option class="dropdown_item" value="yes_tartoo">흡연</option>
+                        <option class="dropdown_item" value="none_tartoo">비흡연</option>
+                    </select>
+
+                    <!-- 문신 -->
+                    <select name="tartoo"  class="select_dropdown_button" @focus="setActive('tartoo')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'tartoo', 'visible_dropdown_button':activeInput !== 'tartoo'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>문신 여부</option>
+                        <option class="dropdown_item" value="yes_tartoo">문신 허용</option>
+                        <option class="dropdown_item" value="none_tartoo">문신 안됨</option>
+                    </select>
+
+                    
+                    
+
+                    <!-- 선택된 상태 -->
+                    
                 </div>
-                <div class="sub_title2">
+
+
+                <div class="sub_title3" style="margin-top: 5px;">
                     주소지
                 </div>
                 <div class="adress">
-                    <input type="text" placeholder="주소검색"  class="input_address"/>
-                    <input type="submit" class="search_address" value="주소 찾기"/>
+                    <div class="address_box">
+                        <img src="icon/profile/search.svg" alt="">
+                        <input type="text" placeholder="지번,도로명,건물명으로 검색"  class="input_address"/>
+                    
+                        <button type="submit" class="search_address">주소찾기</button>
+                    </div>
                 </div>
-                <div class="sub_title2">
+                <div class="sub_title3">
                     자기소개
                 </div>
                 <textarea class="intro">자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~
@@ -91,7 +161,9 @@ export default {
     components:{},
     data() {
         return {
-            activeGender: 'male'  // 초기 활성화상태 '남' 
+            activeGender: 'male',  // 초기 활성화상태 '남' 
+            activeInput:null,
+            
         };
     },
     computed:{
@@ -100,22 +172,22 @@ export default {
         },
         femaleClass(){
             return this.activeGender === 'female' ? 'active' : 'inactive';
-        }
+        },
+
     },
     methods: {
+        //성별 선택
         toggleGender(gender){
           this.activeGender = gender;
        },
-       toggleDropdown(){
-        let dropdownMenu = document.querySelector('.dropdown_menu');
-        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+
+       setActive(inputName){
+        this.activeInput = inputName;
        },
-        updateMBTI(mbti) {
-    // 드롭다운 버튼 텍스트 업데이트
-        document.querySelector('.dropdown-toggle').textContent = mbti;
-    // 오른쪽 텍스트 필드 업데이트
-        document.getElementById('selected-mbti').textContent = mbti;
-        }
+       clearActive(){
+        this.activeInput = null;
+       },
+       
     }
 }
 </script>
@@ -140,23 +212,18 @@ export default {
         height: 300px;
         border: none;
         resize: none;
-        padding: 10px;
+        padding: 20px;
         text-align: start;
         overflow: hidden;
     }
     textarea:focus{
         overflow: auto;
     }
-    btn{
-        border:none;
-        display: grid;
-        outline: none;
-        /* grid-template-columns: 150px 110px; */
-    }
+    
 /* div */
     div.container0{
         width: 600px;
-        height: 100vh;
+        /* height: 100vh; */
         margin:0 auto; 
         /* border:1px solid red; */
         display: flex; 
@@ -168,53 +235,56 @@ export default {
         box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
     }
     .card_box {
-         
-        border: 1px solid red;
+        
+        /* border: 1px solid red; */
         margin-top: 30px;
+        /* margin-bottom:175px ; */
+        margin-left: 15px;
         /* margin-bottom: 80px;  */
-        width: 568px; 
+        width: 570px; 
         display: grid;
         /* grid-auto-columns: repeat(2, minmax(100px,auto));  */
         background-color: #FFFFFF; 
         border-radius: 18px;
      } 
     div.container_top{
-        margin-top: 54px;
-        border: 1px solid red;
+        margin-top: 51px;
+        /* border: 1px solid red; */
         /* margin-bottom: 20px; */
     }
 
     div.container_middle{
         margin-top: 48px;
-        border: 1px solid blue;
+        /* border: 1px solid blue; */
         display: flex;
         flex-direction: column; 
-        gap: 10px;
+        /* gap: 10px; */
     }
 
     div.container_gen_age{
-        border: 1px solid green;
+        /* border: 1px solid green; */
         display: grid;
         grid-template-columns: 1fr 1fr;
          
     }
 
     div.gender{
-        border: 1px solid red;
+        /* border: 1px solid red; */
         display: grid;
         grid-template-columns: 78px 50px;
-        
         justify-items: start;
+        margin-bottom: 30px;
 
     }
     div.select_gender{
         /* margin-left: 33px; */
         /* grid-gap: 33px; */
-        border: 1px solid blue;
+        /* border: 1px solid blue; */
         justify-content: space-between;
         background-color: #d9d9d9;
         border-radius: 9px;
         display: grid;
+        font-size: 13px;
         grid-template-columns: 1fr 1fr;
         padding-left: 4px;
         padding-right: 4px;
@@ -223,7 +293,7 @@ export default {
 
 
     div.age{
-        border: 1px solid red;
+        /* border: 1px solid red; */
         display: grid;
         grid-template-columns: 60px 2fr;
         justify-items: start;
@@ -231,39 +301,104 @@ export default {
     }
 
     div.sub_title{
-        border: 1px solid red;
+        /* border: 1px solid red; */
          font-size: 16px;
-        font-weight: 500px;
+        font-weight: 500;
         margin-left: 16px;
         text-align: start;
         align-content: center;
+    }
+
+    div.title{
+        font-size: 24px;
+        font-weight: 500;
+        text-align: center;
 
     }
     div.sub_title2{
-        border: 1px solid red;
+        /* border: 1px solid red; */
          font-size: 16px;
-        font-weight: 500px;
+        font-weight: 500;
         /* margin-left: 16px; */
         text-align: start;
-
+        align-content: center;
+    
+    }
+    div.sub_title3{
+        /* border: 1px solid red; */
+        font-size: 16px;
+        font-weight: 500;
+        /* margin-left: 16px; */
+        text-align: start;
+        align-content: center;
+        margin-left: 17px;
+        margin-bottom: 10px;
     }
 
     div.container_essential{
-        border: 1px solid red;
+        /* border: 1px solid red; */
         display: grid;
+        padding: 15px;
         grid-template-columns: 1fr 1fr;
-
+        margin-bottom: 1ex;
+        row-gap: 20px;
+        column-gap: 20px;
     }
     .container_essential div{
-        border: 1px solid blue;
+        /* border: 1px solid blue; */
     }
 
     div.adress{
-        border: 1px solid red;
+        /* border: 1px solid red; */
         display: grid;
+        /* grid-gap: 20px; */
+    }
+    div.address_box{
+        /* border: 1px solid red; */
+        display: grid;
+        /*grid-gap: 20px;*/
+        position:relative;
+        margin-left: 17px;
+        margin-bottom: 30px;
         grid-gap: 20px;
         grid-template-columns: 440px 75px;
-
+        
+        /* border: 1px solid #6E7680; */
+        height: 36px;
+    }
+    input.input_address{
+        outline: none;
+        padding-bottom: 1px;
+        /* border: none; */
+        border: 1px solid #6E7680;
+        padding-left: 42px;
+        border-radius: 8px;
+        height: 36px;
+        align-content: center;
+        
+        
+    }
+    .search_address{
+        margin-top: 3px;
+        background-color: var(--purple_main);
+        color: #FFFFFF;
+        border-radius: 10px;
+        align-content: center;
+        justify-content: center;
+        width: 74px;
+        height: 30px;
+        /* padding: 6px 14px; */
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+    img{
+        position: absolute;
+        margin-left: 12px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        width: 20px;
+        height: 20px;
+        
     }
 
     textarea.intro{
@@ -271,11 +406,14 @@ export default {
         background: #F1EFF6;
         border-radius: 6px;
         margin-bottom: 30px;
-
+        /* margin-left: 17px; */
+        margin-left: 15px;
+        margin-right: 15px;
+        width: 540px;
     }
 
     div.container_bottom{
-        border: 1px solid red;
+        /* border: 1px solid red; */
 
     }
     /* div.sub_title{
@@ -289,6 +427,7 @@ export default {
         color: #FFFFFF;
         border: none;
         margin-top:2px;
+        margin-bottom:2px;
         width: 57px;
         height: 30px;
         border-radius: 7px;
@@ -298,8 +437,11 @@ export default {
         background:none;
         color: #111111;
         border: none;
+        margin-top:2px;
+        margin-bottom:2px;
         width: 57px;
         height: 30px;
+        
     }
     .age_input_box{
         /* position: relative; */
@@ -318,124 +460,139 @@ export default {
     }
     .select_box{
         display: grid;
-        margin-top: 10px;
-        margin-left: 17px;
-        margin-right: 20px;
+       
         height: 36px;
         grid-template-columns: 80px 100px 60px;
-        /* grid-template-columns: 1fr 1fr 1fr; */
         background-color:#FFFFFF;
         border: solid 1px var(--purple_main);
         border-radius: 6px;
+        outline: none;
         box-shadow: 0px 1px 12px rgba(92, 9, 227, 0.28);
         align-content: center;
         /* outline: none; */
     }
-    .dropdown{
-        /* position: relative; */
-        
-         /* display: grid; */
-        margin-top: 10px;
-        margin-left: 17px;
-        margin-right: 20px;
-        /* padding-left: 14px; */
+    .visible_select_box{
+        display: grid;
         height: 36px;
-        border: solid 1px var(--purple_main);
+        grid-template-columns: 80px 100px 60px;
+        /* background-color:#B3B3B3; */
+        border: solid 1px #B3B3B3;
         border-radius: 6px;
-        align-content: center;
-        /* text-align:  */
-        box-shadow: 0px 1px 12px rgba(92, 9, 227, 0.28);
-         /* grid-template-columns: 1fr 1fr;  */
-        color: var(--purple_main);  
-    }   
-    .dropdown_toggle{
-        /* padding: 10px; */
-        border: 2px solid purple;
-        background-color: white;
-        cursor: pointer;
         outline: none;
-        border-radius: 5px;
-    }
-    .dropdown_botten{
-        color: var(--purple_main);
-        border: 1px solid red;
-        text-align: start;
-    }
-    .dropdown_menu{
-        /* border:1px solid blue; */
-        text-align: end;
-        display: none;
-        /* position: absolute; */
-        background-color: white;
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        z-index: 1;
-    }
-    .dropdown_item{
-        /* width: 70px; */
-        /* font-size: 16px;
-        color: var(--purple_main);
-        margin-right: 12px;
-        text-align: end;
+        box-shadow: none;
         align-content: center;
-        /* border: 1px solid red; */
-        padding: 12px 20px;
-        display: block;
-        width: 100%;
-        border: none;
-        background: none;
-        cursor: pointer;
-    } 
-        /* 호버 시 드롭다운 메뉴 보이기 */
-    /* .dropdown:hover .dropdown_menu {
-        display: block;
+        
+        /* outline: none; */
     }
-
-    /* 드롭다운 아이템 호버 스타일 */
-    /* .dropdown_item:hover { */
-    /* background-color: #f1f1f1; */
-    /* } */
-
-    .box_input{
-        grid-gap: 10px;
-        text-align: end;
-        align-content: center;
-        font-size: 16px;
-        color: var(--purple_main);
-        border: 1px solid blue;
-        /* align-content: end; */
-    }
+   
     .box_tag{
         margin-left: 12px;
         text-align: start;
         align-content: center;
         color: var(--purple_main);
-        border: 1px solid red;
+        font-size: 14px;
+        
+        /* border: 1px solid red; */
+    }
+    .visible_box_tag{
+        margin-left: 12px;
+        text-align: start;
+        align-content: center;
+        color: #B3B3B3;
+        font-size: 14px;
+        
+        /* border: 1px solid red; */
     }
     .box_end{
         /* margin-left: 12px; */
         text-align: start;
         align-content: center;
         color: var(--purple_main);
-        border: 1px solid red;
+        font-size: 14px;
+        /* border: 1px solid red; */
+    }
+    .visible_box_end{
+        /* margin-left: 12px; */
+        text-align: start;
+        align-content: center;
+        color: #B3B3B3;
+        font-size: 14px;
+        /* border: 1px solid red; */
     }
     
+  
+   
+    .select_dropdown_button{
+        
+        appearance: none;
+        padding-left: 12px;
+        height: 36px;
+        border: solid 1px var(--purple_main);
+        border-radius: 6px;
+        align-content: center;
+        box-shadow: 0px 1px 12px rgba(92, 9, 227, 0.28);
+        color: var(--purple_main);  
+        outline: none;
+    }
+
+    .visible_dropdown_button{
+        
+      
+        /* margin-right: 20px; */
+        appearance: none;
+        padding-left: 12px;
+        height: 36px;
+        border: solid 1px #B3B3B3;
+        border-radius: 6px;
+        align-content: center;
+        outline: none;
+        color: #B3B3B3;  
+        box-shadow: none;
+    }
+    .dropdown_item{
+        /* outline: none; */
+        border: none;
+        
+        cursor: pointer;
+    } 
+
+
+    .box_input{
+        /* grid-gap: 10px; */
+        text-align: center;
+        align-content: center;
+        font-size: 14px;
+        color: var(--purple_main);
+        box-shadow: 0px 1px 12px rgba(92, 9, 227, 0.28);
+        border: var(--purple_main);
+        border: none;
+        outline: none;
+        /* position: relative; */
+        /* align-content: end; */
+    }
+    .visible_box_input{
+        /* grid-gap: 10px; */
+        text-align: center;
+        align-content: center;
+        font-size: 14px;
+        color: #B3B3B3;
+        border: 1px solid #b3b3b3;
+        border: 1px solid blue;
+        /* border: none; */
+        /* outline: none; */
+        box-shadow: none;
+        /* position: relative; */
+        /* align-content: end; */
+    }
+    
+   
    
 
 
 
-    input.input_address{
-        border: 1px solid #6E7680;
-        border-radius: 8px;
-    }
-    .search_address{
-        background-color: var(--purple_main);
-        color: #FFFFFF;
-        border-radius: 10px;
-        width: 74px;
-        padding: 7px 14px;
-        font-size: 12px;
-    }
+    
     .next{
+        margin-bottom: 30px;
         width: 540px;
         height: 60px;
         text-align: center;
