@@ -33,3 +33,4 @@ app.component('ChatModal', ChatModal);
 
 // createApp(App).use(router).mount('#app')
 app.use(router).mount('#app');
+window.Kakao.init(process.env.VUE_APP_KAKAO_APP_KEY);

@@ -2,28 +2,9 @@
     <div class="container0">
         <div class="card_box">
             <div class="container_top">
-                <div class="title">프로필 입력</div>
+                <div class="title">이상형 선택</div>
             </div>
             <div class="container_middle">
-                <div class="container_gen_age">
-                    <div class="gender">
-                        <div class="sub_title">닉네임</div>
-                        <div class="select_nickname_box" :class="{'select_nickname_box': activeInput ==='nickname' ,'visible_select_nickname_box' : activeInput !== 'nickname'  }" style="width: 198px;">
-                            <input id="nickname" type="text" @focus="setActive('nickname')" @blur="clearActive" class="select_nickname_input" :class="{'select_nickname_input': activeInput ==='nickname' ,'visible_nickname_input' : activeInput !== 'nickname' }" placeholder="닉네임을 입력해주세요" >
-                        </div> 
-                    </div>
-                    <div class="gender">
-                        <div class="sub_title">성별</div>
-                        <div class="select_gender">
-                            <button :class="maleClass" @click="toggleGender('male')">
-                            남
-                            </button>
-                            <button :class="femaleClass" @click="toggleGender('female')">
-                            여
-                            </button>
-                        </div>
-                    </div>
-                </div>
                 <div class="sub_title3">
                     필수 입력
                 </div>
@@ -31,32 +12,42 @@
                 <!-- 입력 -->
                 <div class="container_essential">
                     <!-- 나이 -->
-                     <div class="select_box" :class="{'select_box': activeInput ==='age' ,'visible_select_box' : activeInput !== 'age'  }">
-                        <label for="age" :class="{'box_tag': activeInput ==='age' ,'visible_box_tag' : activeInput !== 'age'  }" >나이</label>
-                        <input id="age" type="number" @focus="setActive('age')" @blur="clearActive" class="select_input" :class="{'select_input': activeInput ==='age' ,'visible_input' : activeInput !== 'age' }">
-                        <label for="age" :class="{'box_end': activeInput ==='age' ,'visible_box_end' : activeInput !== 'age'  }">세</label>
-                    </div>  
+                    <select name="age"  class="select_dropdown_button" @focus="setActive('age')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'age', 'visible_dropdown_button':activeInput !== 'age'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>연령대</option>
+                        <option class="dropdown_item" value="earlyTwenties">20대 초반</option>
+                        <option class="dropdown_item" value="lateTwenties">20대 후반</option>
+                        <option class="dropdown_item" value="earlyThirties">30대 후반</option>
+                        <option class="dropdown_item" value="lateThirties">30대 후반</option>
+                        <option class="dropdown_item" value="forties">40대</option>
+                    </select> 
 
                     <!-- 연봉 -->
-                    <div class="select_box" :class="{'select_box': activeInput ==='annual_income' ,'visible_select_box' : activeInput !== 'annual_income'  }">
-                        <label for="annual_income" :class="{'box_tag': activeInput ==='annual_income' ,'visible_box_tag' : activeInput !== 'annual_income'  }" >연봉</label>
-                        <input id="annual_income" type="number" @focus="setActive('annual_income')" @blur="clearActive" class="select_input" :class="{'select_input': activeInput ==='annual_income' ,'visible_input' : activeInput !== 'annual_income' }" >
-                        <label for="annual_income" :class="{'box_end': activeInput ==='annual_income' ,'visible_box_end' : activeInput !== 'annual_income'  }">만원</label>
-                    </div> 
+                    <select name="annual_income"  class="select_dropdown_button" @focus="setActive('annual_income')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'annual_income', 'visible_dropdown_button':activeInput !== 'annual_income'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>연봉</option>
+                        <option class="dropdown_item" value="~1000">~1000</option>
+                        <option class="dropdown_item" value="1000~">1000</option>
+                        <option class="dropdown_item" value="2000~">2000~</option>
+                        <option class="dropdown_item" value="3000~">3000~</option>
+                        <option class="dropdown_item" value="4000~">4000~</option>
+                        <option class="dropdown_item" value="5000~">5000~</option>
+                        <option class="dropdown_item" value="6000~">6000~</option>
+                    </select> 
 
                     <!-- 키 -->
-                    <div class="select_box" :class="{'select_box': activeInput ==='height' ,'visible_select_box' : activeInput !== 'height'  }">
-                        <label for="height" :class="{'box_tag': activeInput ==='height' ,'visible_box_tag' : activeInput !== 'height'  }" >키</label>
-                        <input id="height" type="number" @focus="setActive('height')" @blur="clearActive" class="select_input" :class="{'select_input': activeInput ==='height' ,'visible_input' : activeInput !== 'height' }">
-                        <label for="height" :class="{'box_end': activeInput ==='height' ,'visible_box_end' : activeInput !== 'height'  }">cm</label>
-                    </div>
+                    <select name="height"  class="select_dropdown_button" @focus="setActive('height')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'height', 'visible_dropdown_button':activeInput !== 'height'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>키</option>
+                        <option class="dropdown_item" value="yes_tartoo">한 뼘</option>
+                        <option class="dropdown_item" value="none_tartoo">세 뼘</option>
+                        <option class="dropdown_item" value="none_tartoo">다섯 뼘</option>
+                    </select>
                     
                     <!-- 몸무게 -->
-                    <div class="select_box" :class="{'select_box': activeInput ==='weight' ,'visible_select_box' : activeInput !== 'weight'  }">
-                        <label for="weight" :class="{'box_tag': activeInput ==='weight' ,'visible_box_tag' : activeInput !== 'weight'  }" >몸무게</label>
-                        <input id="weight" type="number" @focus="setActive('weight')" @blur="clearActive" class="select_input" :class="{'select_input': activeInput ==='weight' ,'visible_input' : activeInput !== 'weight' }">
-                        <label for="weight" :class="{'box_end': activeInput ==='weight' ,'visible_box_end' : activeInput !== 'weight'  }">kg</label>
-                    </div> 
+                    <select name="weight"  class="select_dropdown_button" @focus="setActive('weight')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'weight', 'visible_dropdown_button':activeInput !== 'weight'}">
+                        <option class="dropdown_item" value="none" selected disabled hidden>몸무게</option>
+                        <option class="dropdown_item" value="yes_tartoo">한 끼</option>
+                        <option class="dropdown_item" value="none_tartoo">세 끼</option>
+                        <option class="dropdown_item" value="none_tartoo">다섯 끼</option>
+                    </select>
                     
                    
                     
@@ -116,8 +107,8 @@
                     <!-- 흡연 -->
                     <select name="smoke"  class="select_dropdown_button" @focus="setActive('smoke')" @blur="clearActive" :class="{'visible_dropdown_button' : activeInput === 'smoke', 'visible_dropdown_button':activeInput !== 'smoke'}">
                         <option class="dropdown_item" value="none" selected disabled hidden>흡연 여부</option>
-                        <option class="dropdown_item" value="yes_tartoo">흡연</option>
-                        <option class="dropdown_item" value="none_tartoo">비흡연</option>
+                        <option class="dropdown_item" value="yes_tartoo">흡연 허용</option>
+                        <option class="dropdown_item" value="none_tartoo">흡연 안됨</option>
                     </select>
 
                     <!-- 문신 -->
@@ -134,27 +125,9 @@
                     
                 </div>
 
-
-                <div class="sub_title3" style="margin-top: 5px;">
-                    주소지
-                </div>
-                <div class="adress">
-                    <div class="address_box">
-                        <img src="icon/profile/search.svg" alt="">
-                        <input type="text" placeholder="지번,도로명,건물명으로 검색"  class="input_address"/>
-                    
-                        <button type="submit" class="search_address">주소찾기</button>
-                    </div>
-                </div>
-                <div class="sub_title3">
-                    자기소개
-                </div>
-                <textarea class="intro">자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~
-                </textarea>
-
             </div>
             <div class="container_bottom">
-                <button class="next" @click="$router.push('/profile/idol')">다음으로</button>
+                <button class="next">다음으로</button>
             </div>
         </div>
     </div>
@@ -254,7 +227,7 @@ export default {
         border-radius: 18px;
      } 
     div.container_top{
-        margin-top: 54px;
+        margin-top: 51px;
         /* border: 1px solid red; */
         /* margin-bottom: 20px; */
     }
@@ -271,10 +244,8 @@ export default {
         /* border: 1px solid green; */
         display: grid;
         grid-template-columns: 1fr 1fr;
-        /* row-gap: 20px; */
-        column-gap: 20px;
+         
     }
-
 
     div.gender{
         /* border: 1px solid red; */
@@ -468,7 +439,7 @@ export default {
     }
     .select_box{
         display: grid;
-        color: var(--purple_main);
+       
         height: 36px;
         grid-template-columns: 80px 100px 60px;
         background-color:#FFFFFF;
@@ -483,30 +454,6 @@ export default {
         display: grid;
         height: 36px;
         grid-template-columns: 80px 100px 60px;
-        /* background-color:#B3B3B3; */
-        border: solid 1px #B3B3B3;
-        border-radius: 6px;
-        outline: none;
-        box-shadow: none;
-        align-content: center;
-        color: #979797;
-        
-        /* outline: none; */
-    }
-    .select_nickname_box{
-        color: var(--purple_main) ;
-        height: 36px;
-        background-color:#FFFFFF;
-        border: solid 1px var(--purple_main);
-        border-radius: 6px;
-        outline: none;
-        box-shadow: 0px 1px 12px rgba(92, 9, 227, 0.28);
-        align-content: center;
-        /* outline: none; */
-    }
-    .visible_select_nickname_box{
-        
-        height: 36px;
         /* background-color:#B3B3B3; */
         border: solid 1px #B3B3B3;
         border-radius: 6px;
@@ -551,26 +498,8 @@ export default {
         font-size: 14px;
         /* border: 1px solid red; */
     }
-    .select_input{
-        color:var(--purple_main);
-        font-size: 14px;
-        text-align: end;
-    }
-    .visible_input{
-        color: #979797;
-        font-size: 14px;
-        text-align: end;
-    }
-    .select_nickname_input{
-        color:var(--purple_main);
-        font-size: 14px;
-        text-align: start;
-    }
-    .visible_nickname_input{
-        color: #979797;
-        font-size: 14px;
-        text-align: start;
-    }
+    
+  
    
     .select_dropdown_button{
         
@@ -584,7 +513,6 @@ export default {
         color: var(--purple_main);  
         outline: none;
     }
-   
 
     .visible_dropdown_button{
         /* margin-right: 20px; */
@@ -636,13 +564,14 @@ export default {
       background-color: #FFFFFF;
       border: 1px solid #EBEBEB;
     }
-    
+   
    
 
 
 
     
     .next{
+        margin-top: 30px;
         margin-bottom: 30px;
         width: 540px;
         height: 60px;

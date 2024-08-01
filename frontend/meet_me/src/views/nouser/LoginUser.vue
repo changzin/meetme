@@ -6,19 +6,19 @@
                     MEET ME
                 </div>
                 <form class="input_box" style="margin-bottom: 20px;">
-                        <img src="icon/login/user.svg" class="icon">
-                        <input type="text" class="input_text" placeholder="이메일">
+                    <img src="icon/login/user.svg" class="icon">
+                    <input type="text" class="input_text" placeholder="이메일" v-model="email">
                 </form>
                 <form class="input_box">
                     <img src="/icon/login/password.svg" class="icon" >
-                    <input type="password" class="input_text" placeholder="비밀번호">
+                    <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
                 </form>
-                <input type="submit" class="login_button" value="로그인">
+                <input type="submit" class="login_button" value="로그인" @click="login">
                     
                 
                 <div class="option" >
-                    <img src="/icon/login/checkbox.svg" class="icon_login" >
-                    <img src="/icon/login/checkbox_on.svg" class="icon_login">
+                    <img src="/icon/login/checkbox.svg" class="icon_login" v-if="!remain" @click="toggleRemain">
+                    <img src="/icon/login/checkbox_on.svg" class="icon_login" v-if="remain" @click="toggleRemain">
                     <p class="option1">로그인 상태 유지</p>
                     <p class="option2">회원가입</p>
                     <p class="option3">비밀번호를 잊으셨나요?</p>
@@ -28,14 +28,18 @@
                     <span>또는 다음으로 로그인</span>
                     <hr>
                 </div>
-                <div class="dummy_login1" style="margin-top: 14px;">
-                    카카오로그인
+                <div class="dummy_login1" style="margin-top: 14px;" @click="kakaoLogin">
+                    <img src="/icon/login/kakao.svg" class="naver_logo">
+                    <div>카카오 로그인</div>
                 </div>
-                <div class="dummy_login2" style="margin-top: 10px">
-                    네이버로그인
+                <div class="dummy_login2" style="margin-top: 10px" @click="naverInit">
+                    <img src="/icon/login/naver.svg" class="naver_logo">
+                    <div>네이버 로그인</div>
+                    <div id="naverIdLogin" hidden></div>
                 </div>
-                <div class="dummy_login3" style="margin-top: 10px;" >
-                    구글로그인
+                <div class="dummy_login3" style="margin-top: 10px; margin-bottom: 80px;" @click="googleLogin">
+                    <img src="/icon/login/google.svg" class="naver_logo">
+                    <div>구글 로그인</div>
                 </div>
             </div>
         </div>
@@ -43,10 +47,158 @@
 </template>
   
 <script>
+import { firebaseApp } from "../../util/firebase";
+// import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+
 export default {
     data(){
         return{
-            
+            email: null,
+            password: null,
+            remain: false,
+        }
+    },
+    methods:{
+        toggleRemain(){
+            this.remain = !this.remain;
+        },
+        async login(){
+                // 파이어베이스로 먼저 인증을 시작한다.
+                try{
+                    const auth = await getAuth(firebaseApp);
+                    // 파이어베이스 로그인 함수 (실패하면 에러 발생)
+                    await signInWithEmailAndPassword(auth, this.email, this.password);
+                    // 서버 쪽에서 계정이 있는지 또 확인하고, 성공하면 DB에 저장된 accessToken을 가져온다.
+                    await this.loginEnd("local", this.email);
+                }
+                catch(err){
+                    // 파이어베이스에서 인증 실패 (signInWithEmailAndPassword)할 경우를 위한 catch문이다.
+                    console.error(err);
+                }
+            },
+
+        // 카카오 로그인 실행 함수 -> 로그인 결과로 accessToken을 받아오거나, 회원가입으로 보낸다.
+        kakaoLogin(){
+            try{
+                window.Kakao.Auth.login({
+                    scope: 'profile_nickname account_email',
+                    success: this.getKakaoAccount,
+                });
+            }
+            catch(err){
+                console.error(err);
+                alert("에러처리해야됨");
+            }
+        },
+        async getKakaoAccount(){
+            let nickname = null;
+            let email = null;
+            await window.Kakao.API.request({
+                url: '/v2/user/me',
+                success: res=>{
+                    const kakao_account = res.kakao_account;
+                    nickname = kakao_account.profile.nickname;
+                    email = kakao_account.email;
+                },
+                fail: error => {
+                    console.log(error);
+                }
+            });
+            if (nickname && email){
+                await window.Kakao.Auth.logout();
+                this.loginEnd("kakao", email);
+            }
+        },
+        async googleLogin(){
+            const provider = new GoogleAuthProvider();
+            let auth = await getAuth(firebaseApp);
+            try{
+                await signInWithPopup(auth, provider)
+                    .then(async (result)=>{
+                        const user = result.user;
+                        const email = user.email;
+                        await this.loginEnd("google", email);
+                    }).catch((error) => {
+                        console.error(error);
+                    });
+            }
+            catch(err){
+                console.error(err);
+                alert("예기치 못한 에러로 로그인이 실패했습니다. 다시 시도해 주세요.")
+            }
+        },
+        async naverInit(){
+            try{
+                this.naverLogin = new window.naver.LoginWithNaverId({
+                    clientId: "FkAYkKQaYKYBZPgPFIhI",
+                    callbackUrl: "http://localhost:8080/loginBridge",
+                    isPopup: true,
+                    loginButton: {
+                        color: "green", type: 3, height: 60,
+                    },
+                });
+                this.naverLogin.init();
+                window.open("/loginBridge", 'test', 'width=600, height=1000', '_blank');
+                window.call = async (email)=>{
+                    if(email){
+                        await this.loginEnd("naver", email);
+                        return;
+                    }
+                    else{
+                        alert("네이버 이메일을 불러오지 못했습니다. 다시 시도해 주세요.");
+                        return;
+                    }
+                }
+            }
+            catch(err){
+                console.error(err);
+                alert("네이버가 응답하지 않습니다. 다시 시도해주세요.");
+            }
+        },
+        // 로그인 후처리 공통 로직
+        async loginEnd(mode, email){
+            try{
+                let requestBody = {
+                    email: email, 
+                    loginType: mode
+                }
+                const result = await this.$api("/user/login", requestBody, "POST");
+                // 소셜 첫 로그인 시 구분
+                if (result.status == 300){
+                    await this.storeToken(result.accessToken);
+                    this.$router.push({
+                        name: "profile"
+                    });
+                    return;
+                }
+                else if (result.status == 200){
+                    await this.storeToken(result.accessToken);
+                    console.log(result);
+                    if (result.type=="admin"){
+                        this.$router.push({name: 'member'});
+                    }
+                    else{
+                        this.$router.push({name: 'MainPage'});
+                    }
+                    return;
+                }
+                else{
+                    alert("동일한 이메일의 계정이 존재합니다. 다른 이메일을 사용해 주세요");
+                    return;
+                }
+            }
+            catch (err){
+                throw new Error("");
+            }
+        },
+
+        // 로그인 마지막 처리
+        async storeToken(accessToken){
+            this.$cookies.set("meetMeCookie", accessToken);
+            if (this.remain){
+                await this.$store.commit("user", {accessToken: accessToken});
+            }
         }
     }
 }
@@ -61,8 +213,6 @@ export default {
         padding: 0px;
      }
      .card_box{
-        margin-top: 30px;
-        margin-bottom: 80px;
         width: 568px;
         /* height: 605px; */
         display: flex;
@@ -101,28 +251,48 @@ export default {
 
      }
      .dummy_login1{
-        display: flex;
-        align-items: center;
+        cursor: pointer;
         width: 346px;
         height: 40px;
-        border: 1px solid black;
+        border-width: 0px;
+        border-radius: 8px;
+        background-color: #FFE812;
+        color: #232323;
+        font-weight: 500;
+        font-size: 16px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
     }
     .dummy_login2{
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
+        cursor: pointer;
         width: 346px;
         height: 40px;
-        border: 1px solid black;
+        border-width: 0px;
+        border-radius: 8px;
+        background-color: #03C75A;
+        color:#FFFFFF;
+        font-size: 16px;
+        font-weight: 500;
+        display:flex;
+        justify-content: center;
+        align-items: center;
     }
     .dummy_login3{
-        display: flex;
-        align-items: center;
+        cursor: pointer;
         width: 346px;
         height: 40px;
-        border: 1px solid black;
-        margin-bottom: 80px;
+        border-width: 0px;
+        border-radius: 8px;
+        background-color: #F2F2F2;
+        color: #232323;
+        font-weight: 500;
+        font-size: 16px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
     }
+    
 /* button */
      .login_button{
         margin-top: 20px;
@@ -146,6 +316,7 @@ export default {
         /* margin-top: 12px; */
      }
      .icon_login{
+        cursor:pointer;
         width: 18px;
         height: 18px;
         /* margin-right: 5px; */
@@ -172,12 +343,14 @@ export default {
         color: #555555;
      }
      .option2{
+        cursor: pointer;
         font-size: 12px;
         margin-left: 43px;
         color: #555555;
 
      }
      .option3{
+        cursor: pointer;
         font-size: 12px;
         margin-left: 33px;
         color: #555555;
@@ -210,5 +383,21 @@ export default {
         font-size: 12px;
         color: #AAAAAA;
     }
-    
+    .naver_login{
+        font-weight: bold;
+        border-radius: 5px;
+        display:flex;
+        justify-content: center;    
+        align-items: center;
+        width: 220px;
+        padding-right:28px;
+        height :48px;
+        font-size: 15px;
+        background: rgb(3, 199, 90);
+        color: white;
+    }
+
+    .naver_logo{
+        margin-right:10px;
+    }
 </style>
