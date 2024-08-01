@@ -2,9 +2,10 @@ const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const indexRouter = require('./router');
 const fs = require('fs');
 const path = require("path");
+
+const indexRouter = require('./router');
 
 // .env 폴더 설정
 dotenv.config();
@@ -40,6 +41,7 @@ app.use(morgan('dev'));
 
 // uploads폴더를 public하게 만듦
 app.use(express.static(path.join(__dirname, '/uploads')));
+
 // http 메시지 크기 제한
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: false}));

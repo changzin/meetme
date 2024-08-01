@@ -1,5 +1,5 @@
 const express = require('express');
-const { userList, userBlock, userUnblock, userReport, userPayment } = require('../controller/userController.js');
+const { userList, userBlock, userUnblock, userReport, userPayment, userLogin } = require('../controller/userController.js');
 
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.post('/block', userBlock);
 router.post('/unblock', userUnblock);
 router.post('/report', userReport);
 router.post('/payment', userPayment);
+router.post('/login', userLogin);
 
 module.exports = router;
