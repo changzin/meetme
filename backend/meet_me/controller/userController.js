@@ -1,4 +1,5 @@
 const {getConn, db} = require("../util/db");
+const { v4  } = require('uuid');
 
 exports.userList = async (req, res)=>{
     // 기본적으로 connection을 받아와야 트랜잭션을 걸 수 있다.
@@ -21,12 +22,12 @@ exports.userList = async (req, res)=>{
         keyword = "%" + keyword + "%";
 
         query = `SELECT
-                    u.user_id, 
-                    u.user_email, 
+                    u.user_id,
+                    u.user_email,
                     u.user_nickname,
-                    u.user_block, 
-                    (SELECT COUNT(*) FROM report WHERE user_id2 = u.user_id GROUP BY user_id2) as reportCount, 
-                    (SELECT SUM(payment_price) FROM payment WHERE u.user_id = user_id GROUP BY user_id) as payment 
+                    u.user_block,
+                    (SELECT COUNT(*) FROM report WHERE user_id2 = u.user_id GROUP BY user_id2) as reportCount,
+                    (SELECT SUM(payment_price) FROM payment WHERE u.user_id = user_id GROUP BY user_id) as payment
                 FROM 
                     user u
                 WHERE
@@ -236,6 +237,7 @@ exports.userPayment = async(req, res)=>{
         conn.release();
     }   
 }
+
 
 exports.mypageProfile = async(req, res) => {
     const conn = await getConn();
@@ -448,6 +450,124 @@ exports.deleteHeart = async(req, res)=>{
         };
         await conn.commit();
         res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+exports.userLogin = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+        
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        
+        const {email, loginType} = req.body;
+
+        const accessToken = v4();
+
+        // DB에 일치하는 녀석들 - 로그인 가능한 녀석들 처리
+        // 프로필 작성이랑 구분하려면 select에서 더 가져와서 다른 곳으로 300으로 보낼 것.
+        query = `SELECT user_id, user_profile_entered
+                FROM user 
+                WHERE user_email = ? 
+                    AND user_email_verified = 'T' 
+                    AND user_block='F' 
+                    AND user_type=?`;
+        result = await db(conn, query, [email, loginType]);
+        if (result.length == 1){
+            user = result[0];
+            // user_access_token을 update해주는 쿼리문 실행
+            query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
+            result = await db(conn, query, [accessToken, user.user_id]);
+            
+            if (user.user_profile_entered='T'){
+                responseBody = {
+                    status: 200,
+                    accessToken: accessToken,
+                    type: loginType,
+                    message: "로그인 완료했습니다"
+                }
+            }
+            else{
+                responseBody = {
+                    status: 300,
+                    accessToken: accessToken,
+                    type: loginType,
+                    message: "로그인 완료. 프로필 작성으로 넘어가야 합니다."
+                }
+            }
+            res.json(responseBody);
+            return;
+        }
+
+        //일치하는 유저가 DB에 존재하지 않는 경우
+        // 1. 관리자(로그인)
+        if (loginType == 'local'){
+            query = `SELECT user_id, user_profile_entered
+                    FROM user 
+                    WHERE user_email = ? 
+                        AND user_email_verified = 'T' 
+                        AND user_block='F' 
+                        AND user_type='admin'`;
+            result = await db(conn, query, [email]);
+            if (result.length == 1){
+                user = result[0];
+                // user_access_token을 update해주는 쿼리문 실행
+                query = "UPDATE user SET user_access_token = ? WHERE user_id = ?";
+                result = await db(conn, query, [accessToken, user.user_id]);
+                responseBody = {
+                    status: 200,
+                    accessToken: accessToken,
+                    type: 'admin',
+                    message: "로그인 완료했습니다"
+                }
+                res.json(responseBody);
+                return;
+            }
+        }
+        // 2. 소셜 유저(자동 회원가입)
+        // 겹치는 이메일이 있는지 확인하고, 없으면 로그인을 시도할 수 있다.
+        if (loginType != 'local'){
+            query = `SELECT user_id
+                    FROM user 
+                    WHERE user_email = ?`;
+            result = await db(conn, query, [email, loginType]);
+            
+            // 겹치는 이메일이 없다면 회원가입
+            if(result.length == 0){
+                query = `INSERT 
+                        INTO user(user_email, user_type)
+                        VALUES(?, ?)`;
+                result = await db(conn, query, [email, loginType]);
+                query = "UPDATE user SET user_access_token = ? WHERE user_email = ?";
+
+                result = await db(conn, query, [accessToken, email]);
+                responseBody = {
+                    status: 300,
+                    accessToken: accessToken,
+                    type: loginType,
+                    message: "로그인 완료. 프로필 작성으로 넘어가야 합니다."
+                }
+                res.json(responseBody);
+                return;
+            }
+        }
+        throw new Error("로그인 방법이나 계정이 존재하지 않습니다.");
+
     }
     catch(err){
         console.error(err);
