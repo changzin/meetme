@@ -1,29 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Member from '../views/admin/Member.vue'
-import Analysis from '../views/admin/Analysis.vue'
+import AdminAnalysis from '../views/admin/AdminAnalysis.vue'
 
 import MyPage from '../views/mypage/MyPage.vue'
 import MyPageEdit from '../views/mypage/MyPageEdit.vue'
-import ProfileGrade from '../views/mypage/ProfileGrade.vue'
 import SendHeart from '../views/mypage/SendHeart.vue'
 import Qna from '../views/mypage/Qna.vue'
+
+import ProfileGrade from '../views/mypage/ProfileGrade.vue'
+
+import SendStory from '../views/mypage/SendStory.vue'
 
 
 import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
 
 import MainPage from '../views/MainPage.vue'
-import UserLogin from '../views/nouser/UserLogin.vue'
+import LoginUser from '../views/nouser/LoginUser.vue'
 import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
-import Profile_Input from '../views/profile/Profile_Input.vue'
+
+import ProfileInput from '../views/profile/ProfileInput.vue'
 import ReactiveWeb from '../views/ReactiveWeb.vue'
 import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
-import User_Character from '../views/profile/User_Character.vue'
+import UserFeature from '../views/profile/UserFeature.vue'
+
+import RecommendList from '../views/RecommendList.vue'
+import ProfileDetail from '../views/profile/ProfileDetail.vue'
 
 const routes = [
   {
@@ -38,8 +45,8 @@ const routes = [
   },
   {
     path: '/admin/analysis',
-    name: 'analysis',
-    component: Analysis
+    name: 'adminanalysis',
+    component: AdminAnalysis
   },
   {
     path: '/mainpage',
@@ -61,8 +68,8 @@ const routes = [
   },
   {
     path:'/login',
-    name:'UserLogin',
-    component: UserLogin
+    name:'loginuser',
+    component: LoginUser
   },
   {
     path:'/terms',
@@ -82,12 +89,12 @@ const routes = [
   {
     path:'/profile',
     name:'profile',
-    component:Profile_Input
+    component:ProfileInput
   },
   {
-    path: '/character',
-    name:'character',
-    component:User_Character
+    path: '/feature',
+    name:'userfeature',
+    component:UserFeature
   },
   {
     path: '/tempview',
@@ -128,6 +135,21 @@ const routes = [
     path: '/selectmodal',
     name: 'SelectModal',
     component: SelectModal
+  },
+  {
+    path: '/recommendlist',
+    name: 'RecommendList',
+    component: RecommendList
+  },
+  {
+    path: '/profiledetail',
+    name: 'ProfileDetail',
+    component: ProfileDetail
+  },
+  {
+    path: '/sendstory',
+    name: 'SendStory',
+    component: SendStory
   },
   {
     path: '/sendheart',
