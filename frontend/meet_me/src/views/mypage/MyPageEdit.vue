@@ -5,22 +5,19 @@
                 프로필 수정
             </div>
             <div class="profile_image">
-                <img class="edit_profile" src="/model3.png">
-                <img class="edit_profile" src="/model.jpg">
-                <img class="edit_profile" src="/model2.jpg">
-                <img class="edit_profile" src="/model5.jpg">
-                <img class="edit_profile" src="/model6.jpg">
-                <img class="edit_profile" src="/images.jpg">
+            <div v-for="(img, i) in userData.user_image_paths" :key="i">
+                <img class="edit_profile" :src="img">
+            </div>
             </div>
             <div class="profile_info">
                 <div class="name">
-                    장원영입니다,23
+                    {{userData.user_nickname}},{{userData.user_age}}
                 </div>
                 <div class="live">
-                    서울특별시
+                    {{userData.user_add}}
                 </div>
                 <div class="introduce">
-                    안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~ 안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~안녕하세요, 장원영입니다. 원영이는 너무 귀여워~ 카와이네~~~~~~
+                    {{userData.user_introduction}}
                 </div>
             </div>
         </div>
@@ -31,18 +28,31 @@
 export default {	
     data() {
         return {
-            sampleData : ''
+            sampleData : '',
+            userData: {},
         };
     },
     beforeCreate() {},
-    created() {},
+    async created() {
+        this.getUser();
+    },
     beforeMount() {},
     mounted() {},
     beforeUpdate() {},
     updated() {},
     beforeUnmount() {},
     unmounted() {},
-    methods: {}
+    methods: {
+        async getUser() {
+            try{
+                const result = await this.$api(`/user/profileinfo`, {user_id: 1}, "POST");
+                this.userData = result.user;
+                console.log(this.userData)
+            }catch(err){
+                console.log(err);
+            }
+        },
+    }
 }
 </script>
 <style scoped>
@@ -54,7 +64,7 @@ export default {
 }
 
 .title {
-    font-size: 24;
+    font-size: 24px;
     font-weight: 700;
     padding: 30px 0 15px 0;
     margin: 0;

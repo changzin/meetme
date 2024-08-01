@@ -6,17 +6,15 @@
                     <img class="mini_profile" src="/model.jpg">
                     <div class="name_title">
                         <div class="name">
-                            원영이의 닉네임
+                            {{userData.user_nickname}}
                         </div>
                         <div class="live">
-                            도봉구
+                            {{userData.user_add}}
                         </div>
                     </div>
                     <div class="button">
-                        <button class="edit">
-                            <a href="/mypageedit">
+                        <button class="edit" @click="this.$router.push({name: 'MyPageEdit'})">
                             <img src="/icon/mypage/main/edit.svg">
-                            </a>
                         </button>
                     </div>
                 </div>
@@ -27,7 +25,7 @@
                             프로필 등급
                         </div>
                         <div class="user_grade">
-                            다이아몬드
+                            {{userData.user_grade_value}}
                         </div>
                     </div>
                     <div class="mypage_button">
@@ -70,18 +68,24 @@
 export default {	
     data() {
         return {
+            userData: {},
         };
     },
 
-    beforeCreate() {},
-    created() {},
-    beforeMount() {},
-    mounted() {},
-    beforeUpdate() {},
-    updated() {},
-    beforeUnmount() {},
-    unmounted() {},
-    methods: {}
+    async created() {
+        await this.getUser();
+    },
+    methods: {
+        async getUser() {
+            try{
+                const result = await this.$api(`/user/mypageprofile`, {user_id: 1}, "POST");
+                this.userData = result.user;
+                console.log(this.userData)
+            }catch(err){
+                console.log(err);
+            }
+        },
+    }
 
 }
 </script>
@@ -95,7 +99,7 @@ export default {
 
 .mypage_container {
     padding-top: 80px;
-}
+} 
 
 .profile_box {
     height: 130px;
