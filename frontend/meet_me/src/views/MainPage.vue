@@ -103,7 +103,7 @@ export default {
     text-align: left;
     color: #090909;
 }
-.mian_title{
+.main_title{
     padding: 16px 0 16px 0;
     font-size: 22px;
 }
