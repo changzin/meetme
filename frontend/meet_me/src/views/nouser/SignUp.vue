@@ -6,34 +6,36 @@
                 정보입력
             </div>
             <p class="sub_text">회원가입에 필요한 최소한의 정보를 입력해주세요!</p>
-            <div class="box">
-                <div class="sub_title">
-                    이메일
+            <div class="container_middle">
+                <div class="box">
+                    <div class="sub_title2">
+                        이메일
+                    </div>
+                    <form class="input_box" >
+                        <img src="icon/login/user.svg" class="icon">
+                        <input type="text" class="input_text" placeholder="이메일" v-model="email">
+                    </form>
                 </div>
-                <form class="input_box" style="margin-bottom: 20px;">
-                    <img src="icon/login/user.svg" class="icon">
-                    <input type="text" class="input_text" placeholder="이메일" v-model="email">
-                </form>
-            </div>
-            <div class="box">
-                <div class="sub_title">
-                    비밀번호
+                <div class="box">
+                    <div class="sub_title2">
+                        비밀번호
+                    </div>
+                    <form class="input_box" >
+                        <img src="/icon/login/password.svg" class="icon">
+                        <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
+                    </form>
                 </div>
-                <form class="input_box" style="margin-bottom: 20px;">
-                    <img src="/icon/login/password.svg" class="icon">
-                    <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
-                </form>
-            </div>
-            <div class="box">
-                <div class="sub_title">
-                    비밀번호 확인
+                <div class="box">
+                    <div class="sub_title2" style="margin-left: 30px;">
+                        비밀번호 확인
+                    </div>
+                    <form class="input_box" >
+                        <img src="/icon/login/password.svg" class="icon">
+                        <input type="password" class="input_text" placeholder="비밀번호 확인" v-model="passwordCheck">
+                    </form>
                 </div>
-                <form class="input_box" style="margin-bottom: 20px;">
-                    <img src="/icon/login/password.svg" class="icon">
-                    <input type="password" class="input_text" placeholder="비밀번호 확인" v-model="passwordCheck">
-                </form>
             </div>
-            <input type="submit" class="next_button" style="margin-bottom: 324px;" value="이메일 인증하러 가기" @click="emailVerify">
+                <input type="submit" class="next_button" style="margin-bottom: 324px;" value="이메일 인증하러 가기" @click="emailVerify">
         </div>
     </div>
 </div>
@@ -126,7 +128,8 @@ export default {
     width: 600px;
     display: grid;
     align-content: center;
-    
+    /* border: 1px solid orange; */
+    column-gap: 15px;
     }
 
     .card_box {
@@ -136,6 +139,9 @@ export default {
         display: flex;
         background-color: #FFFFFF;
         border-radius: 18px;
+        padding:0px;
+        /* margin-left: 15px; */
+        
     }
 
     .title {
@@ -147,35 +153,65 @@ export default {
         font-weight: bold;
     }
     .box{
-        display: flex;
-        align-items: center;
+        display: grid;
+        grid-template-columns: 128px 380px ;
         padding: 0px;
+        /* border: 1px solid red; */
+        column-gap: 30px;
+        
+        align-items: center;
+    }
+    div.container_middle{
+        /* margin-top: 48px; */
+        /* border: 1px solid blue; */
+        display: grid;
+        padding: 0px;
+        /* grid-template-columns: 158px 410px ; */
+        /* flex-direction: column;  */
+        /* gap: 10px; */
+        row-gap: 30px;
     }
     .sub_title{
+        
         margin-top: 0px;
-        margin-bottom: 30px;
+        /* margin-bottom: 30px; */
         font-weight: 500;
         font-size: 16px;
         margin-left: 30px;
-        width: 100px;
+        /* width: 100px; */
         text-align: start;
-        
+        align-items: center;
     }
     .sub_text{
-        margin-top: 5px;
+        /* margin-top: 5px; */
         margin-bottom: 44px;
         font-size: 16px;
         font-weight: 500;
+        align-items: center;
+
+    }
+    .sub_text2{
+        /* margin-top: 5px; */
+        /* margin-bottom: 44px; */
+        font-size: 16px;
+        text-align: left;
+        font-weight: 500;
+        
+    /* margin-left: 30px; */
+        /* align-items: center; */
 
     }
     .input_box{
+            /* margin-top: 15px; */
             border-radius: 8px;
             border:1px solid #D2D2D2;
-            width: 380px;
+            /* width: 380px; */
+            /* margin-right: 30px; */
             height: 48px;
             display: flex;
             align-items: center;
             padding: 0px;
+            /* border: 1px solid orange; */
             margin-left: 36px;
         }
     .input_box input::placeholder{
@@ -184,7 +220,8 @@ export default {
     .next_button {
     color: #FFFFFF;
     background-image: var(--gradient);
-    margin-top: 20px;
+    
+    margin-top: 44px;
     width: 508px;
     height: 60px;
     font-weight: 500;
@@ -203,5 +240,8 @@ export default {
         outline: none;
         padding: 0px;
      }
+.icon{
+  margin-left: 12px; 
+}
 
 </style> 

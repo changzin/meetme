@@ -111,6 +111,7 @@ export default {
         font-weight: 500px;
         font-size: 16px;
         color: #111111;
+        text-align: start;
         /* width: 100px; */
         margin-left: 20px;
     }
@@ -130,6 +131,7 @@ export default {
     width: 508px;
     height: 60px;
     font-size: 20px;
+    font-weight: 500;
     border-width: 0;
     border-radius: 8px;
 }
