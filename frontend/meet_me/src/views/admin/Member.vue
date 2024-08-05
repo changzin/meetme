@@ -1,8 +1,8 @@
 <template>
 <div class="web_body">
     <AdminHeader />
-    <MemberReportModal :data="this.reportData"/>
-    <MemberPayModal :data="this.payData"/>
+    <MemberReportModal :data="this.reportData" v-if="reportModalVisible" @close="closeReportModal()"/>
+    <MemberPayModal :data="this.payData" v-if="payModalVisible" @close="closePayModal()"/>
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
@@ -83,7 +83,9 @@ export default {
             keyword: "",
             prevKeyword: "",
             reportData: {},
-            payData:{}
+            payData:{},
+            payModalVisible: false,
+            reportModalVisible: false
         }
     },
     methods: {
@@ -156,7 +158,10 @@ export default {
             }
             let result = await this.$api("/user/report", requestBody, "POST");
             this.reportData = result;
-            this.$store.commit("setModalOn");
+            this.reportModalVisible = true;
+        },
+        closeReportModal(){
+            this.reportModalVisible = false;
         },
         async viewPayModal(user_id){
             let requestBody = {
@@ -164,8 +169,11 @@ export default {
             }
             let result = await this.$api("/user/payment", requestBody, "POST");
             this.payData = result;
-            console.log(this.$store.state.modalOn2);
-            this.$store.commit("setModalOn2");
+            
+            this.payModalVisible = true;
+        },
+        closePayModal(){
+            this.payModalVisible = false;
         }
     },
     async created(){
