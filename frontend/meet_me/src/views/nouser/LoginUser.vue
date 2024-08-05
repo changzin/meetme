@@ -20,7 +20,7 @@
                     <img src="/icon/login/checkbox.svg" class="icon_login" v-if="!remain" @click="toggleRemain">
                     <img src="/icon/login/checkbox_on.svg" class="icon_login" v-if="remain" @click="toggleRemain">
                     <p class="option1">로그인 상태 유지</p>
-                    <p class="option2">회원가입</p>
+                    <p class="option2" @click="goToSignUp">회원가입</p>
                     <p class="option3">비밀번호를 잊으셨나요?</p>
                 </div>
                 <div class="line-container" style="width: 346px;">
@@ -199,6 +199,10 @@ export default {
             if (this.remain){
                 await this.$store.commit("user", {accessToken: accessToken});
             }
+        },
+
+        goToSignUp(){
+            this.$router.push({name:"signup"})
         }
     }
 }

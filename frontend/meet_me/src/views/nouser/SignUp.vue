@@ -12,7 +12,7 @@
                 </div>
                 <form class="input_box" style="margin-bottom: 20px;">
                     <img src="icon/login/user.svg" class="icon">
-                    <input type="text" class="input_text" placeholder="이메일">
+                    <input type="text" class="input_text" placeholder="이메일" v-model="email">
                 </form>
             </div>
             <div class="box">
@@ -21,7 +21,7 @@
                 </div>
                 <form class="input_box" style="margin-bottom: 20px;">
                     <img src="/icon/login/password.svg" class="icon">
-                    <input type="password" class="input_text" placeholder="비밀번호">
+                    <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
                 </form>
             </div>
             <div class="box">
@@ -30,24 +30,91 @@
                 </div>
                 <form class="input_box" style="margin-bottom: 20px;">
                     <img src="/icon/login/password.svg" class="icon">
-                    <input type="password" class="input_text" placeholder="비밀번호 확인">
+                    <input type="password" class="input_text" placeholder="비밀번호 확인" v-model="passwordCheck">
                 </form>
             </div>
-            <input type="submit" class="next_button" style="margin-bottom: 324px;" value="이메일 인증하러 가기">
+            <input type="submit" class="next_button" style="margin-bottom: 324px;" value="이메일 인증하러 가기" @click="emailVerify">
         </div>
     </div>
 </div>
 
 </template>
 <script>
+import { firebaseApp } from "../../util/firebase";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 export default {
     data(){
         return{
-            
+            email: "",
+            password: "",
+            passwordCheck: "",
         }
     },
     methods:{
-       
+        async emailVerify(){
+            try{                
+                // 이메일, 패스워드 검증
+                if (!this.verifyUser()){
+                    alert("값 입력 검증 실패");
+                    return;
+                }
+                let requestBody = {
+                    "user_email": this.email
+                }
+                // 이메일 중복체크
+                let result = await this.$api("/user/duplicatecheck", requestBody, "POST");
+                if(result.status==400){
+                    throw new Error("이메일이 중복되었습니다.")
+                }
+                requestBody = {
+                    "user_email": this.email,
+                    "type": "local"
+                }
+                // 회원가입 진행
+
+                // DB 계정 생성
+                result = await this.$api("/user/signup", requestBody, "POST");
+                if(result.status!=201){
+                    throw new Error("에러가 발생하였습니다. 다시 시도해주세요.")
+                }
+
+                // firebase 계정
+                const auth = getAuth(firebaseApp);
+                    createUserWithEmailAndPassword(auth, this.email, this.password)
+                        .then((userCredential) => {
+                            const user = userCredential.user;
+                            console.log(user);
+                            this.$router.push({name: "emailcheck"});
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            alert("firebase 오류입니다. 처음부터 다시 시도해 주십시오.");
+                        });
+            }
+            catch(err){
+                console.error(err);
+                alert(err.message);
+            }
+        },
+        verifyUser(){
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+            let userEmailVerify = true;
+            let userPasswordVerify = true;
+
+            if (this.email == "" || !emailRegex.test(this.email) || this.email.length > 100){
+                userEmailVerify = false;
+            }
+            else{
+                userEmailVerify = true;
+            }
+            if (this.password != this.passwordCheck || this.password == "" || this.password.length < 8 || this.password.length > 30){
+                userPasswordVerify = false;
+            }
+            else{
+                userPasswordVerify = true;
+            }
+            return userEmailVerify && userPasswordVerify;
+        },
     }
 }
 </script>

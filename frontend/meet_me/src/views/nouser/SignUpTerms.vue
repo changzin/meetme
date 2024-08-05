@@ -9,8 +9,8 @@
                 <div class="sub_title">
                     <div class="sub_title_text col-9">전체동의</div>
                     <button class="check_box" @click="toggleallcheck()">
-                        <img src="/icon/signup/checkbox.svg" class="check" v-if="!ischeck">
-                        <img src="/icon/signup/checkbox_on.svg" class="check" v-if="ischeck">
+                        <img src="/icon/signup/checkbox.svg" class="check" v-if="!isAllChecked">
+                        <img src="/icon/signup/checkbox_on.svg" class="check" v-if="isAllChecked">
                     </button>
                 </div>
                 <hr class="sub_line">
@@ -22,9 +22,9 @@
                         이용약관 동의
                     </div>
                     <img class="terms_icon" src="/icon/signup/i.svg" >
-                    <button class="terms_check_box" @click="toggletermscheck()">
-                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!istermscheck">
-                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="istermscheck">
+                    <button class="terms_check_box" @click="toggleEssentialTermscheck(0)">
+                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!essentialTerms[0]">
+                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="essentialTerms[0]">
                     </button>
                 </div>
                 <div class="terms_box" style="margin-bottom: 28px;">
@@ -35,9 +35,9 @@
                         개인정보 수집 및 이용 동의
                     </div>
                     <img src="/icon/signup/i.svg" class="terms_icon">
-                    <button class="terms_check_box" @click="toggletermscheck()">
-                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!istermscheck">
-                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="istermscheck">
+                    <button class="terms_check_box" @click="toggleEssentialTermscheck(1)">
+                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!essentialTerms[1]">
+                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="essentialTerms[1]">
                     </button>
                 </div>
                 <div class="terms_box" style="margin-bottom: 28px;">
@@ -48,9 +48,9 @@
                         위치기반 서비스 약관 동의
                     </div>
                     <img src="/icon/signup/i.svg" class="terms_icon">
-                    <button class="terms_check_box" @click="toggletermscheck()">
-                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!istermscheck">
-                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="istermscheck">
+                    <button class="terms_check_box" @click="toggleInEssentialTermscheck(0)">
+                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!inEssentialTerms[0]">
+                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="inEssentialTerms[0]">
                     </button>
                 </div>
                 <div class="terms_box" style="margin-bottom: 28px;">
@@ -58,16 +58,16 @@
                         선택
                     </div>
                     <div class="clause_text">
-                        종교정보 수집 동의
+                        카메라 접근 허가
                     </div>
                     <img src="/icon/signup/i.svg" class="terms_icon">
-                    <button class="terms_check_box" @click="toggletermscheck()">
-                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!istermscheck">
-                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="istermscheck">
+                    <button class="terms_check_box" @click="toggleInEssentialTermscheck(1)">
+                        <img src="/icon/signup/checkbox.svg" class="terms_check" v-if="!inEssentialTerms[1]">
+                        <img src="/icon/signup/checkbox_on.svg" class="terms_check" v-if="inEssentialTerms[1]">
                     </button>
                 </div>
 
-                <input type="submit" class="next_button" style="margin-bottom: 275px;" value="동의하고 다음 단계로 진행하기">
+                <input type="submit" class="next_button" style="margin-bottom: 275px;" value="동의하고 다음 단계로 진행하기" @click="goToSignUp">
             </div>
         </div>
     </div>
@@ -76,29 +76,92 @@
 export default {
     data(){
         return{
-            ischeck: false,
-            istermscheck: false,
+            isAllChecked: false,
+            essentialTerms:[false, false],
+            inEssentialTerms: [false, false],
         }
     },
     methods:{
         toggleallcheck(){
-            this.ischeck = !this.ischeck;
+            if (!this.isAllChecked){
+                for(let i in this.essentialTerms){
+                    this.essentialTerms[i] = true;
+                }
+                for(let i in this.inEssentialTerms){
+                    this.inEssentialTerms[i] = true;
+                }
+                this.isAllChecked = true;
+            }
+            else{
+                for(let i in this.essentialTerms){
+                    this.essentialTerms[i] = false;
+                }
+                for(let i in this.inEssentialTerms){
+                    this.inEssentialTerms[i] = false;
+                }
+                this.isAllChecked = false;
+            }
         },
-        toggletermscheck(){
-            this.istermscheck = !this.istermscheck;
+        toggleEssentialTermscheck(input){
+            this.essentialTerms[input] = !this.essentialTerms[input];
+            if(this.checkAllTermsChecked()){
+                this.isAllChecked = true;
+            }
+            else{
+                this.isAllChecked = false;
+            }
+        },
+        toggleInEssentialTermscheck(input){
+            this.inEssentialTerms[input] = !this.inEssentialTerms[input];
+            if(this.checkAllTermsChecked()){
+                this.isAllChecked = true;
+            }
+            else{
+                this.isAllChecked = false;
+            }
+        },
+        checkAllTermsChecked(){
+            let checked = true;
+            for(let i of this.essentialTerms){
+                if (!i){
+                    checked = false;
+                }
+            }
+            for(let i of this.inEssentialTerms){
+                if (!i){
+                    checked = false;
+                }
+            }
+            return checked;
+        },
+        goToSignUp(){
+            try{
+                let checked = true;
+                for(let i of this.essentialTerms){
+                    if (!i){
+                        checked = false;
+                    }
+                }
+                if (checked){
+                    this.$router.push({name: "signup"});
+                }
+                else{
+                    alert("필수 동의사항에 동의하셔야 회원가입을 진행할 수 있습니다.");
+                }
+            }
+            catch(err){
+                console.error(err);
+            }
         }
     }
 }
 </script>
-
-      
 
 <style scoped>
     .container0 {
     width: 600px;
     display: grid;
     align-content: center;
-    
 }
 
 .card_box {

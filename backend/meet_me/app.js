@@ -23,7 +23,7 @@ let dir = path.join(__dirname, `./uploads`);
 if(!fs.existsSync(dir)){
     fs.mkdirSync(dir);
 }
-dir = path.join(__dirname, `./uploads/user`);
+dir = path.join(__dirname, `./uploads/profile`);
 if(!fs.existsSync(dir)){
     fs.mkdirSync(dir);
 }
