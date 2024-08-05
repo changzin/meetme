@@ -26,8 +26,12 @@ exports.userList = async (req, res)=>{
                     u.user_email,
                     u.user_nickname,
                     u.user_block,
-                    (SELECT COUNT(*) FROM report WHERE user_id2 = u.user_id GROUP BY user_id2) as reportCount,
-                    (SELECT SUM(payment_price) FROM payment WHERE u.user_id = user_id GROUP BY user_id) as payment
+                    (SELECT COUNT(*) 
+                        FROM report 
+                        WHERE user_id2 = u.user_id GROUP BY user_id2) as reportCount,
+                    (SELECT SUM(coin_product_price) 
+                        FROM payment JOIN coin_product ON payment.coin_product_id = coin_product.coin_product_id
+                        WHERE u.user_id = user_id GROUP BY user_id) as payment
                 FROM 
                     user u
                 WHERE
@@ -209,11 +213,13 @@ exports.userPayment = async(req, res)=>{
         const userId = req.body.user_id;
 
         query = `SELECT 
-                    payment_price, payment_code
+                    coin_product.coin_product_price AS payment_price, payment.payment_code
                 FROM 
                     payment
+                JOIN 
+                    coin_product ON payment.coin_product_id=coin_product.coin_product_id
                 WHERE 
-                    user_id=? ORDER BY payment_create_date`;
+                    payment.user_id=? ORDER BY payment.payment_create_date`;
         result = await db(conn, query, [userId]);
 
         responseBody = {
@@ -520,8 +526,6 @@ exports.userLogin = async(req, res)=>{
             query = `SELECT user_id, user_profile_entered
                     FROM user 
                     WHERE user_email = ? 
-                        AND user_email_verified = 'T' 
-                        AND user_block='F' 
                         AND user_type='admin'`;
             result = await db(conn, query, [email]);
             if (result.length == 1){
