@@ -8,45 +8,24 @@
             <div class="sub_title"> 
                 특징을 선택해주세요
             </div>
+            
+            
             <div class="feature_box">
-                <div class="select_box">뭐든 잘먹어요</div>
-                <div class="select_box">패션 센스가 좋아요</div>
-                <div class="select_box">대화를 잘해요</div>
-                <div class="select_box">요리를 잘해요</div>
-                <div class="select_box">혼자 잘 놀아요</div>
-                <div class="select_box">유머 감각이 있어요</div>
-                <div class="select_box">표현을 잘해요</div>
-                <div class="select_box">웃음이 많아요</div>
-                <div class="select_box">운동을 좋아해요</div>
-                <div class="select_box">엉덩이가 예뻐요</div>
-                <div class="select_box">쌍커플이 없는 눈</div>
-                <div class="select_box">손이 예뻐요</div>
-                <div class="select_box">이야기를 잘 들어줘요</div>
-                <div class="select_box">높은 경제력</div>
-                <div class="select_box"> 표연을 잘해요</div>
-                <div class="select_box">허세 없어요</div>
-                <div class="select_box">목소리가 좋아요</div>
-                <div class="select_box">배려심이 깊어요</div>
-                <div class="select_box">긍정적인 마인드</div>
-                <div class="select_box">섹시한 두뇌</div>
-                <div class="select_box">장난기가 많아요</div>
-                <div class="select_box">섬세해요</div>
-                <div class="select_box">다정해요</div>
-                <div class="select_box">솔직해요</div>
-                <div class="select_box">보조개</div>
-                <div class="select_box">체력이 좋아요</div>
-                <div class="select_box">섹시한 타투</div>
-                <div class="select_box">오똑한 콧날</div>
-                <div class="select_box">털털해요</div>
-                <div class="select_box">큰 눈</div>
-                <div class="select_box">다리가 예뻐요</div>
-                <div class="select_box">웃음이 많아요</div>
-                <div class="select_box">게임을 잘해요</div>
-                <div class="select_box">노래를 잘해요</div>
-                <div class="select_box">재주가 좋아요</div>
-                <div class="select_box">비율이 좋아요</div>
-                <div class="select_box">피부 미인</div>
+                <!-- <div class="select_box" 
+                v-for="feature in userFeature" :key="feature"
+                :class="{'select_box': selectedValues.includes(feature.user_feature_value),'visble_select_box' : !selectedValues.includes(feature.user_feature_value)}" 
+                @click="setActive(feature)" >
+                    {{feature.user_feature_value }}
 
+                </div> -->
+                <div class="select_box" 
+                v-for="feature in userFeature" :key="feature.user_feature_id"
+                :class="{'select_box': selectedIds.includes(feature.user_feature_id),'visble_select_box' : !selectedIds.includes(feature.user_feature_id)}" 
+                @click="setActive(feature)" >
+                    {{feature.user_feature_value }}
+
+                    <!-- 클릭한거 대상으로  변수를 지정해주고  클릭한 것의 id를 post해준다. -->
+                </div>
             </div>
  
             <div class="container_bottom">
@@ -64,24 +43,81 @@ export default {
         return{
             user_feature_id:[],
             user_feature_value:[],
+            userFeatureIds:[],
+            userFeature:{},
+            activeInput:[],
+            selectedValues : [],
+            selectedIds : [],
+            //user아직 없음
+            user_id : 2,
         }
     },
     computed:{
     },
+    created(){
+      this.fetchFeature();
+    },
+
     methods:{
+    //     setActive(inputName){
+    //     if(this.selectedValues.includes(inputName)){
+    //         return;
+    //     }
+    //     if(this.selectedValues.length >= 4){
+    //         this.selectedValues.shift();
+    //     }
+    //     this.selectedValues.push(inputName);
+    //     //id 추출
+    //     this.userFeature.filter(feature => this.selectedValues.includes(feature.user_feature_value))
+    //     .map(feature => feature.user_feature_id);
+
+    //     console.log(this.selectedValues)
+    //     console.log(this.selectedIds);
+    //    },
+        setActive(feature){
+          const index = this.selectedIds.indexOf(feature.user_feature_id);
+          if(index === -1){
+            if(this.selectedIds.length >= 4){
+                this.selectedIds.shift ();
+                this.userFeatureIds.shift();
+            }
+            this.selectedIds.push(feature.user_feature_id);
+            this.userFeatureIds.push({user_feature_id: feature.user_feature_id})
+          }  
+          console.log(this.selectedIds);
+          console.log(this.userFeatureIds);
+        },
+
+
+       clearActive(){
+        this.activeInput = null;
+       },
         async fetchFeature(){
             const requestBody = {}
             const response = await this.$api(`/userFeature/list`,requestBody,"GET")
             console.log(response);
             
             if(response.status == 200){
-                const getFeature = response.userFeature;
-                console.log(getFeature);
+                this.userFeature = response.userFeature;
+                console.log(this.userFeature);
             }
+
+        },
+        async postUserFeature(){
+            const requestBody ={
+                user_id : this.user_id,
+                user_feature_id : this.selectedIds
+            }
+            
+            const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
+            console.log(featureId);
         }
 
-    }
-}
+
+        
+    },
+} 
+
 </script>
 
       
@@ -157,6 +193,7 @@ export default {
         align-content: center;
         justify-content: center;
         height: 40px;
+        background: none;
         border-radius: 8px;
         color: #888888;
         text-align: center;
