@@ -11,13 +11,6 @@
             
             
             <div class="feature_box">
-                <!-- <div class="select_box" 
-                v-for="feature in userFeature" :key="feature"
-                :class="{'select_box': selectedValues.includes(feature.user_feature_value),'visble_select_box' : !selectedValues.includes(feature.user_feature_value)}" 
-                @click="setActive(feature)" >
-                    {{feature.user_feature_value }}
-
-                </div> -->
                 <div class="select_box" 
                 v-for="feature in userFeature" :key="feature.user_feature_id"
                 :class="{'select_box': selectedIds.includes(feature.user_feature_id),'visble_select_box' : !selectedIds.includes(feature.user_feature_id)}" 
@@ -29,7 +22,7 @@
             </div>
  
             <div class="container_bottom">
-                <button class="next">다음으로</button>
+                <button class="next" @click="postUserFeature()">다음으로</button>
             </div>
         </div>
     </div>
@@ -44,8 +37,8 @@ export default {
             user_feature_id:[],
             user_feature_value:[],
             userFeatureIds:[],
+            userFeatureId : {},
             userFeature:{},
-            activeInput:[],
             selectedValues : [],
             selectedIds : [],
             //user아직 없음
@@ -59,33 +52,17 @@ export default {
     },
 
     methods:{
-    //     setActive(inputName){
-    //     if(this.selectedValues.includes(inputName)){
-    //         return;
-    //     }
-    //     if(this.selectedValues.length >= 4){
-    //         this.selectedValues.shift();
-    //     }
-    //     this.selectedValues.push(inputName);
-    //     //id 추출
-    //     this.userFeature.filter(feature => this.selectedValues.includes(feature.user_feature_value))
-    //     .map(feature => feature.user_feature_id);
-
-    //     console.log(this.selectedValues)
-    //     console.log(this.selectedIds);
-    //    },
         setActive(feature){
           const index = this.selectedIds.indexOf(feature.user_feature_id);
           if(index === -1){
             if(this.selectedIds.length >= 4){
                 this.selectedIds.shift ();
-                this.userFeatureIds.shift();
             }
             this.selectedIds.push(feature.user_feature_id);
-            this.userFeatureIds.push({user_feature_id: feature.user_feature_id})
+            
           }  
           console.log(this.selectedIds);
-          console.log(this.userFeatureIds);
+          
         },
 
 
@@ -104,13 +81,22 @@ export default {
 
         },
         async postUserFeature(){
-            const requestBody ={
+
+            if(this.selectedIds.length >=4){
+                const requestBody ={
                 user_id : this.user_id,
                 user_feature_id : this.selectedIds
+                }
+                const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
+                console.log(featureId);
+                //다음 페이지로 넘어가는 함수 추가 
+
+            }else{
+                alert("특징을 4개 선택해주세요")
             }
             
-            const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
-            console.log(featureId);
+            
+
         }
 
 
