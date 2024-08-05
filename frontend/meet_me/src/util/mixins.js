@@ -8,21 +8,32 @@ export default{
     methods: {
         async $api(url, data = {}, method = "GET"){
             console.log(url, data, method);
+            let errorResult;
             const result = (await axios({
                 method: method,
                 url,
                 data: data
             })
+            .then(result=>{
+                return result.data;
+            })
             .catch(e=>{
                 console.error(e);
-            })).data;
+                errorResult = e.response.data;
+            }));
 
-            console.log(result);
-            return result;
+            if (!errorResult){
+                console.log(result);
+                return result;
+            }
+            else{
+                console.log(errorResult)
+                return errorResult;
+            }
         },
         
         $getAccessToken(){
-            const accessToken1 = this.$cookies.get("weddingCookie");
+            const accessToken1 = this.$cookies.get("meetMeCookie");
             const accessToken2 = this.$store.state.user;
 
             let accessToken = (accessToken2) ? accessToken2 : null;
@@ -32,7 +43,7 @@ export default{
 
         // 쿠키와 localStorage의 accessToken(유저정보)를 지워주는 함수
         $logoutUser(){
-            this.$cookies.remove("weddingCookie")
+            this.$cookies.remove("meetMeCookie")
             this.$store.commit("user", null);            
         },
 

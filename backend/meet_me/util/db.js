@@ -25,6 +25,7 @@ exports.db = async (conn, query, param = []) => {
         return result[0];
     }
     catch(err){
+        console.error(err);
         err.status = 500;
         err.message = "DB 에러입니다";
         throw err;

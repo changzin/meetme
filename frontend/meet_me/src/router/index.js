@@ -31,6 +31,7 @@ import UserFeature from '../views/profile/UserFeature.vue'
 
 import RecommendList from '../views/RecommendList.vue'
 import ProfileDetail from '../views/profile/ProfileDetail.vue'
+import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
 
 const routes = [
   {
@@ -85,6 +86,11 @@ const routes = [
     path:'/profile',
     name:'profile',
     component:ProfileInput
+  },
+  {
+    path:'/profilephoto',
+    name:'profilephoto',
+    component:ProfilePhoto
   },
   {
     path:'/profile/idol',

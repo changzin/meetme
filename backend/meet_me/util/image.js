@@ -300,7 +300,7 @@ exports.uploadDelete = async(req, res, next)=>{
 }
 
 
-function writeFile(file, mode, id, ext){
+exports.writeFile = (file, mode, id, ext) => {
     const date = getToday();
 
     // 저장될 파일 이름 생성
