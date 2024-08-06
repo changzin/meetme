@@ -55,16 +55,22 @@ export default {
 
     methods:{
         setActive(feature){
-          const index = this.selectedIds.indexOf(feature.user_feature_id);
-          if(index === -1){
-            if(this.selectedIds.length >= 4){
-                this.selectedIds.shift ();
+            const index = this.selectedIds.indexOf(feature.user_feature_id);
+
+            if(index === -1){
+                if(this.selectedIds.length >= 8){
+                    this.selectedIds.pop();
+                }
+                this.selectedIds.push(feature.user_feature_id);
+                
+            }else{
+                this.selectedIds.splice(index, 1); 
             }
-            this.selectedIds.push(feature.user_feature_id);
+            // if(index === 1){
+            //     this.selectedIds.
+            // }
+            console.log(this.selectedIds);
             
-          }  
-          console.log(this.selectedIds);
-          
         },
 
 
@@ -100,7 +106,7 @@ export default {
                 })
 
             }else{
-                alert("특징을 4개 선택해주세요")
+                alert("특징 4개이상 8개 이하 선택해주세요")
             }
             
             

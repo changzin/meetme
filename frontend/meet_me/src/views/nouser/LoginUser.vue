@@ -48,7 +48,6 @@
   
 <script>
 import { firebaseApp } from "../../util/firebase";
-// import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export default {
@@ -74,6 +73,7 @@ export default {
                 }
                 catch(err){
                     // 파이어베이스에서 인증 실패 (signInWithEmailAndPassword)할 경우를 위한 catch문이다.
+                    alert("일치하는 계정이 없습니다!")
                     console.error(err);
                 }
             },
