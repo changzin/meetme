@@ -151,8 +151,6 @@ exports.handleFileUpload = (req, res, next) => {
 
           // 파일 저장 처리
           req.files.forEach(async (file) => {
-            dest = "uploads/";
-           
             const timestamp = getToday();
             const randomBytes = crypto.randomBytes(16).toString("hex");
             const ext = path.extname(file.originalname);
