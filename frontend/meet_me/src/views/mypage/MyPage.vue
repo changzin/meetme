@@ -3,7 +3,7 @@
         <div class="container">
             <div class="mypage_container">
                 <div class="profile_box">
-                    <img class="mini_profile" src="/model.jpg">
+                    <img class="mini_profile" :src="this.$imageFileFormat(userData.user_image_path)">
                     <div class="name_title">
                         <div class="name">
                             {{userData.user_nickname}}
