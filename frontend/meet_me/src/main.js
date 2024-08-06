@@ -14,8 +14,13 @@ import AdminHeader from './components/AdminHeader.vue';
 import ChatModal from './views/chat/ChatModal.vue'
 import MemberReportModal from './components/MemberReportModal.vue'
 import MemberPayModal from './components/MemberPayModal.vue'
+
 import ImageModal from './components/ImageModal.vue'
 import ProfileImageModal from './components/ProfileImageModal.vue'
+
+import AlertModal from './components/AlertModal.vue'
+
+
 const app = createApp(App);
 
 app.use(store);
@@ -28,8 +33,13 @@ app.component('MeetHeader', MeetHeader);
 app.component('AdminHeader', AdminHeader);
 app.component('MemberReportModal', MemberReportModal);
 app.component('MemberPayModal', MemberPayModal);
+
 app.component('ImageModal', ImageModal);
 app.component('ProfileImageModal', ProfileImageModal);
+
+app.component('AlertModal', AlertModal);
+
+
 app.component('ChatModal', ChatModal);
 
 
