@@ -13,15 +13,15 @@
                     <img src="/icon/login/password.svg" class="icon" >
                     <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
                 </form>
+                
                 <input type="submit" class="login_button" value="로그인" @click="login">
                     
-                
                 <div class="option" >
                     <img src="/icon/login/checkbox.svg" class="icon_login" v-if="!remain" @click="toggleRemain">
                     <img src="/icon/login/checkbox_on.svg" class="icon_login" v-if="remain" @click="toggleRemain">
                     <p class="option1">로그인 상태 유지</p>
                     <p class="option2" @click="goToSignUp">회원가입</p>
-                    <p class="option3">비밀번호를 잊으셨나요?</p>
+                    <p class="option3" @click="goToForgotPassword">비밀번호를 잊으셨나요?</p>
                 </div>
                 <div class="line-container" style="width: 346px;">
                     <hr>
@@ -203,6 +203,9 @@ export default {
 
         goToSignUp(){
             this.$router.push({name:"signup"})
+        },
+        goToForgotPassword(){
+            this.$router.push({name:"forgotpassword"})
         }
     }
 }
