@@ -1,12 +1,13 @@
-const db = require("../util/db");
+const {getConn, db} = require("../util/db");
 
 // requestBody의 accessToken을 중간에서 user_id로 넣어주는 미들웨어, accessToken이 필요한 컨트롤러에서 인증 처리 + user_id를 찾는 중복 쿼리를 줄일 수 있다.
 exports.loginCheck = async (req, res, next) => {
+  const conn = await getConn();
   try {
     // access_token은 유저를 식별하기 위해 DB에 들어간 값이다. 이걸로 쿼리문을 날려 user_id를 식별할 수 있다.
     const accessToken = req.body.access_token;
     query = "SELECT user_id FROM user WHERE user_access_token = ?";
-    result = await db(query, [accessToken]);
+    result = await db(conn, query, [accessToken]);
     const userId = result[0].user_id;
 
     // userId가 null이면 에러고, 발생하면 requestBody에 넣어서 컨트롤러로 넘겨 준다.
@@ -23,6 +24,7 @@ exports.loginCheck = async (req, res, next) => {
       message: "로그인 상태가 아닙니다.",
     };
     res.json(responseBody);
+    return;
   }
 };
 

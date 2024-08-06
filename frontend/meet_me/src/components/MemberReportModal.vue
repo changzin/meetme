@@ -1,7 +1,6 @@
 <template>
   <div>
     <div
-      v-if="this.$store.state.modalOn"
       class="modal-overlay"
       @click="handleOverlayClick"
     >
@@ -59,13 +58,13 @@ export default {
   },
   methods: {
     x_click() {
-      this.$store.commit("setModalOff");
+      this.$emit("close");
     },
 
     handleOverlayClick(event) {
       // 모달 팝업이 아닌 영역을 클릭한 경우 모달을 닫음
       if (!this.$refs.modalPopup.contains(event.target)) {
-        this.$store.commit("setModalOff");
+        this.$emit("close");
       }
     },
   },

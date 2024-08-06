@@ -8,49 +8,21 @@
             <div class="sub_title"> 
                 특징을 선택해주세요
             </div>
+            
+            
             <div class="feature_box">
-                <div class="select_box">뭐든 잘먹어요</div>
-                <div class="select_box">패션 센스가 좋아요</div>
-                <div class="select_box">대화를 잘해요</div>
-                <div class="select_box">요리를 잘해요</div>
-                <div class="select_box">혼자 잘 놀아요</div>
-                <div class="select_box">유머 감각이 있어요</div>
-                <div class="select_box">표현을 잘해요</div>
-                <div class="select_box">웃음이 많아요</div>
-                <div class="select_box">운동을 좋아해요</div>
-                <div class="select_box">엉덩이가 예뻐요</div>
-                <div class="select_box">쌍커플이 없는 눈</div>
-                <div class="select_box">손이 예뻐요</div>
-                <div class="select_box">이야기를 잘 들어줘요</div>
-                <div class="select_box">높은 경제력</div>
-                <div class="select_box"> 표연을 잘해요</div>
-                <div class="select_box">허세 없어요</div>
-                <div class="select_box">목소리가 좋아요</div>
-                <div class="select_box">배려심이 깊어요</div>
-                <div class="select_box">긍정적인 마인드</div>
-                <div class="select_box">섹시한 두뇌</div>
-                <div class="select_box">장난기가 많아요</div>
-                <div class="select_box">섬세해요</div>
-                <div class="select_box">다정해요</div>
-                <div class="select_box">솔직해요</div>
-                <div class="select_box">보조개</div>
-                <div class="select_box">체력이 좋아요</div>
-                <div class="select_box">섹시한 타투</div>
-                <div class="select_box">오똑한 콧날</div>
-                <div class="select_box">털털해요</div>
-                <div class="select_box">큰 눈</div>
-                <div class="select_box">다리가 예뻐요</div>
-                <div class="select_box">웃음이 많아요</div>
-                <div class="select_box">게임을 잘해요</div>
-                <div class="select_box">노래를 잘해요</div>
-                <div class="select_box">재주가 좋아요</div>
-                <div class="select_box">비율이 좋아요</div>
-                <div class="select_box">피부 미인</div>
+                <div class="select_box" 
+                v-for="feature in userFeature" :key="feature.user_feature_id"
+                :class="{'select_box': selectedIds.includes(feature.user_feature_id),'visble_select_box' : !selectedIds.includes(feature.user_feature_id)}" 
+                @click="setActive(feature)" >
+                    {{feature.user_feature_value }}
 
+                    <!-- 클릭한거 대상으로  변수를 지정해주고  클릭한 것의 id를 post해준다. -->
+                </div>
             </div>
  
             <div class="container_bottom">
-                <button class="next">다음으로</button>
+                <button class="next" @click="postUserFeature()">다음으로</button>
             </div>
         </div>
     </div>
@@ -64,24 +36,74 @@ export default {
         return{
             user_feature_id:[],
             user_feature_value:[],
+            userFeatureIds:[],
+            userFeatureId : {},
+            userFeature:{},
+            selectedValues : [],
+            selectedIds : [],
+            //user아직 없음
+            user_id : 2,
         }
     },
     computed:{
     },
+    created(){
+      this.fetchFeature();
+    },
+
     methods:{
+        setActive(feature){
+          const index = this.selectedIds.indexOf(feature.user_feature_id);
+          if(index === -1){
+            if(this.selectedIds.length >= 4){
+                this.selectedIds.shift ();
+            }
+            this.selectedIds.push(feature.user_feature_id);
+            
+          }  
+          console.log(this.selectedIds);
+          
+        },
+
+
+       clearActive(){
+        this.activeInput = null;
+       },
         async fetchFeature(){
             const requestBody = {}
             const response = await this.$api(`/userFeature/list`,requestBody,"GET")
             console.log(response);
             
             if(response.status == 200){
-                const getFeature = response.userFeature;
-                console.log(getFeature);
+                this.userFeature = response.userFeature;
+                console.log(this.userFeature);
             }
+
+        },
+        async postUserFeature(){
+
+            if(this.selectedIds.length >=4){
+                const requestBody ={
+                user_id : this.user_id,
+                user_feature_id : this.selectedIds
+                }
+                const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
+                console.log(featureId);
+                //다음 페이지로 넘어가는 함수 추가 
+
+            }else{
+                alert("특징을 4개 선택해주세요")
+            }
+            
+            
+
         }
 
-    }
-}
+
+        
+    },
+} 
+
 </script>
 
       
@@ -157,6 +179,7 @@ export default {
         align-content: center;
         justify-content: center;
         height: 40px;
+        background: none;
         border-radius: 8px;
         color: #888888;
         text-align: center;

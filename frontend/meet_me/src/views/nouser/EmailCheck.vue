@@ -13,7 +13,7 @@
                     이메일 인증 후 프로필을 등록하시면 첫 가입 보상 300코인과 활동을 시작할 수 있어요.<br/>우리 같이 연애해요 ^^
                 </div>
             </div>
-            <button type="button" class="nextbutton" style="margin-bottom: 438px;">
+            <button type="button" class="nextbutton" style="margin-bottom: 438px;" @click="checkEmailVerfication">
                 이메일 인증 후 프로필 등록하기
             </button>
         </div>
@@ -22,14 +22,47 @@
 
 </template>
 <script>
+import { firebaseApp } from "../../util/firebase";
+import { getAuth, sendEmailVerification } from "firebase/auth";
 export default {
     data(){
         return{
             
         }
     },
+    async created(){
+        await this.sendEmailAuth();
+    },
     methods:{
-       
+        async sendEmailAuth(){
+            try{
+                this.auth = getAuth(firebaseApp);
+                await sendEmailVerification(this.auth.currentUser);
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
+        async checkEmailVerfication() {
+            try{
+                await this.auth.currentUser.reload();
+                if (this.auth.currentUser.emailVerified) {                    
+                    const result = await this.$api("/user/emailisverified", {user_email: this.auth.currentUser.email}, "POST");
+                    if (result.status == 200){
+                        alert("이메일 인증이 완료됐습니다. 다시 로그인해주세요.")
+                        this.$router.push({name: 'profile'});
+                    }
+                    else{
+                        alert("이메일 인증에 실패했습니다. 다시 시도해주세요.")
+                    }
+                }else{
+                    alert("이메일 인증을 해주세요");
+                } 
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
     }
 }
 </script>
