@@ -4,9 +4,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const fs = require('fs');
 const path = require("path");
-const socketIo = require("socket.io");
 
 const indexRouter = require('./router');
+const socket = require("./util/socket");
 
 // .env 폴더 설정
 dotenv.config();
@@ -49,6 +49,8 @@ app.use(express.urlencoded({limit: '50mb', extended: false}));
 
 app.use('/', indexRouter);
 
-app.listen(app.get('port'), ()=>{
+const server = app.listen(app.get('port'), ()=>{
     console.log(app.get('port'), 'port listening...')
 });
+
+socket(server);
