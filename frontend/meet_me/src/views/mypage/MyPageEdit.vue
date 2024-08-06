@@ -4,7 +4,7 @@
       <div class="title">프로필 수정</div>
       <div class="profile_image">
         <div v-for="(img, i) in userData.user_image_paths" :key="i">
-          <img class="edit_profile" :src="img" />
+          <img class="edit_profile" :src="this.$imageFileFormat(userData.user_image_paths)" />
         </div>
       </div>
       <div class="profile_info">
@@ -381,7 +381,7 @@ export default {
       try {
         const result = await this.$api(
           `/user/profileinfo`,
-          { user_id: 1 },
+          {access_token: this.$getAccessToken()},
           "POST"
         );
         this.userData = result.user;
@@ -395,7 +395,6 @@ export default {
         const result = await this.$api(`/user/getcategory`, {}, "POST");
         this.categoryList = result.categoryList;
         this.featureList = result.categoryList.user_feature_values;
-        console.log(this.categoryList);
       } catch (err) {
         console.log(err);
       }
@@ -415,7 +414,7 @@ export default {
       try {
         await this.$api(
           `/user/updateprofile`,
-          { userInfo, user_id: 1 },
+          { userInfo, access_token: this.$getAccessToken() },
           "POST"
         );
         this.getUser();
@@ -457,15 +456,7 @@ export default {
         console.error("Daum Postcode 스크립트가 로드되지 않았습니다.");
         }
     },
-    // async getFeature(index){
-    //   try{
-    //     if(){
 
-    //     }
-    //   }catch(err){
-    //   console.log(err);
-    // }
-    // }
   },
 };
 </script>

@@ -23,13 +23,13 @@ router.post('/emailisverified', emailIsVerified);
 
 // UserController
 router.post('/mypageprofile', loginCheck, mypageProfile);
-router.post('/profileinfo', profileInfo);
-router.post('/getheart', getHeart);
-router.post('/sendmatching', sendMatching);
-router.post('/deletematching', deleteMatching);
-router.post('/deleteheart', deleteHeart);
-router.post('/getcategory', getCategory);
-router.post('/updateprofile', updateProfile);
+router.post('/profileinfo', loginCheck, profileInfo);
+router.post('/getheart', loginCheck, getHeart);
+router.post('/sendmatching', loginCheck, sendMatching);
+router.post('/deletematching', loginCheck, deleteMatching);
+router.post('/deleteheart', loginCheck, deleteHeart);
+router.post('/getcategory', loginCheck, getCategory);
+router.post('/updateprofile', loginCheck, updateProfile);
 
 
 router.post('/enterphoto', handleFileUpload, enterPhoto)
