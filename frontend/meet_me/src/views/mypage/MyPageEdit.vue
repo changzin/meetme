@@ -3,8 +3,8 @@
     <div class="container">
       <div class="title">프로필 수정</div>
       <div class="profile_image">
-        <div v-for="(img, i) in userData.user_image_paths" :key="i">
-          <img class="edit_profile" :src="this.$imageFileFormat(userData.user_image_paths)" />
+        <div v-for="(img, i) in 6" :key="i">
+          <img class="edit_profile" :src="profile[i] ? this.$imageFileFormat(profile[i]) : '/model.jpg'"/>
         </div>
       </div>
       <div class="profile_info">
@@ -353,6 +353,7 @@ export default {
       activeInput: null,
       categoryList: {},
       featureList: {},
+      profile : [false, false, false, false, false, false ]
     };
   },
   beforeCreate() {},
@@ -385,6 +386,7 @@ export default {
           "POST"
         );
         this.userData = result.user;
+        this.profile = result.user.user_image_paths;
         console.log(this.userData);
       } catch (err) {
         console.log(err);

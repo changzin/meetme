@@ -3,7 +3,7 @@
         <div class="container">
             <div class="mypage_container">
                 <div class="profile_box">
-                    <img class="mini_profile" :src="this.$imageFileFormat(userData.user_image_path)">
+                    <img class="mini_profile" :src="userData.user_image_path ? this.$imageFileFormat(userData.user_image_path) : '/model.jpg'">
                     <div class="name_title">
                         <div class="name">
                             {{userData.user_nickname}}
@@ -69,6 +69,7 @@ export default {
     data() {
         return {
             userData: {},
+            profile: {},
         };
     },
     async created() {
@@ -79,6 +80,7 @@ export default {
             try{
                 const result = await this.$api(`/user/mypageprofile`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
+                
                 console.log(this.userData)
             }catch(err){
                 console.log(err);

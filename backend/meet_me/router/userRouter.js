@@ -28,7 +28,7 @@ router.post('/getheart', loginCheck, getHeart);
 router.post('/sendmatching', loginCheck, sendMatching);
 router.post('/deletematching', loginCheck, deleteMatching);
 router.post('/deleteheart', loginCheck, deleteHeart);
-router.post('/getcategory', loginCheck, getCategory);
+router.post('/getcategory', getCategory);
 router.post('/updateprofile', loginCheck, updateProfile);
 
 
