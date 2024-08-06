@@ -31,6 +31,8 @@
 
 </template>
 <script>
+
+
 export default {
     data(){
         return{
@@ -84,12 +86,18 @@ export default {
 
             if(this.selectedIds.length >=4){
                 const requestBody ={
-                user_id : this.user_id,
+                //프로필 단계 진행되면 액세스토큰으로 바꾸기 현제 단계에선 일반 user_id로
+                // access_token: "a5b4d6dc-95de-4626-8ca3-bea748b8eb94",
+                userId : this.user_id,
                 user_feature_id : this.selectedIds
                 }
+                console.log(this.access_token);
                 const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
                 console.log(featureId);
                 //다음 페이지로 넘어가는 함수 추가 
+                this.$router.push({
+                    name:"profilephoto"
+                })
 
             }else{
                 alert("특징을 4개 선택해주세요")
@@ -192,11 +200,17 @@ export default {
 
     div.container_bottom{
         /* border: 1px solid red; */
+        
+        padding: 0px;
+        
+        
     }
 
     .next{
-        margin-bottom: 30px;
-        width: 540px;
+        margin-bottom: 27px;
+        /* margin-right: 30px; */
+        width: 508px;
+        
         height: 60px;
         text-align: center;
         font-size: 22px;
@@ -205,6 +219,7 @@ export default {
         background-image: var(--gradient);
         border-radius: 8px;
         border: none;
+        
     }
 
 </style> 

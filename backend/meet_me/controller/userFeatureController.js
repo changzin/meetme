@@ -48,10 +48,10 @@ exports.FeatureInsert = async (req,res) =>{
   let query = '';
   let result = [];
   let responseBody = {};
-  let user_id = req.body.user_id
+  const userId = req.body.userId;
   let user_feature_ids = req.body.user_feature_id;
   let user_feature_id 
-    console.log(user_id)
+    console.log(userId)
     console.log(user_feature_ids);
 
     
@@ -62,7 +62,7 @@ exports.FeatureInsert = async (req,res) =>{
         for(let i=0; i< user_feature_ids.length; i++){
              user_feature_id = user_feature_ids[i]; 
             query = `INSERT INTO user_feature_bridge (user_id,user_feature_id) VALUES (?,?)`;
-            result = await db(conn,query,[user_id,user_feature_id]);
+            result = await db(conn,query,[userId,user_feature_id]);
         }
         
 
