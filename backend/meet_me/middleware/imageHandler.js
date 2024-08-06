@@ -5,6 +5,8 @@ const crypto = require("crypto");
 const {getConn, db} = require("../util/db");
 const {chatGptService} = require('../util/chatGpt')
 const sharp = require('sharp');
+const { query } = require("express");
+const { deleteFile } = require("../util/image");
 // 메모리 저장소 설정
 const storage = multer.memoryStorage();
 
@@ -103,7 +105,8 @@ exports.handleFileUploadWithChatGpt = (req, res, next) => {
  * ChatGpt를 사용하지 않는 버전의 미들웨어. 
  * 사용자의 등급을 난수로 생성한다.
  */
-exports.handleFileUpload = (req, res, next) => {
+exports.handleFileUpload = async (req, res, next) => {
+  const conn = await getConn();
   try{
       upload(req, res, async (err) => {
           if (err) {
@@ -118,12 +121,11 @@ exports.handleFileUpload = (req, res, next) => {
           const chatId = req.body.chatId;
 
           //access_token으로 user_id 가져오는 작업 (폴더구조를 만들기 위함)
-          const conn = await getConn();
-          query = "SELECT user_id FROM user WHERE user_access_token = ?";
+          let query = "SELECT user_id FROM user WHERE user_access_token = ?";
           result = await db(conn, query, [accessToken]);
           const userId = result[0].user_id + "";
           req.body.userId = userId;
-
+          
           let id = null;
           req.body.image_path_list = [];
           let index = 0;
@@ -169,8 +171,176 @@ exports.handleFileUpload = (req, res, next) => {
   }
   catch(err){
       console.log(err);
+  }finally{
+      conn.release();
   }
+  
 };
+
+exports.insertPhoto = async (req, res, next) => {
+  const conn = await getConn();
+  try{
+    await conn.beginTransaction();
+      upload(req, res, async (err) => {
+          if (err) {
+            return res
+              .status(400)
+              .send({ message: "Error uploading file", error: err.message });
+          }
+      
+          // 파일 유형에 따라 경로를 설정
+          const fileType = req.body.fileType;
+          const accessToken = req.body.access_token;
+          const chatId = req.body.chatId;
+          const index = req.body.index;
+          //access_token으로 user_id 가져오는 작업 (폴더구조를 만들기 위함)
+          let query = "SELECT user_id FROM user WHERE user_access_token = ?";
+          result = await db(conn, query, [accessToken]);
+          const userId = result[0].user_id + "";
+          
+          let id = null;
+          req.body.image_path_list = [];
+
+          let dest = "uploads/";
+
+          if (fileType === "profile") {
+            dest = path.join(dest, "profile", userId);
+            id = userId;
+          } else if (fileType === "chat") {
+            dest = path.join(dest, "chats", chatId);
+            id = chatId;
+          } else {
+            // 추후 에러처리
+            console.log("no type");
+          }
+
+          // 디렉토리가 없으면 생성
+          fs.mkdirSync(dest, { recursive: true });
+
+          // 파일 저장 처리
+          req.files.forEach(async (file) => {
+            const timestamp = getToday();
+            const randomBytes = crypto.randomBytes(16).toString("hex");
+            const ext = path.extname(file.originalname);
+            const filename = `${timestamp}-${index}-${randomBytes}${ext}`;
+            const filePath = path.join(dest, filename);
+      
+            // 파일 저장 (메모리에서 디스크로)
+            fs.writeFileSync(filePath, file.buffer);
+            req.body.image_path_list.push(`${fileType}/${id}/${filename}`)
+            const db_path = `${fileType}/${id}/${filename}`;
+
+            query = "INSERT INTO user_image(user_id, user_image_path) VALUES(?,?)";
+            result = await db(conn, query, [userId, db_path]);
+
+
+          });
+        });
+        let responseBody = {
+          status: 201,
+          message: "이미지 등록 완료"
+      };
+      await conn.commit();
+      res.status(200).json(responseBody);
+  }
+  catch(err){
+      console.error(err);
+      await conn.rollback();
+      const statusCode = (err.status) ? err.status : 400;
+      responseBody = {
+          status: statusCode,
+          message: err.message
+      }
+      return res.status(statusCode).json(responseBody);
+  }finally{
+      conn.release();
+  }
+  
+}
+
+exports.updatePhoto = async (req, res, next) => {
+  const conn = await getConn();
+  try{
+    await conn.beginTransaction();
+      upload(req, res, async (err) => {
+          if (err) {
+            return res
+              .status(400)
+              .send({ message: "Error uploading file", error: err.message });
+          }
+      
+          // 파일 유형에 따라 경로를 설정
+          const fileType = req.body.fileType;
+          const accessToken = req.body.access_token;
+          const chatId = req.body.chatId;
+          const index = req.body.index;
+          const prevPath = req.body.prevPath;
+          //access_token으로 user_id 가져오는 작업 (폴더구조를 만들기 위함)
+          let query = "SELECT user_id FROM user WHERE user_access_token = ?";
+          result = await db(conn, query, [accessToken]);
+          const userId = result[0].user_id + "";
+          
+          let id = null;
+          req.body.image_path_list = [];
+
+          let dest = "uploads/";
+
+          if (fileType === "profile") {
+            dest = path.join(dest, "profile", userId);
+            id = userId;
+          } else if (fileType === "chat") {
+            dest = path.join(dest, "chats", chatId);
+            id = chatId;
+          } else {
+            // 추후 에러처리
+            console.log("no type");
+          }
+
+          // 디렉토리가 없으면 생성
+          fs.mkdirSync(dest, { recursive: true });
+
+          // 파일 저장 처리
+          req.files.forEach(async (file) => {
+            console.log(file)
+            const timestamp = getToday();
+            const randomBytes = crypto.randomBytes(16).toString("hex");
+            const ext = path.extname(file.originalname);
+            const filename = `${timestamp}-${index}-${randomBytes}${ext}`;
+            const filePath = path.join(dest, filename);
+      
+            // 파일 저장 (메모리에서 디스크로)
+            fs.writeFileSync(filePath, file.buffer);
+            req.body.image_path_list.push(`${fileType}/${id}/${filename}`)
+            const db_path = `${fileType}/${id}/${filename}`;
+
+            query = "UPDATE user_image SET user_image_path = ? WHERE user_id = ? AND user_image_path = ?";
+            result = await db(conn, query, [db_path, userId, prevPath]);
+
+            deleteFile(prevPath);
+
+          });
+        });
+        let responseBody = {
+          status: 200,
+          message: "이미지 등록 완료"
+      };
+      await conn.commit();
+      res.status(200).json(responseBody);
+  }
+  catch(err){
+      console.error(err);
+      await conn.rollback();
+      const statusCode = (err.status) ? err.status : 400;
+      responseBody = {
+          status: statusCode,
+          message: err.message
+      }
+      return res.status(statusCode).json(responseBody);
+  }finally{
+      conn.release();
+  }
+  
+}
 
 function getToday(){
     const date = new Date();

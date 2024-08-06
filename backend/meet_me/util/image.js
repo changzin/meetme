@@ -337,7 +337,7 @@ function getToday(){
     return year + month + day;
 }
 
-function deleteFile(imagePath, res){
+exports.deleteFile = (imagePath) => {
     const fullPath = path.join(__dirname, `../uploads/${imagePath}`);
     fs.unlink(fullPath, (err)=>{
         console.error(err);

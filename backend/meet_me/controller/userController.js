@@ -1,4 +1,5 @@
 const {getConn, db} = require("../util/db");
+const { deleteFile } = require("../util/image.js");
 
 exports.mypageProfile = async(req, res) => {
     const conn = await getConn();
@@ -6,7 +7,7 @@ exports.mypageProfile = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
 
         query = `SELECT u.user_nickname, u.user_age, u.user_add, g.user_grade_value, i.user_image_path
@@ -44,7 +45,7 @@ exports.profileInfo = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
 
         query = `SELECT u.user_nickname, u.user_age, u.user_add, u.user_introduction, g.user_grade_value,
@@ -86,7 +87,7 @@ exports.getCategory = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         query = `SELECT
                 (SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
                 (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
@@ -129,7 +130,7 @@ exports.updateProfile = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
         const userInfo = req.body.userInfo;
 
@@ -160,13 +161,51 @@ exports.updateProfile = async(req, res) => {
 }
 
 
+
+exports.deletePhoto = async(req, res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        await conn.beginTransaction();
+        const userId = req.body.user_id;
+        const user_image_path = req.body.user_image_path;
+        
+        query = `DELETE FROM user_image WHERE user_id = ? AND user_image_path = ?`
+                
+        result = await db(conn, query, [userId, user_image_path]);
+
+        deleteFile(user_image_path);
+
+        responseBody = {
+            status : 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+
+
 exports.getHeart = async(req, res) => {
     const conn = await getConn();
     try{
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
 
         query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching
@@ -205,7 +244,7 @@ exports.sendMatching = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
         const userId2 = req.body.user_id2;
 
@@ -247,7 +286,7 @@ exports.deleteMatching = async(req, res) => {
         let query = '';
         let result = [];
         let responseBody = {};
-
+        await conn.beginTransaction();
         const userId = req.body.user_id;
         const userId2 = req.body.user_id2;
 
@@ -363,3 +402,6 @@ exports.enterPhoto = async(req, res)=>{
         conn.release();
     }   
 }
+
+
+
