@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require("path");
 
 const indexRouter = require('./router');
+const socket = require("./util/socket");
 
 // .env 폴더 설정
 dotenv.config();
@@ -35,7 +36,7 @@ if(!fs.existsSync(dir)){
 // 포트 9090으로 설정
 app.set('port', process.env.PORT || 9090);
 // CORS
-app.use(cors(corsOption));
+// app.use(cors());
 // 개발자 모드로 설정 (수정 -> 저장 시 서버 자동 재시작)
 app.use(morgan('dev'));
 
@@ -48,6 +49,8 @@ app.use(express.urlencoded({limit: '50mb', extended: false}));
 
 app.use('/', indexRouter);
 
-app.listen(app.get('port'), ()=>{
+const server = app.listen(app.get('port'), ()=>{
     console.log(app.get('port'), 'port listening...')
 });
+
+socket(server);

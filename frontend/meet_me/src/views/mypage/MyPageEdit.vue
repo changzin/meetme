@@ -3,10 +3,70 @@
     <div class="container">
       <div class="title">프로필 수정</div>
       <div class="profile_image">
-        <div v-for="(img, i) in userData.user_image_paths" :key="i">
-          <img class="edit_profile" :src="img" />
+        <!-- <div v-for="(img, i) in 6" :key="i">
+          <img class="edit_profile" :src="profile[i] ? this.$imageFileFormat(profile[i]) : '/model.jpg'"/>
+        </div> -->
+
+        <!--새 버전의 사진 div-->
+
+        <ProfileImageModal
+          :image="selectedImage"
+          :isVisible="isModalVisible"
+          @close="isModalVisible = false"
+        />
+        <div
+          v-for="(img, index) in 6"
+          :key="index"
+          class="edit_profile"
+          @mouseenter="showOverlay(index)"
+          @mouseleave="hideOverlay(index)"
+        >
+          <!-- 사진이 존재하고, 호버 상태일 때 보이는 것. -->
+          <div
+            v-if="profile[index] && validPictureOverlayIndex === index"
+            @click.stop="showDetailView(index)"
+            class="valid-picture-overlay"
+          >
+            <img src="icon/picture/detailviewIcon.png" alt="Detail View" />
+            <img
+              src="icon/picture/editIcon.png"
+              @click.stop="openFileDialog(index)"
+              alt="Edit"
+            />
+            <img
+              v-if="photosMinimumIndex != 1"
+              src="icon/picture/trashIcon.png"
+              @click.stop="clickToTrashIcon(index)"
+              alt="Delete"
+            />
+          </div>
+          <!-- 사진 추가해야 할 때 보이는 것. -->
+          <div
+            v-if="
+              photosMinimumIndex === index && validPictureOverlayIndex === index
+            "
+            class="valid-picture-overlay"
+          >
+            <img
+              src="icon/picture/addIcon.png"
+              @click="openFileDialog(index)"
+              alt="example"
+            />
+          </div>
+          <!-- 사진 띄워주기 -->
+          <img v-if="profile[index]" :src="this.$imageFileFormat(profile[index])" class="uploaded-photo" />
         </div>
+        
       </div>
+
+      <input
+        type="file"
+        ref="fileInput"
+        accept="image/*"
+        @change="onFileChange"
+        style="display: none"
+      />
+
       <div class="profile_info">
         <div class="name">
           {{ userData.user_nickname }},{{ userData.user_age }}
@@ -81,12 +141,7 @@
           <option class="dropdown_item" value="none" selected disabled hidden>
             연봉
           </option>
-          <option
-            class="dropdown_item"
-            v-for="(annual_income, i) in categoryList.user_annual_income_values"
-            :key="i"
-            :value="i + 1"
-          >
+          <option class="dropdown_item" v-for="(annual_income, i) in categoryList.user_annual_income_values" :key="i" :value="i + 1">
             {{ annual_income }}
           </option>
         </select>
@@ -317,7 +372,7 @@
         <div class="search-container">
           <div class="input-wrapper">
             <img
-              src="icon/profile/search.svg"
+              src="/icon/profile/search.svg"
               class="search-icon"
               alt="Search"
             />
@@ -335,8 +390,8 @@
       <div class="sub_title3">특징</div>
 
         <div class="feature_box">
-            <div v-for="(feature, i) in userData.user_feature_id" :key="i">
-                <div class="select_box2">{{this.categoryList.user_feature_values[i]}}</div>
+            <div v-for="(feature, i) in userData.user_feature_ids" :key="i">
+                <div class="select_box2">{{this.featureList[feature-1]}}</div>
             </div>
         </div>
       
@@ -349,14 +404,20 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
       sampleData: "",
       userData: {},
-      activeGender: "male", // 초기 활성화상태 '남'
       activeInput: null,
       categoryList: {},
+      featureList: {},
+      profile : [null, null, null, null, null, null ],
+
+      // 이미지 호버, 모달 관련 변수
+      validPictureOverlayIndex: null,
+      isModalVisible: false,
     };
   },
   beforeCreate() {},
@@ -373,11 +434,9 @@ export default {
   beforeUnmount() {},
   unmounted() {},
   computed: {
-    maleClass() {
-      return this.activeGender === "male" ? "active" : "inactive";
-    },
-    femaleClass() {
-      return this.activeGender === "female" ? "active" : "inactive";
+    // 이미지 관련 computed
+    photosMinimumIndex() {
+      return this.profile.findIndex((photo) => photo === null);
     },
   },
   methods: {
@@ -385,11 +444,18 @@ export default {
       try {
         const result = await this.$api(
           `/user/profileinfo`,
-          { user_id: 1 },
+          {access_token: this.$getAccessToken()},
           "POST"
         );
         this.userData = result.user;
-        console.log(this.userData);
+        this.profile = [null, null, null, null, null, null];
+        for(let i in result.user.user_image_paths){
+          if (result.user.user_image_paths[i]){
+            this.profile[i] = result.user.user_image_paths[i];
+          }
+        }
+        // this.profile = result.user.user_image_paths;
+        console.log(this.userData.user_image_paths.length);
       } catch (err) {
         console.log(err);
       }
@@ -398,7 +464,7 @@ export default {
       try {
         const result = await this.$api(`/user/getcategory`, {}, "POST");
         this.categoryList = result.categoryList;
-        console.log(this.categoryList);
+        this.featureList = result.categoryList.user_feature_values;
       } catch (err) {
         console.log(err);
       }
@@ -418,9 +484,11 @@ export default {
       try {
         await this.$api(
           `/user/updateprofile`,
-          { userInfo, user_id: 1 },
+          { userInfo, access_token: this.$getAccessToken() },
           "POST"
         );
+        this.getUser();
+
       } catch (err) {
         console.log(err);
       }
@@ -458,6 +526,142 @@ export default {
         console.error("Daum Postcode 스크립트가 로드되지 않았습니다.");
         }
     },
+
+    showOverlay(index) {
+      this.validPictureOverlayIndex = index;
+    },
+    hideOverlay(index) {
+      this.validPictureOverlayIndex = null;
+      console.log("hideOverlay(index) {: ", index);
+    },
+    
+
+    async clickToTrashIcon(index) {
+      // 파일과 DB에서 삭제하는 로직을 추가할 것!
+      const user_image_path = this.userData.user_image_paths[index];
+
+        
+        await this.$api(`/user/deletephoto`, {access_token: this.$getAccessToken(), user_image_path}, "POST")  
+        await this.getUser();
+
+    },
+
+    showDetailView(index) {
+      this.selectedImage = this.profile[index];
+      this.isModalVisible = true;
+    },
+
+    openFileDialog(index) {
+      this.currentIndex = index;
+      this.$refs.fileInput.click();
+    },
+
+    onFileChange(event) {
+      const file = event.target.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          // e.target.result를 multer로 보내서 바로 저장하는 함수를 만들어주어야한다.
+
+          // 기존에 들어간 사진이 있다면 삭제하고 넣는다.
+          if (this.profile[this.currentIndex]){
+            this.clickToPost(this.currentIndex, e.target.result, this.profile[this.currentIndex] )
+          }else {
+            this.clickToPost(this.currentIndex, e.target.result )
+          }
+          this.profile[this.currentIndex] = e.target.result;
+
+
+        };
+      }
+    },
+    dataURLtoBlob(dataURL) {
+      const parts = dataURL.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    },
+    // Blob처리 해서 요청을 보낸다.
+    async clickToPost(index, result, prevPath = null) {
+      let photoList = [];
+      photoList.push(this.dataURLtoBlob(result));
+      if(!prevPath){
+        await this.patchRequestForMulter("/user/insertphoto", photoList, {
+          access_token: this.$getAccessToken(),
+          fileType: "profile",
+          index
+        });
+      }else {
+         await this.patchRequestForMulter("/user/updatephoto", photoList, {
+          access_token: this.$getAccessToken(),
+          fileType: "profile",
+          index,
+          prevPath
+        });
+      }
+      
+    },
+    // axios로 요청을 보내고 받음.
+    /**
+     *
+     * @param endpoint : url이 들어감.
+     * @param payload : formdata가 들어감
+     * @param importantHeaders : Content-type: multipart/form-data
+     */
+    async patchRequest(endpoint, payload = null, importantHeaders = {}) {
+      try {
+        const config = { headers: importantHeaders };
+        const response = await axios.post(endpoint, payload, config);
+        console.log(response);
+        if (response.status >= 400) {
+          this.$router.push({
+            name: "ErrorPage",
+            query: { message: response.data.message },
+          });
+        } else if(response.status == 201){
+          await this.getUser();
+          alert("사진 등록이 완료 되었습니다.");
+        } else {
+          await this.getUser();
+          alert("사진 수정이 완료 되었습니다.");
+        }
+        return response.data;
+      } catch (error) {
+        alert("예기치 못한 에러가 발생하였습니다.");
+      }
+    },
+    // 요청을 보내기 위한 HTTP request 디자인 + HTTP 요청을 보내는 함수 발동
+    async patchRequestForMulter(url, images, additionalInfo) {
+      const formData = this.makeFormDataForMulter(images, additionalInfo);
+      await this.patchRequest(url, formData, {
+        "Content-Type": "multipart/form-data",
+      });
+    },
+    makeFormDataForMulter(images, additionalInfo) {
+      const formData = new FormData();
+
+      if (Array.isArray(images)) {
+        images.forEach((image, index) => {
+          formData.append("image", image, `image${index}.png`);
+        });
+      } else {
+        formData.append("image", images, "image.png");
+        formData.append("imageIndex", 0);
+      }
+      if (additionalInfo) {
+        Object.keys(additionalInfo).forEach((key) => {
+          formData.append(key, additionalInfo[key]);  
+        });
+      }
+      return formData;
+    }
   },
 };
 </script>
@@ -518,6 +722,8 @@ textarea:focus {
   margin: 15px;
   border-radius: 10px;
   object-fit: cover;
+  position:relative;
+  background-color: #e0e0e0;
 }
 
 .profile_info {
@@ -922,9 +1128,121 @@ select option {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .class {
   color: #f1eff6;
+}
+
+.heade_div {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.sub_div {
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-top: 50px;
+  text-align: left;
+}
+
+.photo-upload-container {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 35px;
+  grid-row-gap: 23px;
+  margin: 20px 0;
+  margin-top: 7px;
+}
+
+.photo-box {
+  width: 100%;
+  height: 150px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.uploaded-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.valid-picture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  gap: 10px;
+  z-index: 999;
+}
+
+.instructions {
+  display: flex;
+  /* margin-bottom: 5px; */
+  justify-content: center;
+  gap: 20px;
+}
+
+.example-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.example-photo img {
+  border-radius: 10px;
+}
+
+.selection-circle {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+}
+
+.description_div {
+  font-size: 12px;
+  margin-bottom: 40px;
+  margin-top: 20px;
+  color: #484848;
+}
+
+.submitButton {
+  background-image: var(--gradient);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 18px 0px;
+  font-size: 22px;
+  cursor: pointer;
+  width: 100%;
 }
 </style>

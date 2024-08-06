@@ -8,13 +8,31 @@ exports.main = async(req, res)=>{
         let result = [];
         let responseBody = {};
         
-        query = ``;
-        result = await db(conn, query);
+        query = `SET @logged_in_user_id = ?`;
+        results = await db(conn, query, [3]); //나중에 로그인한 유저 변수 지정해줘야함
         
-        query = ``;
-        results = await db(conn, query, [user_id1]);
+        query = `DROP TEMPORARY TABLE IF EXISTS temp`;
+        results = await db(conn, query);
         
-        query = ``;
+        query = `CREATE TEMPORARY TABLE temp AS
+                SELECT u.user_id, u.user_nickname, u.user_age, u.user_gender, u.user_block, ub.user_id1, ub.user_id2
+                FROM meet_me.user u
+                LEFT JOIN user_block ub
+                ON u.user_id = ub.user_id2 AND ub.user_id1 = @logged_in_user_id
+                WHERE u.user_id != @logged_in_user_id AND u.user_gender != ? AND u.user_block != 'T' AND ub.user_id2 IS NULL
+                ORDER BY RAND()
+                LIMIT 10`;
+        results = await db(conn, query); //성별 구분 확인 , 차단 여부 확인 해야함
+
+        query = `SELECT * FROM temp`;
+        results = await db(conn, query);
+
+        query = `SELECT ufb.user_feature_bridge_id, uf.user_feature_value, u1.user_id
+                FROM user_feature_bridge ufb
+                JOIN user u1 ON ufb.user_id = u1.user_id
+                JOIN user_feature uf ON ufb.user_feature_id = uf.user_feature_id
+                WHERE u1.user_id = ?
+                LIMIT 10`;
 
         for(let i = 0; i < results.length; i++) {
             let user_id = results[i].user_id;
@@ -32,7 +50,8 @@ exports.main = async(req, res)=>{
         responseBody = {
             status: 200,
             recommendList: result,
-            results : results
+            results : results,
+            // featureList : featureList,
         };
         await conn.commit();
         res.status(200).json(responseBody);

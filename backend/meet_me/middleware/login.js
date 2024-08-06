@@ -10,6 +10,9 @@ exports.loginCheck = async (req, res, next) => {
     result = await db(conn, query, [accessToken]);
     const userId = result[0].user_id;
 
+    console.log(accessToken);
+    console.log("result", result);
+
     // userId가 null이면 에러고, 발생하면 requestBody에 넣어서 컨트롤러로 넘겨 준다.
     if (userId) {
       req.body.user_id = userId;
@@ -25,6 +28,9 @@ exports.loginCheck = async (req, res, next) => {
     };
     res.json(responseBody);
     return;
+  }
+  finally{
+    conn.release();
   }
 };
 
