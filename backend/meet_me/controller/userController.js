@@ -168,7 +168,7 @@ exports.getHeart = async(req, res) => {
         let responseBody = {};
 
         const userId = req.body.user_id;
-
+                //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
         query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching
                 FROM heart as h 
                 JOIN user AS u ON u.user_id = h.user_id2

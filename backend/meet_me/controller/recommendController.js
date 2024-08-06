@@ -22,13 +22,18 @@ exports.recommend = async(req, res)=>{
                 WHERE rc.user_id1 = ?`;
         results = await db(conn, query, [user_id1]);
         
+        query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;
+        getHeart = await db(conn, query, [user_id1]);
+        console.log("results>>" ,results)
+        query = `SELECT user_id2 AS matching_status from matching where user_id1 = ?`;
+        getMatching = await db(conn, query, [user_id1]);
+        
         query = `SELECT ufb.user_feature_bridge_id, uf.user_feature_value, u1.user_id
-                FROM user_feature_bridge ufb
-                JOIN user u1 ON ufb.user_id = u1.user_id
-                JOIN user_feature uf ON ufb.user_feature_id = uf.user_feature_id
-                WHERE u1.user_id = ?
-                LIMIT 10`;
-
+        FROM user_feature_bridge ufb
+        JOIN user u1 ON ufb.user_id = u1.user_id
+        JOIN user_feature uf ON ufb.user_feature_id = uf.user_feature_id
+        WHERE u1.user_id = ?
+        LIMIT 10`;
         for(let i = 0; i < results.length; i++) {
             let user_id = results[i].user_id;
             // let user_id = 1;
@@ -44,7 +49,9 @@ exports.recommend = async(req, res)=>{
         responseBody = {
             status: 200,
             recommendList: result,
-            results : results
+            results : results,
+            getHeart : getHeart,
+            getMatching : getMatching
         };
         await conn.commit();
         res.status(200).json(responseBody);
@@ -71,14 +78,16 @@ exports.heart = async(req, res) => { //좋아요/하트 신청
         let result = [];
         let responseBody = {};
 
-        const {user_id1, user_id2} = req.body;
+        const userId = req.body.user_id;
+        const user_id2 = req.body.user_id2;
+        // console.log(userId)
 
         console.log("req.body ==>", req.body)
 
         query = `INSERT IGNORE INTO heart (user_id1, user_id2) 
-                VALUES (?, ?);`;
+                VALUES (?, ?)`;
 
-        result = await db(conn, query, [req.body.user_id1, req.body.user_id2]);
+        result = await db(conn, query, [userId, user_id2]);
 
         responseBody = {
             status : 200,
@@ -141,3 +150,80 @@ exports.sendMatching = async(req, res) => { //매칭 신청
         conn.release();
     }
 }
+
+exports.heartCheck = async(req, res) => { 
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+        query = `SELECT user_id2 from heart where user_id1 = ? AND user_id2 = ?`;
+        result = await db(conn, query, [userId, userId2]);
+        if(result.length > 0){
+            responseBody = {
+                status : 200,
+                result: false
+            }
+        }else if(result.length == 0){
+            responseBody = {
+                status : 200,
+                result: true
+            };
+        }
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+exports.userDelete = async(req, res) => { //유저 삭제
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const user_id2 = req.body.user_id2;
+
+        console.log("req.body ==>", req.body)
+
+        query = `DELETE FROM recommend_list
+                WHERE user_id1 = ? AND user_id2 = ?`;
+
+        result = await db(conn, query, [userId, user_id2]);
+
+        responseBody = {
+            status : 200,
+            message: "해당 유저 삭제 완료",
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
