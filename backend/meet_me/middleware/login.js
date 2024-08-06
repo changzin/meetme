@@ -26,6 +26,9 @@ exports.loginCheck = async (req, res, next) => {
     res.json(responseBody);
     return;
   }
+  finally{
+    conn.release();
+  }
 };
 
 // 관리자용 로그인 체크. 똑같은 매커니즘인데 변수 이름만 바뀌었다.
