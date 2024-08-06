@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { userList, userBlock, userUnblock, userReport, userPayment, userLogin, mypageProfile, profileInfo, getHeart, sendMatching, deleteMatching, deleteHeart} = require('../controller/userController.js');
+const { userList, userBlock, userUnblock, userReport, userPayment, userLogin, mypageProfile, profileInfo, getHeart, sendMatching, deleteMatching, deleteHeart, getCategory, updateProfile} = require('../controller/userController.js');
 
 
 const router = express.Router();
@@ -19,6 +19,8 @@ router.post('/getheart', getHeart);
 router.post('/sendmatching', sendMatching);
 router.post('/deletematching', deleteMatching);
 router.post('/deleteheart', deleteHeart);
+router.post('/getcategory', getCategory);
+router.post('/updateprofile', updateProfile);
 
 
 
