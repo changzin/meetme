@@ -22,7 +22,7 @@ router.post('/duplicatecheck', emailDuplicateCheck);
 router.post('/emailisverified', emailIsVerified);
 
 // UserController
-router.post('/mypageprofile', mypageProfile);
+router.post('/mypageprofile', loginCheck, mypageProfile);
 router.post('/profileinfo', profileInfo);
 router.post('/getheart', getHeart);
 router.post('/sendmatching', sendMatching);

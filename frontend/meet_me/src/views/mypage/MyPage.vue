@@ -71,14 +71,13 @@ export default {
             userData: {},
         };
     },
-
     async created() {
         await this.getUser();
     },
     methods: {
         async getUser() {
             try{
-                const result = await this.$api(`/user/mypageprofile`, {user_id: 1}, "POST");
+                const result = await this.$api(`/user/mypageprofile`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
                 console.log(this.userData)
             }catch(err){
