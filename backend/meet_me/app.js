@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const fs = require('fs');
 const path = require("path");
+const socketIo = require("socket.io");
 
 const indexRouter = require('./router');
 
@@ -35,7 +36,7 @@ if(!fs.existsSync(dir)){
 // 포트 9090으로 설정
 app.set('port', process.env.PORT || 9090);
 // CORS
-app.use(cors(corsOption));
+// app.use(cors());
 // 개발자 모드로 설정 (수정 -> 저장 시 서버 자동 재시작)
 app.use(morgan('dev'));
 
