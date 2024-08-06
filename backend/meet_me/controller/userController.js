@@ -1,5 +1,5 @@
 const {getConn, db} = require("../util/db");
-const { writeFile } = require("../util/image")
+
 exports.mypageProfile = async(req, res) => {
     const conn = await getConn();
     try{
@@ -323,6 +323,8 @@ exports.enterPhoto = async(req, res)=>{
 
         const userId = req.body.userId;
         const photos = req.body.photos;
+        const score = req.body.user_grade_id;
+
         const imagePathList = req.body.image_path_list;
         query = `DELETE FROM user_image
                  WHERE user_id = ?`;
@@ -334,10 +336,11 @@ exports.enterPhoto = async(req, res)=>{
             result = await db(conn, query, [userId, imagePath]);
         }
 
+        console.log(score);
         query = `UPDATE user 
-                SET user_profile_entered='T'
+                SET user_profile_entered='T', user_grade_id=?
                 WHERE user_id=?`;
-        result = await db(conn, query, [userId]);
+        result = await db(conn, query, [score, userId]);
         
         responseBody = {
             status: 200,

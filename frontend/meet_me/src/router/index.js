@@ -32,6 +32,7 @@ import UserFeature from '../views/profile/UserFeature.vue'
 import RecommendList from '../views/RecommendList.vue'
 import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
+import ForgotPassword from '../views/nouser/ForgotPassword.vue'
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     path:'/emailcheck',
     name:'emailcheck',
     component: EmailCheck
+  },
+  {
+    path:'/forgotpassword',
+    name:'forgotpassword',
+    component: ForgotPassword
   },
   {
     path:'/profile',
