@@ -1,10 +1,11 @@
 const express = require('express');
 
-const { mypageProfile, profileInfo, getHeart, sendMatching, deleteMatching, deleteHeart, enterPhoto} = require('../controller/userController.js');
+const { mypageProfile, profileInfo, getHeart, sendMatching, deleteMatching, deleteHeart, enterPhoto, getCategory, updateProfile} = require('../controller/userController.js');
 const { userLogin, emailDuplicateCheck, signup, emailIsVerified } = require("../controller/authController.js")
 const { userList, userBlock, userUnblock, userReport, userPayment } = require("../controller/adminController.js")
 const { handleFileUpload } = require('../middleware/imageHandler.js')
 const { loginCheck } = require('../middleware/login.js')
+
 const router = express.Router();
 
 // adminController
@@ -27,7 +28,12 @@ router.post('/getheart', getHeart);
 router.post('/sendmatching', sendMatching);
 router.post('/deletematching', deleteMatching);
 router.post('/deleteheart', deleteHeart);
+router.post('/getcategory', getCategory);
+router.post('/updateprofile', updateProfile);
+
+
 router.post('/enterphoto', handleFileUpload, enterPhoto)
+
 
 
 module.exports = router;
