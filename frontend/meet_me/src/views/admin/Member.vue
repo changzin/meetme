@@ -3,6 +3,7 @@
     <AdminHeader />
     <MemberReportModal :data="this.reportData" v-if="reportModalVisible" @close="closeReportModal()"/>
     <MemberPayModal :data="this.payData" v-if="payModalVisible" @close="closePayModal()"/>
+    <MemberPayModal :data="this.detailData" v-if="detailModalVisible" @close="closeDetailModal()"/>
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
@@ -33,8 +34,8 @@
                                 <td>{{index+1 + (page-1)*10}}</td>
                                 <td>{{user.user_email}}</td>
                                 <td>{{user.user_nickname}}</td>
-                                <td @click="viewPayModal(user.user_id)">{{(user.user_payment) ? user.user_payment : 0}}</td>
-                                <td @click="viewReportModal(user.user_id)">{{(user.user_reportCount) ? user.user_reportCount : 0}}</td>
+                                <td @click="viewPayModal(user.user_id)">{{(user.payment) ? user.payment : 0}}</td>
+                                <td @click="viewReportModal(user.user_id)">{{(user.reportCount) ? user.reportCount : 0}}</td>
                                 <td>
                                     <div class="block_buttons">
                                         <div :class="{block_button_active: (user.user_block=='T'), 
@@ -84,8 +85,10 @@ export default {
             prevKeyword: "",
             reportData: {},
             payData:{},
+            detailData:{},
             payModalVisible: false,
-            reportModalVisible: false
+            reportModalVisible: false,
+            detailModalVisible: false
         }
     },
     methods: {
@@ -174,6 +177,17 @@ export default {
         },
         closePayModal(){
             this.payModalVisible = false;
+        },
+        async viewDetailModal(user_id){
+            let requestBody = {
+                user_id: user_id
+            }
+            let result = await this.$api("/user/payment", requestBody, "POST");
+            this.detailData = result;
+            this.detailModalVisible = true;
+        },
+        closeDetailModal(){
+            this.detailModalVisible = false;
         }
     },
     async created(){

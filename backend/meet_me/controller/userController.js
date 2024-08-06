@@ -1,8 +1,5 @@
 const {getConn, db} = require("../util/db");
 
-
-
-
 exports.mypageProfile = async(req, res) => {
     const conn = await getConn();
     try{
