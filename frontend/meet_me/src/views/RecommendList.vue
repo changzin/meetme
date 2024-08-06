@@ -1,5 +1,6 @@
 <template>
     <div class="safety_zone">
+        <!-- <AlertModal v-if="visibleModal" message="좋아요 신청을 하시겠습니까?" @close="handleClose" class="modal"/> -->
         <div class="container">
             <div class="title">
                 오늘의 추천
@@ -34,15 +35,17 @@
                         <div class="category_D" v-if="user.user_feature_value[3]">{{user.user_feature_value[3]}}
                         </div>
                     </div>
+
                     <div class="action_btn_container">
-                        <div>
-                            <img src="/icon/main_recommend/airplane.svg" class="airplane"
-                                @click="this.$router.push({ name:'MyPageEdit'})">
-                        </div>
-                        <div>
-                            <img src="/icon/main_recommend/heart.svg" class="heart">
-                        </div>
-                        <div>
+                        <div class="button">
+                            <img v-if="!isImageTwoVisible2" src="/icon/main_recommend/airplane.svg" @click="sendMatching(user.user_id2)" class="airplane">
+                            <img v-if="isImageTwoVisible2" src="/icon/main_recommend/airplane_delete.svg" class="airplane">
+
+
+                            <img v-if="!isImageTwoVisible" src="/icon/main_recommend/heart.svg" alt="Image 1" @click="heart(user.user_id2,user.user_id1)" class="heart" />
+                            <img v-if="isImageTwoVisible" src="icon/main_recommend/heart_delete.svg" alt="Image 2" class="heart"/>
+
+
                             <img src="/icon/main_recommend/delete.svg" class="delete">
                         </div>
                     </div>
@@ -57,7 +60,12 @@
     export default {	
         data() {
             return {
+                // visibleModal: false,
+                isImageTwoVisible: false, //이미지
+                isImageTwoVisible2: false, //이미지
                 // recommendList: [],
+                user_id1: '',
+                user_id2: '',
                 results:[],
                 sampleData : '',
                 user_image : [
@@ -83,6 +91,10 @@
         beforeUnmount() {},
         unmounted() {},
         methods: {
+        
+                handleClose() {
+                this.visibleModal = false;
+                },
             count(cnt){
                 this.index += cnt;
                 if(this.index == 6){
@@ -103,8 +115,41 @@
                 catch(err){
                     console.error(err);
             }
-        }
-        
+        },
+
+        async heart(user_id2,user_id1){
+            
+                // this.visibleModal = !this.visibleModal;
+                this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
+
+                try{
+                    this.$router.push({ name: 'RecommendList', query: {user_id1, user_id2}});
+
+                    this.user_id1 = this.$route.query.user_id1;
+                    this.user_id2 = this.$route.query.user_id2;
+                    let requestBody = {
+                        user_id1: this.user_id1,
+                        user_id2: this.user_id2
+                    };
+
+                    const result = await this.$api(`/recommend/heart`, requestBody , "POST");
+                    this.recommendList = result,
+                    this.message = result.message;
+                }
+                catch(err){
+                    console.error(err);
+                }
+            },
+            async sendMatching(user_id2){
+                
+                this.isImageTwoVisible2 = !this.isImageTwoVisible2;
+                
+                try{
+                    await this.$api(`/recommend/sendmatching`, {user_id: 1, user_id2}, "POST");
+                }catch(err){
+                    console.error(err);
+                }
+            },
     }
 }
     </script>
@@ -263,10 +308,8 @@
     .action_btn_container div img {
         width: 48px;
         height: 48px;
-        margin-right: 20px;
-    }
-    .action_btn_container div:last-child img {
-        margin-right: 28px;
+        margin-right: 23px;
+        margin-bottom: 11px;
     }
     .airplane{
         cursor: pointer;
@@ -279,6 +322,10 @@
     }
     .next_img{
         margin-bottom: 41px;
+    }
+    .modal-popup .modal{
+        width: 400px;
+        height: 220px;
     }
     
     
