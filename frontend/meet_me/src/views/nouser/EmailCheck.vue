@@ -49,7 +49,13 @@ export default {
                 if (this.auth.currentUser.emailVerified) {                    
                     const result = await this.$api("/user/emailisverified", {user_email: this.auth.currentUser.email}, "POST");
                     if (result.status == 200){
-                        alert("이메일 인증이 완료됐습니다. 다시 로그인해주세요.")
+                        let requestBody = {
+                            email: this.auth.currentUser.email, 
+                            loginType: "local"
+                        }
+                        const result = await this.$api("/user/login", requestBody, "POST");
+                        await this.storeToken(result.accessToken);
+
                         this.$router.push({name: 'profile'});
                     }
                     else{
@@ -63,6 +69,14 @@ export default {
                 console.error(err);
             }
         },
+        // 로그인 마지막 처리
+        async storeToken(accessToken){
+            this.$cookies.set("meetMeCookie", accessToken);
+            if (this.remain){
+                await this.$store.commit("user", {accessToken: accessToken});
+            }
+        },
+
     }
 }
 </script>
