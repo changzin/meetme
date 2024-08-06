@@ -81,12 +81,7 @@
           <option class="dropdown_item" value="none" selected disabled hidden>
             연봉
           </option>
-          <option
-            class="dropdown_item"
-            v-for="(annual_income, i) in categoryList.user_annual_income_values"
-            :key="i"
-            :value="i + 1"
-          >
+          <option class="dropdown_item" v-for="(annual_income, i) in categoryList.user_annual_income_values" :key="i" :value="i + 1">
             {{ annual_income }}
           </option>
         </select>
@@ -335,8 +330,8 @@
       <div class="sub_title3">특징</div>
 
         <div class="feature_box">
-            <div v-for="(feature, i) in userData.user_feature_id" :key="i">
-                <div class="select_box2">{{this.categoryList.user_feature_values[i]}}</div>
+            <div v-for="(feature, i) in userData.user_feature_ids" :key="i">
+                <div class="select_box2">{{this.featureList[feature-1]}}</div>
             </div>
         </div>
       
@@ -357,6 +352,7 @@ export default {
       activeGender: "male", // 초기 활성화상태 '남'
       activeInput: null,
       categoryList: {},
+      featureList: {},
     };
   },
   beforeCreate() {},
@@ -398,6 +394,7 @@ export default {
       try {
         const result = await this.$api(`/user/getcategory`, {}, "POST");
         this.categoryList = result.categoryList;
+        this.featureList = result.categoryList.user_feature_values;
         console.log(this.categoryList);
       } catch (err) {
         console.log(err);
@@ -421,6 +418,8 @@ export default {
           { userInfo, user_id: 1 },
           "POST"
         );
+        this.getUser();
+
       } catch (err) {
         console.log(err);
       }
@@ -458,6 +457,15 @@ export default {
         console.error("Daum Postcode 스크립트가 로드되지 않았습니다.");
         }
     },
+    // async getFeature(index){
+    //   try{
+    //     if(){
+
+    //     }
+    //   }catch(err){
+    //   console.log(err);
+    // }
+    // }
   },
 };
 </script>

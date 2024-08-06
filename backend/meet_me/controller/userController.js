@@ -1,5 +1,7 @@
 const {getConn, db} = require("../util/db");
 const { writeFile } = require("../util/image")
+
+
 exports.mypageProfile = async(req, res) => {
     const conn = await getConn();
     try{
@@ -11,11 +13,11 @@ exports.mypageProfile = async(req, res) => {
 
         query = `SELECT u.user_nickname, u.user_age, u.user_add, g.user_grade_value, i.user_image_path
                 FROM user AS u
-                JOIN user_image AS i ON u.user_id = i.user_id
                 JOIN user_grade AS g ON u.user_grade_id = g.user_grade_id
+                LEFT OUTER JOIN user_image AS i ON u.user_id = i.user_id
                 WHERE u.user_id = ?
                 ORDER BY i.user_image_id
-                LIMIT 1;`
+                LIMIT 1`
         result = await db(conn, query, [userId]);
         
         responseBody = {
@@ -94,7 +96,7 @@ exports.getCategory = async(req, res) => {
                 (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values,
                 (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
                 (SELECT GROUP_CONCAT(user_feature_value ORDER BY user_feature_id SEPARATOR ',') FROM user_feature) AS user_feature_values`
-                
+
         result = await db(conn, query);
         result[0].user_mbti_values = result[0].user_mbti_values.split(',');
         result[0].user_blood_type_values = result[0].user_blood_type_values.split(',');
@@ -134,11 +136,11 @@ exports.updateProfile = async(req, res) => {
         const userInfo = req.body.userInfo;
 
         query = `UPDATE user SET 
-                user_add = ?, user_age = ?, user_annual_income_id = ?, user_drinking_id = ?, user_height = ?,
+                user_add = ?, user_age = ?, user_annual_income_id = ?, user_drinking_id = ?, user_height = ?, user_blood_type_id = ?,
                 user_introduction = ?, user_mbti_id = ?, user_religion_id = ?, user_smoke = ?, user_tartoo = ?, user_weight = ?
                 WHERE user_id = ?`
                 
-        result = await db(conn, query, [userInfo.user_add, userInfo.user_age, userInfo.user_annual_income_id, userInfo.user_drinking_id, userInfo.user_height, userInfo.user_introduction, userInfo.user_mbti_id, userInfo.user_religion_id, userInfo.user_smoke, userInfo.user_tartoo, userInfo.user_weight ,userId]);
+        result = await db(conn, query, [userInfo.user_add, userInfo.user_age, userInfo.user_annual_income_id, userInfo.user_drinking_id, userInfo.user_height, userInfo.user_blood_type_id, userInfo.user_introduction, userInfo.user_mbti_id, userInfo.user_religion_id, userInfo.user_smoke, userInfo.user_tartoo, userInfo.user_weight ,userId]);
 
         responseBody = {
             status : 200,
