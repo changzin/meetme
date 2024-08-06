@@ -242,3 +242,47 @@ exports.userPayment = async(req, res)=>{
         conn.release();
     }   
 }
+
+exports.adminUserDetail = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `SELECT u.user_nickname, u.user_age, u.user_add, u.user_introduction, g.user_grade_value,
+                u.user_height, u.user_weight, u.user_annual_income_id, u.user_mbti_id, u.user_blood_type_id, u.user_religion_id,
+                u.user_drinking_id, u.user_smoke, u.user_tartoo, 
+                (SELECT GROUP_CONCAT(i.user_image_path ORDER BY i.user_image_id SEPARATOR ',') FROM user_image AS i WHERE u.user_id = i.user_id) AS user_image_paths,
+                (SELECT GROUP_CONCAT(fb.user_feature_id ORDER BY fb.user_feature_bridge_id SEPARATOR ',') FROM user_feature_bridge AS fb WHERE u.user_id = fb.user_id) AS user_feature_ids
+                FROM user AS u
+                JOIN user_grade AS g ON u.user_grade_id = g.user_grade_id
+                WHERE u.user_id = ?
+                LIMIT 1`
+                
+        result = await db(conn, query, [userId]);
+        result[0].user_image_paths = result[0].user_image_paths.split(',');
+        result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        responseBody = {
+            status : 200,
+            user : result[0],
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
