@@ -6,8 +6,9 @@
                 오늘의 추천
                 <img class="title_img" src="/icon/main_recommend/fier.svg">
             </div>
-            <div v-if="results.length>0">
-                <div class="main_image next_img" v-for="(user,i) in results" :key="i">
+            <div v-if="results.length > 0">
+                <div class="main_image next_img" v-for="(user,i) in results" :key="i"> 
+                    <!-- user.nickname, user.user_age,  -->
                     <div class="image_tab">
                         <div :class="{number2: index == 0, number: index != 0}"></div>
                         <div :class="{number2: index == 1, number: index != 1}"></div>
@@ -25,8 +26,7 @@
                         {{user.user_nickname}} , {{ user.user_age }}
                     </div>
                     <div class="category">
-                        <div class="category_A" v-if="user.user_feature_value[0]">{{user.user_feature_value[0]}}
-                            
+                        <div class="category_A" v-if="user.user_feature_value[0]">{{user.user_feature_value[0]}} 
                         </div>
                         <div class="category_B" v-if="user.user_feature_value[1]">{{user.user_feature_value[1]}}
                         </div>
@@ -38,15 +38,15 @@
 
                     <div class="action_btn_container">
                         <div class="button">
-                            <img v-if="!isImageTwoVisible2" src="/icon/main_recommend/airplane.svg" @click="sendMatching(user.user_id2)" class="airplane">
-                            <img v-if="isImageTwoVisible2" src="/icon/main_recommend/airplane_delete.svg" class="airplane">
+                            <img v-if="!user.giveMatching" src="/icon/main_recommend/airplane.svg" @click="sendMatching(user.user_id2)" class="airplane">
+                            <img v-if="user.giveMatching" src="/icon/main_recommend/airplane_delete.svg" class="airplane">
 
 
-                            <img v-if="!isImageTwoVisible" src="/icon/main_recommend/heart.svg" alt="Image 1" @click="heart(user.user_id2,user.user_id1)" class="heart" />
-                            <img v-if="isImageTwoVisible" src="icon/main_recommend/heart_delete.svg" alt="Image 2" class="heart"/>
+                            <img v-if="!user.giveHeart" src="/icon/main_recommend/heart.svg" alt="Image 1" @click="heart(user.user_id2)" class="heart" />
+                            <img v-if="user.giveHeart" src="icon/main_recommend/heart_delete.svg" alt="Image 2" class="heart"/>
 
 
-                            <img src="/icon/main_recommend/delete.svg" class="delete">
+                            <img src="/icon/main_recommend/delete.svg" @click="userDelete(user.user_id2)" class="delete">
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,8 @@
                     "/model6.jpg",
                     "/images.jpg"
                 ],
-                index: 0
+                index: 0,
+                heartData: {},
             };
             
         },
@@ -85,6 +86,7 @@
         beforeMount() {},
         mounted() {
             this.getRecommendList();
+            this.getHeart();
         },
         beforeUpdate() {},
         updated() {},
@@ -92,9 +94,9 @@
         unmounted() {},
         methods: {
         
-                handleClose() {
+            handleClose() {
                 this.visibleModal = false;
-                },
+            },
             count(cnt){
                 this.index += cnt;
                 if(this.index == 6){
@@ -103,38 +105,53 @@
                     return this.index = 5;
                 }
             },
-            
-            async getRecommendList(){
-                try{
-                    let requestBody = {
-                    };
-                    const result = await this.$api(`/recommend/list`, requestBody , "POST");
-                    this.recommendList = result;
-                    this.results = result.results;
-                }
-                catch(err){
-                    console.error(err);
-            }
-        },
 
-        async heart(user_id2,user_id1){
-            
+            async getRecommendList(){
+                    try{
+                        let requestBody = {
+                            access_token: this.$getAccessToken()
+                        };
+                        const result = await this.$api(`/recommend/list`, requestBody , "POST");
+                        this.recommendList = result;
+                        this.results = result.results;
+                        let heartList = result.getHeart;
+                        let matchingList = result.getMatching
+                        
+                        for(let i in heartList){
+                            for(let j in this.results){
+                                if(this.results[j].user_id2 == heartList[i].heart_status){
+                                    this.results[j].giveHeart = true;
+                                }                                                                
+                            }                            
+                        }
+                        for(let i in matchingList){
+                            for(let j in this.results){
+                                if(this.results[j].user_id2 == matchingList[i].matching_status){
+                                    this.results[j].giveMatching = true;
+                                }                                                                
+                            }                            
+                        }
+                        
+                    }
+                    catch(err){
+                        console.error(err);
+                }
+            },
+
+            async heart(user_id2){  
                 // this.visibleModal = !this.visibleModal;
                 this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
                 try{
-                    this.$router.push({ name: 'RecommendList', query: {user_id1, user_id2}});
-
-                    this.user_id1 = this.$route.query.user_id1;
-                    this.user_id2 = this.$route.query.user_id2;
                     let requestBody = {
-                        user_id1: this.user_id1,
-                        user_id2: this.user_id2
+                        access_token: this.$getAccessToken(), //user_id = 나
+                        user_id2
                     };
 
                     const result = await this.$api(`/recommend/heart`, requestBody , "POST");
-                    this.recommendList = result,
+                    this.heartData = result,
                     this.message = result.message;
+                    await this.getRecommendList();
                 }
                 catch(err){
                     console.error(err);
@@ -144,14 +161,39 @@
                 
                 this.isImageTwoVisible2 = !this.isImageTwoVisible2;
                 
+                
                 try{
+
                     await this.$api(`/recommend/sendmatching`, {user_id: 1, user_id2}, "POST");
                 }catch(err){
                     console.error(err);
                 }
             },
+            async getHeart(){
+                const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
+                this.heartData = result.heart;
+                console.log("this.heartData" ,this.heartData)
+            },
+            async userDelete(user_id2){  
+                try{
+                    let requestBody = {
+                        access_token: this.$getAccessToken(),
+                        user_id2
+                    };
+
+                    const result = await this.$api(`/recommend/userdelete`, requestBody , "POST");
+                    this.delete = result,
+                    this.message = result.message;
+                    await this.getRecommendList();
+                }
+                catch(err){
+                    console.error(err);
+                }
+            },
+        }
+        
     }
-}
+
     </script>
     <style scoped>
     .container {

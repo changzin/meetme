@@ -15,12 +15,14 @@ exports.main = async(req, res)=>{
         results = await db(conn, query);
         
         query = `CREATE TEMPORARY TABLE temp AS
-                SELECT user_id, user_nickname, user_age 
-                FROM meet_me.user
-                WHERE user_id != @logged_in_user_id
+                SELECT u.user_id, u.user_nickname, u.user_age, u.user_gender, u.user_block, ub.user_id1, ub.user_id2
+                FROM meet_me.user u
+                LEFT JOIN user_block ub
+                ON u.user_id = ub.user_id2 AND ub.user_id1 = @logged_in_user_id
+                WHERE u.user_id != @logged_in_user_id AND u.user_gender != ? AND u.user_block != 'T' AND ub.user_id2 IS NULL
                 ORDER BY RAND()
                 LIMIT 10`;
-        results = await db(conn, query); //성별 구분 확인 , 차단 여부 확인
+        results = await db(conn, query); //성별 구분 확인 , 차단 여부 확인 해야함
 
         query = `SELECT * FROM temp`;
         results = await db(conn, query);
