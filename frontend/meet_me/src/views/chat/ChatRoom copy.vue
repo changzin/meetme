@@ -97,22 +97,10 @@
   </template>  
 <script>
 
-import io from 'socket.io-client';
-
 export default {
   data(){
     return {
-      socket: null
     }
-  },
-  created(){
-    this.socket = io.connect("http://localhost:9090", {
-      path: "/socket.io"
-    });
-    this.socket.on("news", (data) =>{
-      console.log(data);
-      this.socket.emit("reply", "HELLO node.js")
-    })
   },
   methods: {
     chatModal(){
