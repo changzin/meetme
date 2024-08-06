@@ -128,32 +128,31 @@ exports.handleFileUpload = (req, res, next) => {
           req.body.image_path_list = [];
           let index = 0;
           let dest = "uploads/";
-      
+
+          if (fileType === "profile") {
+            dest = path.join(dest, "profile", userId);
+            id = userId;
+          } else if (fileType === "chat") {
+            dest = path.join(dest, "chats", chatId);
+            id = chatId;
+          } else {
+            // 추후 에러처리
+            console.log("no type");
+          }
+          // 업데이트를 위해서 일단 삭제를 먼저 진행함.(업데이트 시에는 폴더 자체를 지우고 전부 다시 넣는 방식으로 진행할 예정)
+          try{
+            fs.rmdirSync(dest, { recursive: true });
+          }
+          catch(err){
+            ;
+          }
+          // 디렉토리가 없으면 생성
+          fs.mkdirSync(dest, { recursive: true });
+
           // 파일 저장 처리
           req.files.forEach(async (file) => {
             dest = "uploads/";
-      
-            if (fileType === "profile") {
-              dest = path.join(dest, "profile", userId);
-              id = userId;
-            } else if (fileType === "chat") {
-              dest = path.join(dest, "chats", chatId);
-              id = chatId;
-            } else {
-              // 추후 에러처리
-              console.log("no type");
-            }
-      
-            // 업데이트를 위해서 일단 삭제를 먼저 진행함.(업데이트 시에는 폴더 자체를 지우고 전부 다시 넣는 방식으로 진행할 예정)
-            try{
-              fs.rmdirSync(dest, { recursive: true });
-            }
-            catch(err){
-              ;
-            }
-            // 디렉토리가 없으면 생성
-            fs.mkdirSync(dest, { recursive: true });
-      
+           
             const timestamp = getToday();
             const randomBytes = crypto.randomBytes(16).toString("hex");
             const ext = path.extname(file.originalname);
