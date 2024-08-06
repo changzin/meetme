@@ -3,7 +3,7 @@
     <AdminHeader />
     <MemberReportModal :data="this.reportData" v-if="reportModalVisible" @close="closeReportModal()"/>
     <MemberPayModal :data="this.payData" v-if="payModalVisible" @close="closePayModal()"/>
-    <MemberPayModal :data="this.detailData" v-if="detailModalVisible" @close="closeDetailModal()"/>
+    <MemberDetailModal :data="this.detailData" v-if="detailModalVisible" @close="closeDetailModal()"/>
     <div class="admin_web_inner_flex">
         <div>
             <div class="admin_header_text">회원 관리</div>
@@ -30,18 +30,19 @@
                         </thead>
                         <tbody>
                             <tr :class="{tr_gray: (index%2==0), tr_white: (index%2==1) }"
-                                 v-for="(user, index) in userList" :key="index">
+                                 v-for="(user, index) in userList" :key="index"
+                                 @click.stop="viewDetailModal(user.user_id)">
                                 <td>{{index+1 + (page-1)*10}}</td>
                                 <td>{{user.user_email}}</td>
                                 <td>{{user.user_nickname}}</td>
-                                <td @click="viewPayModal(user.user_id)">{{(user.payment) ? user.payment : 0}}</td>
-                                <td @click="viewReportModal(user.user_id)">{{(user.reportCount) ? user.reportCount : 0}}</td>
+                                <td @click.stop="viewPayModal(user.user_id)">{{(user.payment) ? user.payment : 0}}</td>
+                                <td @click.stop="viewReportModal(user.user_id)">{{(user.reportCount) ? user.reportCount : 0}}</td>
                                 <td>
                                     <div class="block_buttons">
                                         <div :class="{block_button_active: (user.user_block=='T'), 
-                                            block_button_inactive: (user.user_block=='F') }" @click="blockUser(user)">Y</div>
+                                            block_button_inactive: (user.user_block=='F') }" @click.stop="blockUser(user)">Y</div>
                                         <div :class="{block_button_active: (user.user_block=='F'), 
-                                            block_button_inactive: (user.user_block=='T') }" @click="unBlockUser(user)">N</div>
+                                            block_button_inactive: (user.user_block=='T') }" @click.stop="unBlockUser(user)">N</div>
                                     </div>
                                 </td>
                             </tr>
@@ -341,4 +342,5 @@ tbody tr:last-child td:last-child{
     justify-content: center;
   }
 }
+
 </style>

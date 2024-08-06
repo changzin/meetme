@@ -7,7 +7,7 @@
       <div class="modal-popup" ref="modalPopup" @click.stop>
         <div class="modal-popup-header-text">
           <div style="width:20px;"></div>
-          신고 내역
+          결제 내역
         <img
           src="/icon/main_recommend/delete.svg"
           @click="x_click"
@@ -18,8 +18,8 @@
           <table class="admin_modal_table">
                 <thead>
                     <tr class="admin_modal_table_thead">
-                        <td>신고자 닉네임</td>
-                        <td>신고 내역</td>
+                        <td>구매 금액</td>
+                        <td>결제 코드</td>
                     </tr>
                 </thead>
                 <tbody class="admin_modal_table_body">
