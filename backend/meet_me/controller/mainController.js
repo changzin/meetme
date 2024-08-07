@@ -9,10 +9,12 @@ exports.main = async(req, res)=>{
         let responseBody = {};
         
         query = `SET @logged_in_user_id = 1`;
-        await db(conn, query); //나중에 로그인한 유저 변수 지정해줘야함
+        user = await db(conn, query); //나중에 로그인한 유저 변수 지정해줘야함
+        console.log("user>>" , user);
         
         query = `DROP TEMPORARY TABLE IF EXISTS temp`;
-        await db(conn, query);
+        temp = await db(conn, query);
+        console.log("temp>>" , temp);
         
         query = `CREATE TEMPORARY TABLE temp AS
                 SELECT u.user_id, u.user_nickname, u.user_age, u.user_gender, u.user_block, ub.user_id1, ub.user_id2

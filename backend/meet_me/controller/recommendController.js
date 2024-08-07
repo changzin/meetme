@@ -8,12 +8,12 @@ exports.recommend = async(req, res)=>{
         let query = '';
         let result = [];
         let responseBody = {};
-        let user_id1 = 1;
+        let user_id1 = req.body.user_id;
         
         
         
-        query = `call get_user_recommend_list(3)`;
-        result = await db(conn, query);
+        query = `call get_user_recommend_list(1)`;
+        result = await db(conn, query, [user_id1]);
         
         query = `SELECT u2.user_id, u2.user_nickname, u2.user_age, rc.user_id1, rc.user_id2
                 FROM recommend_list rc
@@ -24,7 +24,7 @@ exports.recommend = async(req, res)=>{
         
         query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;
         getHeart = await db(conn, query, [user_id1]);
-        console.log("results>>" ,results)
+
         query = `SELECT user_id2 AS matching_status from matching where user_id1 = ?`;
         getMatching = await db(conn, query, [user_id1]);
         
@@ -34,15 +34,29 @@ exports.recommend = async(req, res)=>{
         JOIN user_feature uf ON ufb.user_feature_id = uf.user_feature_id
         WHERE u1.user_id = ?
         LIMIT 10`;
+
         for(let i = 0; i < results.length; i++) {
             let user_id = results[i].user_id;
             // let user_id = 1;
             result = await db(conn, query, [user_id]);
-
+            
             results[i].user_feature_value = [];
-
+            
             for(let j = 0; j < result.length; j++){
                 results[i].user_feature_value.push(result[j].user_feature_value);
+            }
+        }
+
+        query = `SELECT user_image_path FROM user_image WHERE user_id = ?`;
+
+        for(let i = 0; i < results.length; i++) {
+            let user_id = results[i].user_id;
+            result = await db(conn, query, [user_id]);
+            
+            results[i].user_image_path = [];
+            
+            for(let j = 0; j < result.length; j++){
+                results[i].user_image_path.push(result[j].user_image_path);
             }
         }
 
@@ -53,6 +67,7 @@ exports.recommend = async(req, res)=>{
             getHeart : getHeart,
             getMatching : getMatching
         };
+        console.log("responseBody <>>>>>" , responseBody)
         await conn.commit();
         res.status(200).json(responseBody);
     }
@@ -80,9 +95,6 @@ exports.heart = async(req, res) => { //좋아요/하트 신청
 
         const userId = req.body.user_id;
         const user_id2 = req.body.user_id2;
-        // console.log(userId)
-
-        console.log("req.body ==>", req.body)
 
         query = `INSERT IGNORE INTO heart (user_id1, user_id2) 
                 VALUES (?, ?)`;
@@ -119,7 +131,6 @@ exports.sendMatching = async(req, res) => { //매칭 신청
         const userId = req.body.user_id;
         const userId2 = req.body.user_id2;
 
-        console.log(userId, userId2);
         query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
         result = await db(conn, query, [userId, userId2]);
@@ -196,17 +207,15 @@ exports.userDelete = async(req, res) => { //유저 삭제
         let query = '';
         let result = [];
         let responseBody = {};
+        await conn.beginTransaction();
 
         const userId = req.body.user_id;
         const user_id2 = req.body.user_id2;
-
-        console.log("req.body ==>", req.body)
 
         query = `DELETE FROM recommend_list
                 WHERE user_id1 = ? AND user_id2 = ?`;
 
         result = await db(conn, query, [userId, user_id2]);
-
         responseBody = {
             status : 200,
             message: "해당 유저 삭제 완료",

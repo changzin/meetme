@@ -8,20 +8,14 @@
             </div>
             <div v-if="results.length > 0">
                 <div class="main_image next_img" v-for="(user,i) in results" :key="i"> 
-                    <!-- user.nickname, user.user_age,  -->
                     <div class="image_tab">
-                        <div :class="{number2: index == 0, number: index != 0}"></div>
-                        <div :class="{number2: index == 1, number: index != 1}"></div>
-                        <div :class="{number2: index == 2, number: index != 2}"></div>
-                        <div :class="{number2: index == 3, number: index != 3}"></div>
-                        <div :class="{number2: index == 4, number: index != 4}"></div>
-                        <div :class="{number2: index == 5, number: index != 5}"></div>
+                        <div v-for="(image_paths,j) in user.user_image_path" :key="j" :class="{number2: user.index == j, number: user.index != j}"></div>
                     </div>
-                    <div class="prev_button" @click="count(-1)">
+                    <div class="prev_button" @click="count(-1, user)">
                     </div>
-                    <div class="next_button" @click="count(1)">
+                    <div class="next_button" @click="count(1, user)">
                     </div>
-                    <img :src="user_image[index]" @click="count(1)">
+                    <img :src="this.$imageFileFormat(user.user_image_path[user.index])" @click="count(1, user)">
                     <div class="name" @click="this.$router.push({ name:'ProfileDetail'})">
                         {{user.user_nickname}} , {{ user.user_age }}
                     </div>
@@ -68,14 +62,14 @@
                 user_id2: '',
                 results:[],
                 sampleData : '',
-                user_image : [
-                    "/model3.png",
-                    "/model.jpg",
-                    "/model2.jpg",
-                    "/model5.jpg",
-                    "/model6.jpg",
-                    "/images.jpg"
-                ],
+                // user_image : [
+                //     "/model3.png",
+                //     "/model.jpg",
+                //     "/model2.jpg",
+                //     "/model5.jpg",
+                //     "/model6.jpg",
+                //     "/images.jpg"
+                // ],
                 index: 0,
                 heartData: {},
             };
@@ -88,21 +82,18 @@
             this.getRecommendList();
             this.getHeart();
         },
-        beforeUpdate() {},
-        updated() {},
-        beforeUnmount() {},
-        unmounted() {},
         methods: {
         
             handleClose() {
                 this.visibleModal = false;
             },
-            count(cnt){
-                this.index += cnt;
-                if(this.index == 6){
-                    return this.index = 0;
-                }else if(this.index < 0) {
-                    return this.index = 5;
+            count(cnt, user){
+                user.index += cnt;            
+
+                if(user.index == user.user_image_path.length){
+                    return user.index = 0;
+                }else if(user.index < 0) {
+                    return user.index = user.user_image_path.length-1;
                 }
             },
 
@@ -116,6 +107,11 @@
                         this.results = result.results;
                         let heartList = result.getHeart;
                         let matchingList = result.getMatching
+                        this.results = result.results.map(user => {
+                            user.index = 0;  // 각 사용자에 인덱스 속성을 추가
+                            return user;
+                        });
+                        
                         
                         for(let i in heartList){
                             for(let j in this.results){
@@ -372,3 +368,171 @@
     
     
     </style>
+
+
+
+
+
+
+
+
+
+
+
+//윈터
+profile/13/1d21c1eb9f199cfeba2133adbcc157ed05c7e0ff.gif
+profile/13/화면 캡처 2024-08-07 135748.png
+profile/13/화면 캡처 2024-08-07 135819.png
+profile/13/화면 캡처 2024-08-07 135650.png
+profile/13/화면 캡처 2024-08-07 135709.png
+profile/13/화면 캡처 2024-08-07 135723.png
+
+//민지
+profile/14/debfce8f72116b5ec54d4b06b379871b1fd80ead.gif
+profile/14/화면 캡처 2024-08-07 135224.png
+profile/14/화면 캡처 2024-08-07 135434.png
+profile/14/화면 캡처 2024-08-07 135331.png
+profile/14/화면 캡처 2024-08-07 135404.png
+profile/14/화면 캡처 2024-08-07 135458.png
+
+//안유진
+profile/15/KakaoTalk_20240807_135807312_02.jpg
+profile/15/KakaoTalk_20240807_135807312_01.jpg
+profile/15/KakaoTalk_20240807_135807312.jpg
+profile/15/KakaoTalk_20240807_135807312_04.jpg
+profile/15/KakaoTalk_20240807_135807312_03.jpg
+
+//카리나
+profile/16/KakaoTalk_20240807_140632305_03.jpg
+profile/16/KakaoTalk_20240807_140632305_04.jpg
+profile/16/KakaoTalk_20240807_140632305_05.jpg
+profile/16/KakaoTalk_20240807_140632305.jpg
+profile/16/KakaoTalk_20240807_140632305_01.jpg
+profile/16/KakaoTalk_20240807_140632305_02.jpg
+
+//지우
+profile/17/KakaoTalk_20240807_140651975_02.jpg
+profile/17/KakaoTalk_20240807_140651975_03.jpg
+profile/17/KakaoTalk_20240807_140651975_05.jpg
+profile/17/KakaoTalk_20240807_140651975_01.jpg
+profile/17/KakaoTalk_20240807_140651975.jpg
+profile/17/KakaoTalk_20240807_140651975_04.png
+
+//해린
+profile/18/KakaoTalk_20240807_141411691.jpg
+profile/18/KakaoTalk_20240807_141411691_05.jpg
+profile/18/KakaoTalk_20240807_141411691_01.jpg
+profile/18/KakaoTalk_20240807_141411691_03.jpg
+profile/18/KakaoTalk_20240807_141411691_02.jpg
+profile/18/KakaoTalk_20240807_141411691_04.jpg
+
+//미연
+profile/19/다운로드.gif
+profile/19/화면 캡처 2024-08-07 141855.png
+profile/19/화면 캡처 2024-08-07 142229.png
+profile/19/화면 캡처 2024-08-07 142150.png
+profile/19/화면 캡처 2024-08-07 142133.png
+profile/19/화면 캡처 2024-08-07 142214.png
+
+//1호
+profile/1/KakaoTalk_20240807_135436085.png
+profile/1/KakaoTalk_20240807_135444008.png
+profile/1/KakaoTalk_20240807_135455667.png
+
+//2호
+profile/2/KakaoTalk_20240807_141323996.png
+profile/2/KakaoTalk_20240807_141242881.png
+profile/2/KakaoTalk_20240807_141310809.png
+
+//3호
+profile/3/KakaoTalk_20240807_141844948_02.jpg
+profile/3/KakaoTalk_20240807_141844948_03.jpg
+profile/3/KakaoTalk_20240807_141844948_04.jpg
+profile/3/KakaoTalk_20240807_141844948_01.jpg
+profile/3/KakaoTalk_20240807_141844948.jpg
+
+//4호
+profile/4/KakaoTalk_20240807_142149480.png
+profile/4/KakaoTalk_20240807_142159356.png
+profile/4/KakaoTalk_20240807_142130032.png
+profile/4/KakaoTalk_20240807_142228500.png
+profile/4/KakaoTalk_20240807_142136973.png
+
+
+
+
+
+
+
+
+INSERT 
+    INTO user_image(user_id, user_image_path)
+    VALUES
+        (13, 'profile/13/1d21c1eb9f199cfeba2133adbcc157ed05c7e0ff.gif'),
+        (13, 'profile/13/화면 캡처 2024-08-07 135748.png'),
+        (13, 'profile/13/화면 캡처 2024-08-07 135819.png'),
+        (13, 'profile/13/화면 캡처 2024-08-07 135650.png'),
+        (13, 'profile/13/화면 캡처 2024-08-07 135709.png'),
+        (13, 'profile/13/화면 캡처 2024-08-07 135723.png'),
+
+        (14, 'profile/14/debfce8f72116b5ec54d4b06b379871b1fd80ead.gif'),
+        (14, 'profile/14/화면 캡처 2024-08-07 135224.png'),
+        (14, 'profile/14/화면 캡처 2024-08-07 135434.png'),
+        (14, 'profile/14/화면 캡처 2024-08-07 135331.png'),
+        (14, 'profile/14/화면 캡처 2024-08-07 135404.png'),
+        (14, 'profile/14/화면 캡처 2024-08-07 135458.png'),
+
+        (15, 'profile/15/KakaoTalk_20240807_135807312_02.jpg'),
+        (15, 'profile/15/KakaoTalk_20240807_135807312_01.jpg'),
+        (15, 'profile/15/KakaoTalk_20240807_135807312.jpg'),
+        (15, 'profile/15/KakaoTalk_20240807_135807312_04.jpg'),
+        (15, 'profile/15/KakaoTalk_20240807_135807312_03.jpg'),
+
+        (16, 'profile/16/KakaoTalk_20240807_140632305_03.jpg'),
+        (16, 'profile/16/KakaoTalk_20240807_140632305_04.jpg'),
+        (16, 'profile/16/KakaoTalk_20240807_140632305_05.jpg'),
+        (16, 'profile/16/KakaoTalk_20240807_140632305.jpg'),
+        (16, 'profile/16/KakaoTalk_20240807_140632305_01.jpg'),
+        (16, 'profile/16/KakaoTalk_20240807_140632305_02.jpg'),
+
+        (17, 'profile/17/KakaoTalk_20240807_140651975_02.jpg'),
+        (17, 'profile/17/KakaoTalk_20240807_140651975_03.jpg'),
+        (17, 'profile/17/KakaoTalk_20240807_140651975_05.jpg'),
+        (17, 'profile/17/KakaoTalk_20240807_140651975_01.jpg'),
+        (17, 'profile/17/KakaoTalk_20240807_140651975.jpg'),
+        (17, 'profile/17/KakaoTalk_20240807_140651975_04.png'),
+
+        (18, 'profile/18/KakaoTalk_20240807_141411691.jpg'),
+        (18, 'profile/18/KakaoTalk_20240807_141411691_05.jpg'),
+        (18, 'profile/18/KakaoTalk_20240807_141411691_01.jpg'),
+        (18, 'profile/18/KakaoTalk_20240807_141411691_03.jpg'),
+        (18, 'profile/18/KakaoTalk_20240807_141411691_02.jpg'),
+        (18, 'profile/18/KakaoTalk_20240807_141411691_04.jpg'),
+
+        (19, 'profile/19/다운로드.gif'),
+        (19, 'profile/19/화면 캡처 2024-08-07 141855.png'),
+        (19, 'profile/19/화면 캡처 2024-08-07 142229.png'),
+        (19, 'profile/19/화면 캡처 2024-08-07 142150.png'),
+        (19, 'profile/19/화면 캡처 2024-08-07 142133.png'),
+        (19, 'profile/19/화면 캡처 2024-08-07 142214.png'),
+
+        (1, 'profile/1/KakaoTalk_20240807_135436085.png'),
+        (1, 'profile/1/KakaoTalk_20240807_135444008.png'),
+        (1, 'profile/1/KakaoTalk_20240807_135455667.png'),
+
+        (2, 'profile/2/KakaoTalk_20240807_141323996.png'),
+        (2, 'profile/2/KakaoTalk_20240807_141242881.png'),
+        (2, 'profile/2/KakaoTalk_20240807_141310809.png'),
+
+        (3, 'profile/3/KakaoTalk_20240807_141844948_02.jpg'),
+        (3, 'profile/3/KakaoTalk_20240807_141844948_03.jpg'),
+        (3, 'profile/3/KakaoTalk_20240807_141844948_04.jpg'),
+        (3, 'profile/3/KakaoTalk_20240807_141844948_01.jpg'),
+        (3, 'profile/3/KakaoTalk_20240807_141844948.jpg'),
+
+        (4, 'profile/4/KakaoTalk_20240807_142149480.png'),
+        (4, 'profile/4/KakaoTalk_20240807_142159356.png'),
+        (4, 'profile/4/KakaoTalk_20240807_142130032.png'),
+        (4, 'profile/4/KakaoTalk_20240807_142228500.png'),
+        (4, 'profile/4/KakaoTalk_20240807_142136973.png');
+
