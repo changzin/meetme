@@ -155,6 +155,17 @@ export default {
 
     },
     methods: {
+
+    async getCategory() {
+        try {
+            const result = await this.$api(`/user/idollist`, {}, "GET");
+            this.idolList = result.idolList;
+            console.log(this.categoryList);
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
         //성별 선택
         toggleGender(gender){
           this.activeGender = gender;

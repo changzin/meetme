@@ -94,7 +94,7 @@ export default {
                 const requestBody ={
                 //프로필 단계 진행되면 액세스토큰으로 바꾸기 현제 단계에선 일반 user_id로
                 // access_token: "a5b4d6dc-95de-4626-8ca3-bea748b8eb94",
-                userId : this.user_id,
+                access_token: this.$getAccessToken(),
                 user_feature_id : this.selectedIds
                 }
                 console.log(this.access_token);
