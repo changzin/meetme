@@ -187,7 +187,9 @@ exports.profileInfo = async(req, res) => {
                 
         result = await db(conn, query, [userId]);
         result[0].user_image_paths = result[0].user_image_paths.split(',');
-        result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        if(result[0].user_feature_ids){
+            result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        }
                 
         responseBody = {
             status : 200,
@@ -269,6 +271,7 @@ exports.updateProfile = async(req, res) => {
                 
         result = await db(conn, query, [userInfo.user_add, userInfo.user_age, userInfo.user_annual_income_id, userInfo.user_drinking_id, userInfo.user_height, userInfo.user_blood_type_id, userInfo.user_introduction, userInfo.user_mbti_id, userInfo.user_religion_id, userInfo.user_smoke, userInfo.user_tartoo, userInfo.user_weight ,userId]);
 
+        console.log(result)
         responseBody = {
             status : 200,
         };
@@ -306,6 +309,51 @@ exports.deletePhoto = async(req, res) => {
 
         deleteFile(user_image_path);
 
+        responseBody = {
+            status : 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+exports.featureEdit = async(req, res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        await conn.beginTransaction();
+        const userId = req.body.user_id;
+        const feature_id = req.body.user_feature_ids;
+        console.log(feature_id.length)
+        
+        query = `SELECT user_feature_id FROM user_feature_bridge WHERE user_id = ?`
+                
+        result = await db(conn, query, [userId]);
+        console.log(result)
+        if(result.length > 0){
+            query = `DELETE FROM user_feature_bridge WHERE user_id = ?`
+
+            result = await db(conn, query, [userId]);
+        }
+        for(let i = 0; i < feature_id.length; i++){
+            const featureId = feature_id[i];
+            query = `INSERT INTO user_feature_bridge(user_id, user_feature_id) VALUES(?,?)`
+
+            result = await db(conn, query, [userId, featureId]);
+        }
         responseBody = {
             status : 200,
         };
