@@ -10,9 +10,6 @@ exports.loginCheck = async (req, res, next) => {
     result = await db(conn, query, [accessToken]);
     const userId = result[0].user_id;
 
-    console.log(accessToken);
-    console.log("result", result);
-
     // userId가 null이면 에러고, 발생하면 requestBody에 넣어서 컨트롤러로 넘겨 준다.
     if (userId) {
       req.body.user_id = userId;
@@ -36,14 +33,20 @@ exports.loginCheck = async (req, res, next) => {
 
 // 관리자용 로그인 체크. 똑같은 매커니즘인데 변수 이름만 바뀌었다.
 exports.adminLoginCheck = async (req, res, next) => {
+  const conn = await getConn();
   try {
+    // access_token은 유저를 식별하기 위해 DB에 들어간 값이다. 이걸로 쿼리문을 날려 user_id를 식별할 수 있다.
     const accessToken = req.body.access_token;
-    query = "SELECT admin_id FROM admin WHERE admin_access_token = ?";
-    result = await db(query, [accessToken]);
-    const adminId = result[0].admin_id;
+    query = "SELECT user_id FROM user WHERE user_access_token = ? AND user_type='admin'";
+    result = await db(conn, query, [accessToken]);
+    const userId = result[0].user_id;
 
-    if (adminId) {
-      req.body.admin_id = adminId;
+    console.log(accessToken);
+    console.log("result", result);
+
+    // userId가 null이면 에러고, 발생하면 requestBody에 넣어서 컨트롤러로 넘겨 준다.
+    if (userId) {
+      req.body.admin_id = userId;
       next();
     } else {
       throw new Error("accessToken이 유효하지 않거나 존재하지 않습니다.");
@@ -55,6 +58,10 @@ exports.adminLoginCheck = async (req, res, next) => {
       message: "로그인 상태가 아닙니다.",
     };
     res.json(responseBody);
+    return;
+  }
+  finally{
+    conn.release();
   }
 };
 

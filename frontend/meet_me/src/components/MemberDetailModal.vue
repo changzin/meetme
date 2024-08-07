@@ -25,16 +25,19 @@
             >
               <label
                 for="age"
+                style="text-align: start;"
                 >나이</label
               >
               <input
                 id="age"
                 type="number"
                 class="select_input"
+                disabled
               />
               <label
                 for="age"
-                >세</label
+                style="text-align: end;"
+                >{{ data.user_age }} 세</label
               >
             </div>
 
@@ -50,7 +53,7 @@
               class="visible_dropdown_button"
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
-                연봉
+                {{ data.user_annual_income_value }}
               </option>
             </select>
 
@@ -60,6 +63,7 @@
             >
               <label
                 for="height"
+                style="text-align: start;"
                 >키</label
               >
               <input
@@ -68,7 +72,8 @@
               />
               <label
                 for="height"
-                >cm</label
+                style="text-align: end;"
+                >{{ data.user_height }} cm</label
               >
             </div>
 
@@ -78,7 +83,8 @@
             >
               <label
                 for="weight"
-                >몸무게</label
+                style="text-align: start;"
+                >몸무게 </label
               >
               <input
                 id="weight"
@@ -86,7 +92,8 @@
               />
               <label
                 for="weight"
-                >kg</label
+                style="text-align: end;"
+                >{{ data.user_weight }} kg</label
               >
             </div>
 
@@ -100,7 +107,7 @@
               class="visible_dropdown_button"
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
-                MBTI
+                {{ data.user_mbti_value }}
               </option>
             </select>
 
@@ -111,7 +118,7 @@
               disabled
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
-                혈액형
+                {{ data.user_blood_type_value }}
               </option>
             </select>
 
@@ -121,7 +128,7 @@
               class="visible_dropdown_button"
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
-                종교
+                {{ data.user_religion_value }}
               </option>
             </select>
 
@@ -129,9 +136,10 @@
             <select
               name="drinking"
               class="visible_dropdown_button"
+              
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
-                주량
+                {{ data.user_drinking_value }}
               </option>
             </select>
 
@@ -139,12 +147,9 @@
             <select
               name="smoke"
               class="visible_dropdown_button"
+              
             >
-              <option class="dropdown_item" value="none" selected disabled hidden>
-                흡연 여부
-              </option>
-              <option class="dropdown_item" value="T">흡연</option>
-              <option class="dropdown_item" value="F">비흡연</option>
+            <option class="dropdown_item" selected>{{(data.user_smoke=='T') ? "흡연" : '비흡연'}}</option>
             </select>
 
             <!-- 문신 -->
@@ -152,11 +157,7 @@
               name="tartoo"
               class="visible_dropdown_button"
             >
-              <option class="dropdown_item" value="none" selected disabled hidden>
-                문신 여부
-              </option>
-              <option class="dropdown_item" value="T">문신 허용</option>
-              <option class="dropdown_item" value="F">문신 안됨</option>
+              <option class="dropdown_item" selected>{{(data.user_tartoo=='T') ? "문신 있음" : '문신 없음'}}</option>
             </select>
             <!-- 선택된 상태 -->
           </div>
@@ -166,10 +167,7 @@
 
             <div class="search-container">
               <div class="input-wrapper">
-                <input
-                  type="text"
-                  class="input-address"
-                />
+                <div class="input-address">{{ data.user_add }}</div>
               </div>
             </div>
 
@@ -177,7 +175,7 @@
           </div>
           <div class="address_title">자기소개</div>
           <div class="introduce">
-              <input type="text" placeholder="asdf">
+              {{ data.user_introduction }}
           </div>
 
           <div class="address_title">프로필 사진</div>
@@ -200,12 +198,22 @@ export default {
       type:Object,
       default: function(){
                 return {
-                  userData: [
-                    {
-                      user_nickname: "#",
-                      report_content: "#",
-                    }
-                  ]
+                  user_nickname: "#",
+                  user_age: 0,
+                  user_add: "#",
+                  user_introduction: "#",
+                  user_grade_value: "#",
+                  user_height: 0,
+                  user_weight: 0,
+                  user_annual_income_value: "#",
+                  user_mbti_value: "#",
+                  user_blood_type_value: "#",
+                  user_religion_value: "#",
+                  user_drinking_value: "#",
+                  user_smoke: "#",
+                  user_tartoo: "#",
+                  user_image_paths: [],
+                  user_feature_ids: []
                 };
           } 
     }
@@ -369,6 +377,8 @@ textarea:focus {
   padding: 20px;
   text-align: left;
   margin-bottom:30px;
+  margin-left:15px;
+  width:530px;
 }
 
 .introduce input {
@@ -455,12 +465,14 @@ div.container_essential {
 
 .input-address {
   width: 100%;
-  padding: 10px 10px 10px 50px;
+  height:46px;
+  padding: 10px 10px 10px 20px;
   border: none;
   border-radius: 8px;
   outline: none;
   font-size: 16px;
   border: 1px solid #6E7680;
+  text-align: left;
 }
 
 .search-button {
@@ -473,28 +485,6 @@ div.container_essential {
   cursor: pointer;
 }
 
-/* .input_address {
-  outline: none;
-  padding-bottom: 1px;
-  border: 1px solid #6e7680;
-  padding-left: 42px;
-  border-radius: 8px;
-  height: 36px;
-  align-content: center;
-  width: 100%;
-}
-.search_address {
-  margin-top: 3px;
-  background-color: var(--purple_main);
-  color: #ffffff;
-  border-radius: 10px;
-  align-content: center;
-  justify-content: center;
-  width: 74px;
-  height: 30px;
-  font-size: 12px;
-  box-sizing: border-box;
-} */
 
 textarea.intro {
   background: #f1eff6;
@@ -505,15 +495,6 @@ textarea.intro {
   width: 540px;
 }
 
-div.container_bottom {
-  /* border: 1px solid red; */
-}
-/* div.sub_title{
-        font-size: 16px;
-        font-weight: 500px;
-        margin-left: 17px;
-        text-align: start;
-    } */
 .active {
   background-color: var(--purple_main);
   color: #ffffff;
@@ -552,16 +533,16 @@ div.container_bottom {
 .visible_select_box {
   display: grid;
   height: 36px;
-  grid-template-columns: 80px 100px 60px;
+  grid-template-columns: 50px 100px 60px;
   /* background-color:#B3B3B3; */
   border: solid 1px #b3b3b3;
   border-radius: 6px;
   outline: none;
   box-shadow: none;
   align-content: center;
-  color: #979797;
-
+  padding-left: 12px;
   /* outline: none; */
+  color: #b3b3b3;
 }
 .select_nickname_box {
   color: var(--purple_main);
