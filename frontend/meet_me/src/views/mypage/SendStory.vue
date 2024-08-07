@@ -5,10 +5,10 @@
                 사연 보내기
             </div>
             <div class="input-container">
-                <textarea type="text" class="input-box" placeholder="사연을 입력하세요"></textarea>
+                <textarea type="text" class="input-box" id="story" placeholder="사연을 입력하세요"></textarea>
             </div>
             <div class="story_send_container">
-            <button class="story_send_button" @click="1">사연 보내기</button>
+            <button class="story_send_button" @click="sendStory()">사연 보내기</button>
             </div>
         </div>
     </div>
@@ -31,7 +31,22 @@ export default {
     updated() {},
     beforeUnmount() {},
     unmounted() {},
-    methods: {},
+    methods: {
+        async sendStory(){
+            try{
+                const story = document.getElementById('story').value;
+                if(story){
+                    await this.$api(`/userstory/new`, {access_token: this.$getAccessToken(), story}, 'POST');
+                    alert('사연이 보냈습니다.');
+                    this.$router.push({name: 'MainPage'});
+                } else {
+                    alert('사연을 입력해주세요.');
+                }
+            }catch(err){    
+                console.log(err);
+            }
+        }
+    },
 }
     
 </script>
