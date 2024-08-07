@@ -13,10 +13,9 @@ exports.FeatureList = async (req, res)=>{
         await conn.beginTransaction();
         
         query = "SELECT * FROM user_feature;"
-        console.log(query);
+
         result = await db(conn,query);
         
-        console.log(result);
 
         const responseBody = {
             status : 200,
