@@ -487,7 +487,7 @@ export default {
           { userInfo, access_token: this.$getAccessToken() },
           "POST"
         );
-        this.getUser();
+        await this.getUser();
 
       } catch (err) {
         console.log(err);

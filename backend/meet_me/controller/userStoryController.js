@@ -9,12 +9,13 @@ exports.userStoryCreate = async(req, res)=>{
         let result = [];
         let responseBody = {};
 
-        const {user_id, user_story_content} = req.body;
+        const userId = req.body.user_id;
+        const story = req.body.story;
         
         query=`INSERT 
                 INTO user_story(user_id, user_story_content)
                 VALUES(?, ?)`
-        result = await db(conn, query, [user_id, user_story_content]);
+        result = await db(conn, query, [userId, story]);
 
         responseBody = {
             status:200,

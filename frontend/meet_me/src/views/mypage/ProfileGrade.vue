@@ -17,7 +17,7 @@
                 </div>
                 <div class="next_button" @click="count(1)">
                 </div>
-                <img :src="userImage[index]" @click="count(1)">  
+                <img :src="this.$imageFileFormat(userImage[index])" @click="count(1)">  
             </div>
             <div class="profile_info">
                 <div class="introduce">
@@ -68,9 +68,9 @@ export default {
         },
         async getUser() {
             try{
-                const result = await this.$api(`/user/profileinfo`, {user_id: 1}, "POST");
+                const result = await this.$api(`/user/profileinfo`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
-                this.userImage = result.user.user_image_paths;
+                this.userImage = this.userData.user_image_paths;
                 console.log(this.userData)
                 console.log(this.userImage)
             }catch(err){
