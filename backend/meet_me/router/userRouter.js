@@ -4,18 +4,19 @@ const express = require('express');
 const { mypageProfile, profileInfo, getHeart, sendMatching, deleteMatching, deleteHeart, enterPhoto, getCategory, updateProfile, deletePhoto,getProfile,profileInput} = require('../controller/userController.js');
 
 const { userLogin, emailDuplicateCheck, signup, emailIsVerified } = require("../controller/authController.js")
-const { userList, userBlock, userUnblock, userReport, userPayment } = require("../controller/adminController.js")
+const { userList, userBlock, userUnblock, userReport, userPayment, adminUserDetail } = require("../controller/adminController.js")
 const { handleFileUpload, insertPhoto, updatePhoto } = require('../middleware/imageHandler.js')
-const { loginCheck } = require('../middleware/login.js')
+const { loginCheck, adminLoginCheck } = require('../middleware/login.js')
 
 const router = express.Router();
 
 // adminController
-router.post('/list', userList);
-router.post('/block', userBlock);
-router.post('/unblock', userUnblock);
-router.post('/report', userReport);
-router.post('/payment', userPayment);
+router.post('/list', adminLoginCheck, userList);
+router.post('/block', adminLoginCheck, userBlock);
+router.post('/unblock', adminLoginCheck, userUnblock);
+router.post('/report', adminLoginCheck, userReport);
+router.post('/payment', adminLoginCheck, userPayment);
+router.post('/admindetail', adminLoginCheck, adminUserDetail);
 
 // AuthController
 router.post('/login', userLogin);

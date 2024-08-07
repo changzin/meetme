@@ -86,7 +86,24 @@ export default {
             prevKeyword: "",
             reportData: {},
             payData:{},
-            detailData:{},
+            detailData:{
+                  user_nickname: "#",
+                  user_age: 0,
+                  user_add: "#",
+                  user_introduction: "#",
+                  user_grade_value: "#",
+                  user_height: 0,
+                  user_weight: 0,
+                  user_annual_income_value: "#",
+                  user_mbti_value: "#",
+                  user_blood_type_value: "#",
+                  user_religion_value: "#",
+                  user_drinking_value: "#",
+                  user_smoke: "#",
+                  user_tartoo: "#",
+                  user_image_paths: [],
+                  user_feature_ids: []
+                },
             payModalVisible: false,
             reportModalVisible: false,
             detailModalVisible: false
@@ -105,7 +122,7 @@ export default {
                 this.offset = (!this.offset) ? 10 : this.offset;
 
                 let requestBody = {
-
+                    access_token: this.$getAccessToken()
                 };
                 let result = await this.$api(`/user/list?page=${this.page}&keyword=${this.prevKeyword}&offset=${this.offset}`, requestBody, "POST");
                 this.userList = result.userList;
@@ -127,7 +144,11 @@ export default {
             // 유저 차단 
         async blockUser(user){
             try{
-                const result = await this.$api(`/user/block`, {user_id: user.user_id}, "POST");
+                let requestBody = {
+                    user_id: user.user_id,
+                    access_token: this.$getAccessToken()
+                }
+                const result = await this.$api(`/user/block`, requestBody, "POST");
                 if (result.status == 200){
                 user.user_block = "T";
                 }
@@ -143,12 +164,16 @@ export default {
         // 유저 차단 해제
         async unBlockUser(user){
             try{
-                const result = await this.$api(`/user/unblock`, {user_id: user.user_id}, "POST");
+                let requestBody = {
+                    user_id: user.user_id,
+                    access_token: this.$getAccessToken()
+                }
+                const result = await this.$api(`/user/unblock`, requestBody, "POST");
                 if (result.status == 200){
-                user.user_block = "F";
+                    user.user_block = "F";
                 }
                 else{
-                alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
+                    alert("서버 에러로 작업을 완료하지 못했습니다. 다시 시도하세요.")
                 }
             }
             catch(err){
@@ -158,7 +183,8 @@ export default {
         },
         async viewReportModal(user_id){
             let requestBody = {
-                user_id: user_id
+                user_id: user_id,
+                access_token: this.$getAccessToken()
             }
             let result = await this.$api("/user/report", requestBody, "POST");
             this.reportData = result;
@@ -169,7 +195,8 @@ export default {
         },
         async viewPayModal(user_id){
             let requestBody = {
-                user_id: user_id
+                user_id: user_id,
+                access_token: this.$getAccessToken()
             }
             let result = await this.$api("/user/payment", requestBody, "POST");
             this.payData = result;
@@ -181,10 +208,11 @@ export default {
         },
         async viewDetailModal(user_id){
             let requestBody = {
-                user_id: user_id
+                user_id: user_id,
+                access_token: this.$getAccessToken()
             }
-            let result = await this.$api("/user/payment", requestBody, "POST");
-            this.detailData = result;
+            let result = await this.$api("/user/admindetail", requestBody, "POST");
+            this.detailData = result.user;
             this.detailModalVisible = true;
         },
         closeDetailModal(){
@@ -193,6 +221,7 @@ export default {
     },
     async created(){
         await this.getUserList();
+        console.log(this.detailData)
     }
 }
 </script>

@@ -36,7 +36,7 @@ if(!fs.existsSync(dir)){
 // 포트 9090으로 설정
 app.set('port', process.env.PORT || 9090);
 // CORS
-// app.use(cors());
+app.use(cors(corsOption));
 // 개발자 모드로 설정 (수정 -> 저장 시 서버 자동 재시작)
 app.use(morgan('dev'));
 

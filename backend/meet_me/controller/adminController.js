@@ -255,18 +255,34 @@ exports.adminUserDetail = async(req, res)=>{
         const userId = req.body.user_id;
 
         query = `SELECT u.user_nickname, u.user_age, u.user_add, u.user_introduction, g.user_grade_value,
-                u.user_height, u.user_weight, u.user_annual_income_id, u.user_mbti_id, u.user_blood_type_id, u.user_religion_id,
-                u.user_drinking_id, u.user_smoke, u.user_tartoo, 
-                (SELECT GROUP_CONCAT(i.user_image_path ORDER BY i.user_image_id SEPARATOR ',') FROM user_image AS i WHERE u.user_id = i.user_id) AS user_image_paths,
-                (SELECT GROUP_CONCAT(fb.user_feature_id ORDER BY fb.user_feature_bridge_id SEPARATOR ',') FROM user_feature_bridge AS fb WHERE u.user_id = fb.user_id) AS user_feature_ids
+                u.user_height, u.user_weight, ai.user_annual_income_value, m.user_mbti_value, bt.user_blood_type_value, r.user_religion_value,
+                d.user_drinking_value, u.user_smoke, u.user_tartoo, 
+                (SELECT 
+					GROUP_CONCAT(i.user_image_path ORDER BY i.user_image_id SEPARATOR ',') 
+					FROM user_image AS i 
+					WHERE u.user_id = i.user_id) AS user_image_paths,
+                (SELECT 
+					GROUP_CONCAT(f.user_feature_value ORDER BY fb.user_feature_bridge_id SEPARATOR ',') 
+					FROM user_feature_bridge AS fb 
+                    JOIN user_feature AS f ON fb.user_feature_id = f.user_feature_id
+                    WHERE u.user_id = fb.user_id) AS user_feature_ids
                 FROM user AS u
                 JOIN user_grade AS g ON u.user_grade_id = g.user_grade_id
+                JOIN user_annual_income AS ai ON u.user_annual_income_id = ai.user_annual_income_id
+                JOIN user_mbti AS m ON u.user_mbti_id = m.user_mbti_id 
+                JOIN user_blood_type AS bt ON u.user_blood_type_id = bt.user_blood_type_id
+                JOIN user_religion AS r ON u.user_religion_id = r.user_religion_id
+                JOIN user_drinking AS d ON u.user_drinking_id = d.user_drinking_id
                 WHERE u.user_id = ?
                 LIMIT 1`
                 
         result = await db(conn, query, [userId]);
-        result[0].user_image_paths = result[0].user_image_paths.split(',');
-        result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        if (result[0].user_image_paths){
+            result[0].user_image_paths = result[0].user_image_paths.split(',');
+        }
+        if (result[0].user_feature_ids){
+            result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        }
         responseBody = {
             status : 200,
             user : result[0],
