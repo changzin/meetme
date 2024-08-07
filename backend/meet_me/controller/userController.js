@@ -82,6 +82,49 @@ exports.getProfile = async(req,res) => {
     }
 }
 //건용
+exports.idolList = async(req,res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        query = `SELECT
+        (SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+        (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
+        (SELECT GROUP_CONCAT(user_annual_income_value ORDER BY user_annual_income_id SEPARATOR ',') FROM user_annual_income) AS user_annual_income_values,
+        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values,
+        (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
+        (SELECT GROUP_CONCAT(user_feature_value ORDER BY user_feature_id SEPARATOR ',') FROM user_feature) AS user_feature_values`
+        
+        result = await db(conn, query);
+        result[0].user_mbti_values = result[0].user_mbti_values.split(',');
+        result[0].user_blood_type_values = result[0].user_blood_type_values.split(',');
+        result[0].user_annual_income_values = result[0].user_annual_income_values.split(',');
+        result[0].user_drinking_values = result[0].user_drinking_values.split(',');
+        result[0].user_religion_values = result[0].user_religion_values.split(',');
+        result[0].user_feature_values = result[0].user_feature_values.split(',');
+
+        responseBody = {
+            status : 200,
+            categoryList : result[0],
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+//건용
 exports.profileInput = async(req,res)=>{
     const conn = await getConn();
     try{
