@@ -112,7 +112,7 @@ export default {
     methods: {
         async getUserList(){
             try{
-                this.$router.push({name: 'member', query: {page: this.page, keyword: this.prevKeyword, offset: this.offset}});
+                await this.$router.push({name: 'member', query: {page: this.page, keyword: this.prevKeyword, offset: this.offset}});
 
                 this.page = this.$route.query.page;
                 this.prevKeyword = this.$route.query.keyword;
