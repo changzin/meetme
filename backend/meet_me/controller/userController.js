@@ -400,8 +400,48 @@ exports.enterPhoto = async(req, res)=>{
     }
     finally{
         conn.release();
-    }   
+    }
 }
 
+exports.userCoin = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
 
+        let query = '';
+        let result = [];
+        let responseBody = {};
 
+        const userId = req.body.user_id;
+        
+        query = `SELECT user_coin
+                FROM user
+                WHERE user_id=?`;
+        result = await db(conn, query, [userId]);
+        if (result[0].user_coin){
+            responseBody = {
+                status: 200,
+                userCoin: result[0].user_coin
+            };
+        }
+        else{
+            throw new Error("유저의 코인 정보를 불러올 수 없습니다.")
+        }
+        
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }
+}

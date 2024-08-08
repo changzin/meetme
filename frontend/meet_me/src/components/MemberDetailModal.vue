@@ -51,6 +51,7 @@
             <select
               name="annual_income"
               class="visible_dropdown_button"
+              disabled
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
                 {{ data.user_annual_income_value }}
@@ -69,6 +70,8 @@
               <input
                 id="height"
                 type="number"
+                style="background-color: rgba(0, 0, 0, 0);"
+                disabled
               />
               <label
                 for="height"
@@ -89,6 +92,8 @@
               <input
                 id="weight"
                 type="number"
+                style="background-color: rgba(0, 0, 0, 0);"
+                disabled
               />
               <label
                 for="weight"
@@ -105,6 +110,7 @@
             <select
               name="MBTI"
               class="visible_dropdown_button"
+              disabled
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
                 {{ data.user_mbti_value }}
@@ -126,6 +132,7 @@
             <select
               name="religion"
               class="visible_dropdown_button"
+              disabled
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
                 {{ data.user_religion_value }}
@@ -136,7 +143,7 @@
             <select
               name="drinking"
               class="visible_dropdown_button"
-              
+              disabled
             >
               <option class="dropdown_item" value="none" selected disabled hidden>
                 {{ data.user_drinking_value }}
@@ -147,7 +154,7 @@
             <select
               name="smoke"
               class="visible_dropdown_button"
-              
+              disabled
             >
             <option class="dropdown_item" selected>{{(data.user_smoke=='T') ? "흡연" : '비흡연'}}</option>
             </select>
@@ -156,6 +163,7 @@
             <select
               name="tartoo"
               class="visible_dropdown_button"
+              disabled
             >
               <option class="dropdown_item" selected>{{(data.user_tartoo=='T') ? "문신 있음" : '문신 없음'}}</option>
             </select>
@@ -180,9 +188,11 @@
 
           <div class="address_title">프로필 사진</div>
           <div class="profile_image">
-            <!-- <div v-for="(img, i) in 6" :key="i">
-              <img class="edit_profile" :src="profile[i] ? this.$imageFileFormat(profile[i]) : '/model.jpg'"/>
-            </div> -->
+            <div v-for="(img, i) in 6" :key="i">
+              <img v-if="data.user_image_paths[i]" class="edit_profile" :src="this.$imageFileFormat(data.user_image_paths[i])"/>
+
+              <div v-if="!data.user_image_paths[i]" class="edit_profile" style="background-color: #f1eff6;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -254,7 +264,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   width: 600px;
-  height: 800px;
+  height: 70%;
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -605,6 +615,7 @@ textarea.intro {
   color: var(--purple_main);
   font-size: 14px;
   text-align: end;
+  background-color:rgba(0, 0, 0, 0);
 }
 .visible_input {
   color: #979797;

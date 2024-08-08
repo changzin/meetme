@@ -33,6 +33,7 @@ import RecommendList from '../views/RecommendList.vue'
 import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
 import ForgotPassword from '../views/nouser/ForgotPassword.vue'
+import MyPageStore from '../views/mypage/MyPageStore.vue'
 
 const routes = [
   {
@@ -177,6 +178,11 @@ const routes = [
     path: '/loginbridge',
     name: 'LoginBridge',
     component: LoginBridge
+  },
+  {
+    path: '/coinstore',
+    name: 'mypagestore',
+    component: MyPageStore
   }
 ]
 
