@@ -46,7 +46,7 @@
                             자주 묻는 질문
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'SendStory'})">
                         <img class="button_icon" src="/icon/mypage/main/qna.svg">
                         <div class="button_icon">
                             밋미 사연 보내기

@@ -38,6 +38,176 @@ exports.mypageProfile = async(req, res) => {
         conn.release();
     }
 }
+//건용
+exports.getProfile = async(req,res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        query = `SELECT
+        (SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+        (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
+        (SELECT GROUP_CONCAT(user_annual_income_value ORDER BY user_annual_income_id SEPARATOR ',') FROM user_annual_income) AS user_annual_income_values,
+        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values,
+        (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
+        (SELECT GROUP_CONCAT(user_feature_value ORDER BY user_feature_id SEPARATOR ',') FROM user_feature) AS user_feature_values`
+        
+        result = await db(conn, query);
+        result[0].user_mbti_values = result[0].user_mbti_values.split(',');
+        result[0].user_blood_type_values = result[0].user_blood_type_values.split(',');
+        result[0].user_annual_income_values = result[0].user_annual_income_values.split(',');
+        result[0].user_drinking_values = result[0].user_drinking_values.split(',');
+        result[0].user_religion_values = result[0].user_religion_values.split(',');
+        result[0].user_feature_values = result[0].user_feature_values.split(',');
+
+        responseBody = {
+            status : 200,
+            categoryList : result[0],
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+//건용
+exports.idolList = async(req,res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        query = `SELECT
+        (SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+        (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
+        (SELECT GROUP_CONCAT(user_annual_income_value ORDER BY user_annual_income_id SEPARATOR ',') FROM user_annual_income) AS user_annual_income_values,
+        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values,
+        (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
+        (SELECT GROUP_CONCAT(user_feature_value ORDER BY user_feature_id SEPARATOR ',') FROM user_feature) AS user_feature_values`
+        
+        result = await db(conn, query);
+        result[0].user_mbti_values = result[0].user_mbti_values.split(',');
+        result[0].user_blood_type_values = result[0].user_blood_type_values.split(',');
+        result[0].user_annual_income_values = result[0].user_annual_income_values.split(',');
+        result[0].user_drinking_values = result[0].user_drinking_values.split(',');
+        result[0].user_religion_values = result[0].user_religion_values.split(',');
+        result[0].user_feature_values = result[0].user_feature_values.split(',');
+
+        responseBody = {
+            status : 200,
+            categoryList : result[0],
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+//건용
+exports.profileInput = async(req,res)=>{
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        //ProfileInput에서 불러옴
+        let user_id = req.body.user_id
+        let user_nickname = req.body.user_nickname;
+        let user_gender = req.body.user_gender;
+        let user_age = req.body.user_age;
+        let user_mbti_id = req.body.user_mbti_id;
+        let user_blood_type_id = req.body.user_blood_type_id;
+        let user_height = req.body.user_height;
+        let user_weight = req.body.user_weight;
+        let user_annual_income_id = req.body.user_annual_income_id;
+        let user_smoke = req.body.user_smoke;
+        let user_drinking_id = req.body.user_drinking_id;
+        let user_tartoo = req.body.user_tartoo;
+        let user_religion_id = req.body.user_religion_id;
+        let user_introduction = req.body.user_introduction;
+        let user_add = req.body.user_add;
+        
+        console.log("닉네임"+ ""+user_nickname);
+        console.log("성별"+ ""+user_gender);
+        console.log("나이"+ ""+user_age);
+        console.log("mbti"+ ""+user_mbti_id);
+        console.log("혈액형"+ ""+user_blood_type_id);
+        console.log("키"+user_height);
+        console.log("몸무게"+ ""+user_weight);
+        console.log("주소"+ ""+user_add);
+        console.log("연봉"+ ""+user_annual_income_id);
+        console.log("흡연"+ ""+user_smoke);
+        console.log("주량"+ ""+user_drinking_id);
+        console.log("타투"+ ""+user_tartoo);
+        console.log("종교"+ ""+user_religion_id);
+        console.log("자기소개"+ ""+user_introduction);
+        console.log("유저"+ ""+user_id);
+
+        query =  `UPDATE user
+        SET
+          user_nickname = ?,
+          user_gender = ?,
+          user_age = ?,
+          user_mbti_id = ?,
+          user_blood_type_id = ?,
+          user_height = ?,
+          user_weight = ?,
+          user_add = ?,
+          user_annual_income_id = ?,
+          user_smoke = ?,
+          user_drinking_id = ?,
+          user_tartoo = ?,
+          user_religion_id = ?,
+          user_introduction = ?
+        WHERE user_id = ?`;
+
+        result = await db(conn, query, [user_nickname,user_gender,user_age,user_mbti_id,user_blood_type_id,user_height,user_weight,user_add,user_annual_income_id,user_smoke,user_drinking_id,user_tartoo,user_religion_id,user_introduction,user_id]);
+
+        console.log(result)
+        responseBody = {
+            status : 200,
+            profile : result,
+            message : "유저 프로필 정보가 업데이트 되었습니다."
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+
+}
 
 exports.profileInfo = async(req, res) => {
     const conn = await getConn();
@@ -60,7 +230,10 @@ exports.profileInfo = async(req, res) => {
                 
         result = await db(conn, query, [userId]);
         result[0].user_image_paths = result[0].user_image_paths.split(',');
-        result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        if(result[0].user_feature_ids){
+            result[0].user_feature_ids = result[0].user_feature_ids.split(',');
+        }
+                
         responseBody = {
             status : 200,
             user : result[0],
@@ -141,6 +314,7 @@ exports.updateProfile = async(req, res) => {
                 
         result = await db(conn, query, [userInfo.user_add, userInfo.user_age, userInfo.user_annual_income_id, userInfo.user_drinking_id, userInfo.user_height, userInfo.user_blood_type_id, userInfo.user_introduction, userInfo.user_mbti_id, userInfo.user_religion_id, userInfo.user_smoke, userInfo.user_tartoo, userInfo.user_weight ,userId]);
 
+        console.log(result)
         responseBody = {
             status : 200,
         };
@@ -178,6 +352,51 @@ exports.deletePhoto = async(req, res) => {
 
         deleteFile(user_image_path);
 
+        responseBody = {
+            status : 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+exports.featureEdit = async(req, res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        await conn.beginTransaction();
+        const userId = req.body.user_id;
+        const feature_id = req.body.user_feature_ids;
+        console.log(feature_id.length)
+        
+        query = `SELECT user_feature_id FROM user_feature_bridge WHERE user_id = ?`
+                
+        result = await db(conn, query, [userId]);
+        console.log(result)
+        if(result.length > 0){
+            query = `DELETE FROM user_feature_bridge WHERE user_id = ?`
+
+            result = await db(conn, query, [userId]);
+        }
+        for(let i = 0; i < feature_id.length; i++){
+            const featureId = feature_id[i];
+            query = `INSERT INTO user_feature_bridge(user_id, user_feature_id) VALUES(?,?)`
+
+            result = await db(conn, query, [userId, featureId]);
+        }
         responseBody = {
             status : 200,
         };

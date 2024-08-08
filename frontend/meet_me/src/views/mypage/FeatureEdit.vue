@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="card_box row justify-content-center">
             <div class="title">
-                특징 선택
+                특징 수정
             </div>
             <div class="sub_title"> 
                 특징을 선택해주세요
@@ -14,15 +14,14 @@
                 <div class="select_box" 
                 v-for="feature in userFeature" :key="feature.user_feature_id"
                 :class="{'select_box': selectedIds.includes(feature.user_feature_id),'visble_select_box' : !selectedIds.includes(feature.user_feature_id)}" 
-                @click="setActive(feature)" >
+                @click="setActive(feature)">
                     {{feature.user_feature_value }}
-
                     <!-- 클릭한거 대상으로  변수를 지정해주고  클릭한 것의 id를 post해준다. -->
                 </div>
             </div>
- 
+
             <div class="container_bottom">
-                <button class="next" @click="postUserFeature()">다음으로</button>
+                <button class="next" @click="postUserFeature()">저장하기</button>
             </div>
         </div>
     </div>
@@ -44,13 +43,14 @@ export default {
             selectedValues : [],
             selectedIds : [],
             //user아직 없음
-            user_id : 2,
+            userData: {},
         }
     },
     computed:{
     },
     created(){
       this.fetchFeature();
+      this.getUser();
     },
 
     methods:{
@@ -72,19 +72,26 @@ export default {
             console.log(this.selectedIds);
             
         },
+        async getUser() {
+            try {
+                const result = await this.$api(`/user/profileinfo`, {access_token: this.$getAccessToken()}, "POST");
+                this.userData = result.user.user_feature_ids.map(id => Number(id));
+                this.selectedIds = this.userData;
+                console.log(this.selectedIds);
+            } catch (err) {
+            console.log(err);
+            }
+        },
 
-
-       clearActive(){
-        this.activeInput = null;
-       },
+        clearActive(){
+            this.activeInput = null;
+        },
         async fetchFeature(){
             const requestBody = {}
             const response = await this.$api(`/userFeature/list`,requestBody,"GET")
-            console.log(response);
             
             if(response.status == 200){
                 this.userFeature = response.userFeature;
-                console.log(this.userFeature);
             }
 
         },
@@ -92,18 +99,14 @@ export default {
 
             if(this.selectedIds.length >=4){
                 const requestBody ={
-                //프로필 단계 진행되면 액세스토큰으로 바꾸기 현제 단계에선 일반 user_id로
-                // access_token: "a5b4d6dc-95de-4626-8ca3-bea748b8eb94",
-                access_token: this.$getAccessToken(),
-                user_feature_id : this.selectedIds
+                access_token : this.$getAccessToken(),
+                user_feature_ids : this.selectedIds
                 }
-                console.log(this.access_token);
-                const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
-                console.log(featureId);
+
+                await this.$api("/user/featureedit",requestBody,"POST") 
+
                 //다음 페이지로 넘어가는 함수 추가 
-                this.$router.push({
-                    name:"profilephoto"
-                })
+                await this.$router.push({ name: "MyPageEdit" })
 
             }else{
                 alert("특징 4개이상 8개 이하 선택해주세요")
