@@ -34,9 +34,7 @@
           <div class="gender">
             <div class="sub_title">성별</div>
             <div class="select_gender">
-              <button :class="maleClass" @click="toggleGender('M')">
-                남
-              </button>
+              <button :class="maleClass" @click="toggleGender('M')">남</button>
               <button :class="femaleClass" @click="toggleGender('F')">
                 여
               </button>
@@ -324,8 +322,8 @@
             <option class="dropdown_item" value="null" selected disabled hidden>
               문신 여부
             </option>
-            <option class="dropdown_item" value="T">문신 허용</option>
-            <option class="dropdown_item" value="F">문신 안됨</option>
+            <option class="dropdown_item" value="T">문신 있음</option>
+            <option class="dropdown_item" value="F">문신 없음</option>
           </select>
         </div>
 
@@ -341,24 +339,29 @@
               v-model="inputUserAddress"
             />
 
-            <button type="submit" class="search_address" @click="zipload()">주소찾기</button>
+            <button type="submit" class="search_address" @click="zipload()">
+              주소찾기
+            </button>
           </div>
         </div>
         <div class="sub_title3">자기소개</div>
-        <textarea id="userintroduction" class="select_intro" v-model="inputUserIntroduction" @focus="setActive('intro')"
-            @blur="clearActive"
-            :class="{
-              visible_select_intro: activeInput === 'intro',
-              visible_select_intro: activeInput !== 'intro',
-            }" >
+        <textarea
+          id="userintroduction"
+          class="select_intro"
+          v-model="inputUserIntroduction"
+          @focus="setActive('intro')"
+          @blur="clearActive"
+          :class="{
+            visible_select_intro: activeInput === 'intro',
+            visible_select_intro: activeInput !== 'intro',
+          }"
+        >
 자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~~~~~~~자기소개해봐~~~~~
                 </textarea
         >
       </div>
       <div class="container_bottom">
-        <button class="next" @click="validateAndPostProfile()">
-          다음으로
-        </button>
+        <button class="next" @click="validateAndPostProfile()">다음으로</button>
       </div>
     </div>
   </div>
@@ -371,25 +374,25 @@ export default {
       activeGender: "M", // 초기 활성화상태 '남'
       activeInput: null,
       categoryList: {},
-
+      inputDatas : [],
+      inputs:[],
       //항목 선택
       selectGender: null,
-      selectAnnualIncome: "null",
-      selectedMbti: "null",
-      selectedBloodType: "null",
-      selectedReligion: "null",
-      selectedDrinking: "null",
-      selectedSmoke: "null",
-      selectedTartoo: "null",
+      selectAnnualIncome: null,
+      selectedMbti: null,
+      selectedBloodType:null,
+      selectedReligion: null,
+      selectedDrinking: null,
+      selectedSmoke: null,
+      selectedTartoo: null,
       //input
-      inputNickname:null,
+      inputNickname: null,
       inputAge: null,
       inputWeight: null,
       inputHeight: null,
       inputUserIntroduction: null,
-      inputUserAddress:null,
-      user_id : 26,
-
+      inputUserAddress: null,
+      user_id: 26,
     };
   },
   async created() {
@@ -417,8 +420,8 @@ export default {
         console.log(err);
       }
     },
-    validateInputs(){
-      const inputs = {
+    validateInputs() {
+       this.inputDatas = {
         user_nickname: this.inputNickname,
         user_gender: this.selectGender,
         user_age: this.inputAge,
@@ -432,67 +435,125 @@ export default {
         user_smoke: this.selectedSmoke,
         user_tartoo: this.selectedTartoo,
         user_address: this.inputUserAddress,
-        user_introduction: this.inputUserIntroduction
+        user_introduction: this.inputUserIntroduction,
+      };
+      let inputs = this.inputDatas
+      console.log(inputs)
+      for (let key in inputs) {
+        if (
+          inputs[key] === null ||
+          inputs[key] === "" ||
+          inputs[key] === "none"
+        ) {
+          // let keyKorenName = this.korean(key);
+          console.error(`${key} 입력값이 유효하지 않습니다.`);
+          // alert(keyKorenName + "" + "정보를 입력해주세요");
+
+          return false;
+        } else if (
+          inputs[key] !== null ||
+          inputs[key] !== "" ||
+          inputs[key] !== "none"
+        ) {
+          console.log(`${key} 입력` )
+          return true;
+        }
+      }
+    },
+    korean(category) {
+      if (category == "user_nickname") {
+        return "닉네임";
+      }
+      if (category == "user_gender") {
+        return "성별";
+      }
+      if (category == "user_age") {
+        return "나이";
+      }
+      if (category == "user_height") {
+        return "키";
+      }
+      if (category == "user_weight") {
+        return "몸무게";
+      }
+      if (category == "user_annual_income") {
+        return "MBTI";
+      }
+      if (category == "user_mbti") {
+        return "MBTI";
+      }
+      if (category == "user_blood_type") {
+        return "혈액형";
+      }
+      if (category == "user_religion") {
+        return "종교";
+      }
+      if (category == "user_drinking") {
+        return "주량";
+      }
+      if (category == "user_smoke") {
+        return "흡연 여부";
+      }
+      if (category == "user_tartoo") {
+        return "문신 여부";
+      }
+      if (category == "user_address") {
+        return "주소";
+      }
+      if (category == "user_introduction") {
+        return "자기 소개";
+      }
+    },
+    async validateAndPostProfile() {
+      if ( this.validateInputs()!== null) {
+        this.postUserProfile();
+      } else {
+        alert(" dd")
+        console.log(this.validateInputs());
+      }
+    },
+
+    async postUserProfile() {
+      try {
+        const requestBody = {
+          access_token: this.$getAccessToken(),
+          user_nickname: this.inputNickname,
+          user_gender: this.selectGender,
+          user_age: this.inputAge,
+          user_mbti_id: this.selectedMbti,
+          user_blood_type_id: this.selectedBloodType,
+          user_height: this.inputHeight,
+          user_weight: this.inputWeight,
+          user_annual_income_id: this.selectAnnualIncome,
+          user_smoke: this.selectedSmoke,
+          user_drinking_id: this.selectedDrinking,
+          user_tartoo: this.selectedTartoo,
+          user_religion_id: this.selectedReligion,
+          user_introduction: this.inputUserIntroduction,
+          user_add: this.inputUserAddress,
         };
-        for(let key in inputs){
-          if(inputs[key] === null || inputs[key] === '' || inputs[key] === 'none'){
-            console.error(`${key} 입력값이 유효하지 않습니다.`)
-            alert("정보를 입력해주세요")
-            return false;
-          }else{
-            return true;
-          }
-          
+        const request = await this.$api(
+          "/user/profileinput",
+          requestBody,
+          "POST"
+        );
+        console.log(request);
+        if (request.status === 200) {
+          this.$router.push({
+            name: "idol",
+          });
         }
-        
-      },
-      async validateAndPostProfile(){
-        if(this.validateInputs()){
-          await this.postUserProfile();
-        }else{
-          console.log(this.validateInputs())
-        }
-      },
-
-
-
-    async postUserProfile(){
-         try{
-          
-            const requestBody = {
-                user_id : this.user_id,
-                user_nickname : this.inputNickname,
-                user_gender : this.selectGender,
-                user_age:this.inputAge,
-                user_mbti_id : this.selectedMbti,
-                user_blood_type_id : this.selectedBloodType,
-                user_height : this.inputHeight,
-                user_weight : this.inputWeight,
-                user_annual_income_id : this.selectAnnualIncome,
-                user_smoke : this.selectedSmoke,
-                user_drinking_id : this.selectedDrinking,
-                user_tartoo : this.selectedTartoo,
-                user_religion_id : this.selectedReligion,
-                user_introduction : this.inputUserIntroduction,
-                user_add:this.inputUserAddress,
-            }
-            const request = await this.$api('/user/profileinput',requestBody,"POST")
-            console.log(request);
-            if(request.status === 200){
-              this.$router.push({
-                    name:"idol"
-                })
-            }
-         }catch(err){
-            console.log(err);
-         }
+      } catch (err) {
+        alert("정보를 입력해주세요");
+        console.log(err);
+      }
     },
 
     //성별 선택
     toggleGender(gender) {
-        this.activeGender = gender;
-        this.selectGender = this.activeGender;
-        console.log(this.selectGender);
+      this.activeGender = gender;
+      this.selectGender = this.activeGender;
+      console.log(this.selectGender);
     },
     loadDaumPostcodeScript() {
       const script = document.createElement("script");
@@ -534,21 +595,10 @@ export default {
     },
     clearActive() {
       this.activeInput = null;
-      this.assignMbtiId();
-      console.log("MBTI" + this.selectedMbti);
-      console.log("연봉" + this.selectAnnualIncome);
-      console.log("혈액형" + this.selectedBloodType);
-      console.log("종교" + this.selectedReligion);
-      console.log("주량" + this.selectedDrinking);
-      console.log("나이" + this.inputAge);
-      console.log("키" + this.inputHeight);
-      console.log("몸무게" + this.inputWeight);
-      console.log("흡연" + this.selectedSmoke);
-      console.log("문신" + this.selectedTartoo);
-      console.log("자기소개" + this.inputUserIntroduction);
-      console.log("닉네임" + this.inputNickname);
+      this.assignId();
+
     },
-    assignMbtiId() {
+    assignId() {
       this.user_mbti_id = this.selectedMbti;
       this.user_annual_income_id = this.selectAnnualIncome;
       this.user_blood_type_id = this.selectedBloodType;

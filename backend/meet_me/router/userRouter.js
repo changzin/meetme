@@ -1,8 +1,8 @@
 const express = require('express');
 
 
-const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm} = require('../controller/userController.js');
 
+const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm, idolList, idolInput, userCoin} = require('../controller/userController.js');
 const { userLogin, emailDuplicateCheck, signup, emailIsVerified } = require("../controller/authController.js")
 const { userList, userBlock, userUnblock, userReport, userPayment, adminUserDetail } = require("../controller/adminController.js")
 const { handleFileUpload, insertPhoto, updatePhoto } = require('../middleware/imageHandler.js')
@@ -38,12 +38,13 @@ router.post('/getcategory', getCategory);
 router.post('/updateprofile', loginCheck, updateProfile);
 router.post('/deletephoto', loginCheck, deletePhoto);
 router.post('/getalarm', loginCheck, getAlarm);
+router.post('/coin', loginCheck, userCoin);
 
 
-
-router.post('/profile', getProfile);
-router.post('/profileinput',profileInput)
-
+router.post('/profile',getProfile);
+router.post('/profileinput',loginCheck,profileInput)
+router.post('/idollist',idolList)
+router.post('/idolinput',loginCheck,idolInput)
 
 
 

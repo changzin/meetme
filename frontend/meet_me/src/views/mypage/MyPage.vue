@@ -28,7 +28,7 @@
                             {{userData.user_grade_value}}
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'mypagestore'})">
                         <img class="button_icon" src="/icon/mypage/main/store.svg">
                         <div class="button_icon">
                             스토어

@@ -82,6 +82,138 @@ exports.getProfile = async(req,res) => {
     }
 }
 //건용
+exports.idolList = async(req,res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let idol = [];
+        let responseBody = {};
+        query = `SELECT
+		(SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+        (SELECT GROUP_CONCAT(user_idol_age_value ORDER BY user_idol_age_id SEPARATOR ',') FROM user_idol_age) AS user_idol_age_values,
+        (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
+        (SELECT GROUP_CONCAT(user_annual_income_value ORDER BY user_annual_income_id SEPARATOR ',') FROM user_annual_income) AS user_annual_income_values,
+        (SELECT GROUP_CONCAT(user_idol_height_value ORDER BY user_idol_height_id SEPARATOR ',') FROM user_idol_height) AS user_idol_height_values,
+        (SELECT GROUP_CONCAT(user_idol_weight_value ORDER BY user_idol_weight_id SEPARATOR ',') FROM user_idol_weight) AS user_idol_weight_values,
+        (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
+        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values`;
+        
+        idol = await db(conn, query);
+        
+        idol[0].user_mbti_values = idol[0].user_mbti_values.split(',');
+        
+        idol[0].user_blood_type_values = idol[0].user_blood_type_values.split(',');
+        
+        idol[0].user_annual_income_values = idol[0].user_annual_income_values.split(',');
+        
+        idol[0].user_drinking_values = idol[0].user_drinking_values.split(',');
+        
+        idol[0].user_religion_values = idol[0].user_religion_values.split(',');
+
+        idol[0].user_idol_height_values = idol[0].user_idol_height_values.split(',');
+
+        idol[0].user_idol_weight_values = idol[0].user_idol_weight_values.split(',')
+
+        idol[0].user_idol_age_values = idol[0].user_idol_age_values.split(',');
+
+
+
+        responseBody = {
+            status : 200,
+            idolList : idol[0],
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+exports.idolInput = async(req,res)=>{
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        //ProfileInput에서 불러옴
+        let user_id = req.body.user_id
+        
+        
+        let user_idol_age_id = req.body.user_idol_age_id;
+        let user_mbti_id = req.body.user_mbti_id;
+        let user_blood_type_id = req.body.user_blood_type_id;
+        let user_idol_height_id = req.body.user_idol_height_id;
+        let user_idol_weight_id = req.body.user_idol_weight_id;
+        let user_annual_income_id = req.body.user_annual_income_id;
+        let user_idol_smoke = req.body.user_idol_smoke;
+        let user_drinking_id = req.body.user_drinking_id;
+        let user_idol_tartoo = req.body.user_idol_tartoo;
+        let user_religion_id = req.body.user_religion_id;
+        
+        
+        
+        console.log("나이"+ ""+user_idol_age_id);
+        console.log("mbti"+ ""+user_mbti_id);
+        console.log("혈액형"+ ""+user_blood_type_id);
+        console.log("키"+user_idol_height_id);
+        console.log("몸무게"+ ""+user_idol_weight_id);
+        console.log("연봉"+ ""+user_annual_income_id);
+        console.log("흡연"+ ""+user_idol_smoke);
+        console.log("주량"+ ""+user_drinking_id);
+        console.log("타투"+ ""+user_idol_tartoo);
+        console.log("종교"+ ""+user_religion_id);
+        console.log("유저"+ ""+user_id);
+
+        query =  `UPDATE user_idol
+        SET
+            user_idol_age_id = ?,
+            user_mbti_id = ?,
+            user_blood_type_id = ?,
+            user_idol_height_id = ?,
+            user_idol_weight_id = ?,
+            user_annual_income_id = ?,
+            user_idol_smoke = ?,
+            user_drinking_id = ?,
+            user_idol_tartoo = ?,
+            user_religion_id = ?
+        WHERE user_id = ?`;
+
+        result = await db(conn, query, [user_idol_age_id,user_mbti_id,user_blood_type_id,user_idol_height_id,user_idol_weight_id,user_annual_income_id,user_idol_smoke,user_drinking_id,user_idol_tartoo,user_religion_id,user_id]);
+
+
+        console.log(result)
+        responseBody = {
+            status : 200,
+            userIdol : result,
+            message : "유저 이상형 정보가 업데이트 되었습니다."
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+//건용
 exports.profileInput = async(req,res)=>{
     const conn = await getConn();
     try{
@@ -647,9 +779,49 @@ exports.enterPhoto = async(req, res)=>{
     }
     finally{
         conn.release();
-    }   
+    }
 }
 
+exports.userCoin = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        
+        query = `SELECT user_coin
+                FROM user
+                WHERE user_id=?`;
+        result = await db(conn, query, [userId]);
+        if (result[0].user_coin){
+            responseBody = {
+                status: 200,
+                userCoin: result[0].user_coin
+            };
+        }
+        else{
+            throw new Error("유저의 코인 정보를 불러올 수 없습니다.")
+        }
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+      conn.release();
+    }
+}
 
 exports.getAlarm = async(req, res)=>{
     const conn = await getConn();
@@ -688,7 +860,7 @@ exports.getAlarm = async(req, res)=>{
                 FROM user_image
                 WHERE user_id = ui.user_id
                 )) AS i ON h.user_id1 = i.user_id
-                WHERE al.user_id = ?) ORDER BY alarm_create_date`
+                WHERE al.user_id = ?) ORDER BY alarm_create_date`;
         result = await db(conn, query, [userId, userId]);
 
         responseBody = {
@@ -709,6 +881,6 @@ exports.getAlarm = async(req, res)=>{
         return res.status(statusCode).json(responseBody);
     }
     finally{
-        conn.release();
-    }   
+      conn.release();
+    }
 }
