@@ -6,12 +6,7 @@
             </div>
             <div class="main_image">
                 <div class="image_tab">
-                    <div :class="{number2: index == 0, number: index != 0}"></div>
-                    <div :class="{number2: index == 1, number: index != 1}"></div>
-                    <div :class="{number2: index == 2, number: index != 2}"></div>
-                    <div :class="{number2: index == 3, number: index != 3}"></div>
-                    <div :class="{number2: index == 4, number: index != 4}"></div>
-                    <div :class="{number2: index == 5, number: index != 5}"></div>
+                    <div v-for="(item, i) in userImage.length" :key="i" :class="{number2: index == i, number: index != i}"></div>
                 </div>
                 <div class="prev_button" @click="count(-1)">
                 </div>
@@ -60,10 +55,10 @@ export default {
     methods: {
         count(cnt){
             this.index += cnt;
-            if(this.index == 6){
+            if(this.index == this.userImage.length){
                 return this.index = 0;
             }else if(this.index < 0) {
-                return this.index = 5;
+                return this.index = this.userImage.length-1;
             }
         },
         async getUser() {
@@ -122,12 +117,13 @@ export default {
 
 .image_tab {
     margin-top: 5px;
-    width: 150px;
+    width: 510px;
     height: 18px;
     background-color: rgba(183, 67, 67, 0);
     border-radius: 100px;
     position: absolute;
     display: flex;
+    gap: 15px;
     top: 0;
     left: 50%;
     transform: translate(-50%, 0);
@@ -138,7 +134,7 @@ export default {
 }
 
 .number {
-    width: 20px;
+    width: 100%;
     height: 2px;
     border-radius: 100px;
     background-color: slategrey;
@@ -147,7 +143,7 @@ export default {
 }
 
 .number2 {
-    width: 20px;
+    width: 100%;
     height: 2px;
     border-radius: 100px;
     background-color: rgb(252, 252, 252);

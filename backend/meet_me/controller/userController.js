@@ -86,27 +86,116 @@ exports.idolList = async(req,res) => {
     const conn = await getConn();
     try{
         let query = '';
-        let result = [];
+        let idol = [];
         let responseBody = {};
         query = `SELECT
-        (SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+		(SELECT GROUP_CONCAT(user_mbti_value ORDER BY user_mbti_id SEPARATOR ',') FROM user_mbti) AS user_mbti_values,
+        (SELECT GROUP_CONCAT(user_idol_age_value ORDER BY user_idol_age_id SEPARATOR ',') FROM user_idol_age) AS user_idol_age_values,
         (SELECT GROUP_CONCAT(user_blood_type_value ORDER BY user_blood_type_id SEPARATOR ',') FROM user_blood_type) AS user_blood_type_values,
         (SELECT GROUP_CONCAT(user_annual_income_value ORDER BY user_annual_income_id SEPARATOR ',') FROM user_annual_income) AS user_annual_income_values,
-        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values,
+        (SELECT GROUP_CONCAT(user_idol_height_value ORDER BY user_idol_height_id SEPARATOR ',') FROM user_idol_height) AS user_idol_height_values,
+        (SELECT GROUP_CONCAT(user_idol_weight_value ORDER BY user_idol_weight_id SEPARATOR ',') FROM user_idol_weight) AS user_idol_weight_values,
         (SELECT GROUP_CONCAT(user_religion_value ORDER BY user_religion_id SEPARATOR ',') FROM user_religion) AS user_religion_values,
-        (SELECT GROUP_CONCAT(user_feature_value ORDER BY user_feature_id SEPARATOR ',') FROM user_feature) AS user_feature_values`
+        (SELECT GROUP_CONCAT(user_drinking_value ORDER BY user_drinking_id SEPARATOR ',') FROM user_drinking) AS user_drinking_values`;
         
-        result = await db(conn, query);
-        result[0].user_mbti_values = result[0].user_mbti_values.split(',');
-        result[0].user_blood_type_values = result[0].user_blood_type_values.split(',');
-        result[0].user_annual_income_values = result[0].user_annual_income_values.split(',');
-        result[0].user_drinking_values = result[0].user_drinking_values.split(',');
-        result[0].user_religion_values = result[0].user_religion_values.split(',');
-        result[0].user_feature_values = result[0].user_feature_values.split(',');
+        idol = await db(conn, query);
+        
+        idol[0].user_mbti_values = idol[0].user_mbti_values.split(',');
+        
+        idol[0].user_blood_type_values = idol[0].user_blood_type_values.split(',');
+        
+        idol[0].user_annual_income_values = idol[0].user_annual_income_values.split(',');
+        
+        idol[0].user_drinking_values = idol[0].user_drinking_values.split(',');
+        
+        idol[0].user_religion_values = idol[0].user_religion_values.split(',');
+
+        idol[0].user_idol_height_values = idol[0].user_idol_height_values.split(',');
+
+        idol[0].user_idol_weight_values = idol[0].user_idol_weight_values.split(',')
+
+        idol[0].user_idol_age_values = idol[0].user_idol_age_values.split(',');
+
+
 
         responseBody = {
             status : 200,
-            categoryList : result[0],
+            idolList : idol[0],
+        };
+
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+exports.idolInput = async(req,res)=>{
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        //ProfileInput에서 불러옴
+        let user_id = req.body.user_id
+        
+        
+        let user_idol_age_id = req.body.user_idol_age_id;
+        let user_mbti_id = req.body.user_mbti_id;
+        let user_blood_type_id = req.body.user_blood_type_id;
+        let user_idol_height_id = req.body.user_idol_height_id;
+        let user_idol_weight_id = req.body.user_idol_weight_id;
+        let user_annual_income_id = req.body.user_annual_income_id;
+        let user_idol_smoke = req.body.user_idol_smoke;
+        let user_drinking_id = req.body.user_drinking_id;
+        let user_idol_tartoo = req.body.user_idol_tartoo;
+        let user_religion_id = req.body.user_religion_id;
+        
+        
+        
+        console.log("나이"+ ""+user_idol_age_id);
+        console.log("mbti"+ ""+user_mbti_id);
+        console.log("혈액형"+ ""+user_blood_type_id);
+        console.log("키"+user_idol_height_id);
+        console.log("몸무게"+ ""+user_idol_weight_id);
+        console.log("연봉"+ ""+user_annual_income_id);
+        console.log("흡연"+ ""+user_idol_smoke);
+        console.log("주량"+ ""+user_drinking_id);
+        console.log("타투"+ ""+user_idol_tartoo);
+        console.log("종교"+ ""+user_religion_id);
+        console.log("유저"+ ""+user_id);
+
+        query =  `UPDATE user_idol
+        SET
+            user_idol_age_id = ?,
+            user_mbti_id = ?,
+            user_blood_type_id = ?,
+            user_idol_height_id = ?,
+            user_idol_weight_id = ?,
+            user_annual_income_id = ?,
+            user_idol_smoke = ?,
+            user_drinking_id = ?,
+            user_idol_tartoo = ?,
+            user_religion_id = ?
+        WHERE user_id = ?`;
+
+        result = await db(conn, query, [user_idol_age_id,user_mbti_id,user_blood_type_id,user_idol_height_id,user_idol_weight_id,user_annual_income_id,user_idol_smoke,user_drinking_id,user_idol_tartoo,user_religion_id,user_id]);
+
+
+        console.log(result)
+        responseBody = {
+            status : 200,
+            userIdol : result,
+            message : "유저 이상형 정보가 업데이트 되었습니다."
         };
 
         await conn.commit();
@@ -131,7 +220,7 @@ exports.profileInput = async(req,res)=>{
         let query = '';
         let result = [];
         let responseBody = {};
-
+        console.log("requestBody" + JSON.stringify(req.body));
         //ProfileInput에서 불러옴
         let user_id = req.body.user_id
         let user_nickname = req.body.user_nickname;
@@ -416,8 +505,6 @@ exports.featureEdit = async(req, res) => {
     }
 }
 
-
-
 exports.getHeart = async(req, res) => {
     const conn = await getConn();
     try{
@@ -427,12 +514,13 @@ exports.getHeart = async(req, res) => {
         await conn.beginTransaction();
         const userId = req.body.user_id;
                 //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
-        query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching
+        query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching,
+                (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id ORDER BY i.user_image_id limit 1) AS user_image_path
                 FROM heart as h 
                 JOIN user AS u ON u.user_id = h.user_id2
 				LEFT OUTER JOIN matching AS m ON h.user_id1 = m.user_id1 AND h.user_id2 = m.user_id2
                 WHERE h.user_id1 = ?
-                ORDER BY h.heart_create_date`
+                ORDER BY h.heart_create_date;`
 
         result = await db(conn, query, [userId]);
         responseBody = {
@@ -482,6 +570,39 @@ exports.sendMatching = async(req, res) => {
 
         responseBody = {
             status : 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+exports.acceptMatching = async(req, res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        await conn.beginTransaction();
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+                //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
+        query = `UPDATE matching SET matching_success = 'T' WHERE user_id1 = ? AND user_id2 = ?`
+
+        result = await db(conn, query, [userId2, userId]);
+        responseBody = {
+            status : 200,
+            heart : result,
         };
         await conn.commit();
         res.status(200).json(responseBody);
@@ -570,6 +691,45 @@ exports.deleteHeart = async(req, res)=>{
     }   
 }
 
+exports.deleteAlarm = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+
+        query = `DELETE FROM alarm
+                WHERE user_id = ? AND alarm_id = ?`
+        result = await db(conn, query, [userId, userId2]);
+
+        responseBody = {
+            status: 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+
+
 exports.enterPhoto = async(req, res)=>{
     const conn = await getConn();
     try{
@@ -626,7 +786,6 @@ exports.userCoin = async(req, res)=>{
     const conn = await getConn();
     try{
         await conn.beginTransaction();
-
         let query = '';
         let result = [];
         let responseBody = {};
@@ -646,7 +805,6 @@ exports.userCoin = async(req, res)=>{
         else{
             throw new Error("유저의 코인 정보를 불러올 수 없습니다.")
         }
-        
         await conn.commit();
         res.status(200).json(responseBody);
     }
@@ -661,7 +819,69 @@ exports.userCoin = async(req, res)=>{
         return res.status(statusCode).json(responseBody);
     }
     finally{
-        conn.release();
+      conn.release();
+    }
+}
+
+exports.getAlarm = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `(SELECT al.*, u.user_nickname, i.user_image_path, m.user_id1 AS send_user_id, m.matching_success
+                FROM alarm AS al
+                JOIN matching AS m ON al.matching_id = m.matching_id
+                JOIN user AS u ON u.user_id = m.user_id1
+                JOIN (SELECT user_id, user_image_path
+                FROM user_image AS ui
+                WHERE user_image_id = (
+                SELECT MIN(user_image_id)
+                FROM user_image
+                WHERE user_id = ui.user_id
+                )) AS i ON m.user_id1 = i.user_id
+                WHERE al.user_id = ?
+                                
+                UNION 
+
+                SELECT al.*, u.user_nickname, i.user_image_path, h.user_id1 AS send_user_id, null
+                FROM alarm AS al
+                JOIN heart AS h ON al.heart_id = h.heart_id
+                JOIN user AS u ON u.user_id = h.user_id1
+                JOIN (SELECT user_id, user_image_path
+                FROM user_image AS ui
+                WHERE user_image_id = (
+                SELECT MIN(user_image_id)
+                FROM user_image
+                WHERE user_id = ui.user_id
+                )) AS i ON h.user_id1 = i.user_id
+                WHERE al.user_id = ?) ORDER BY alarm_create_date`;
+        result = await db(conn, query, [userId, userId]);
+
+        responseBody = {
+            status: 200,
+            alarm: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+      conn.release();
     }
 }
 

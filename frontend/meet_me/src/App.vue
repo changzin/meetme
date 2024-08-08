@@ -12,6 +12,7 @@
     <router-link to="/recommendlist">RecommendList</router-link>  |
     <router-link to="/profiledetail">ProfileDetail</router-link>  |
     <router-link to="/sendstory">SendStory</router-link>  |
+    <router-link to="/alarmlist">AlarmList</router-link>  |
   </nav>
   
   <router-view />
