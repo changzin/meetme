@@ -1,528 +1,381 @@
 <template>
-  <div class="tempDiv">
-    <!-- <MeetHeader /> -->
+  <div>
+    <MeetHeader />
+    <div class="safety_zone">
+      <div class="heade_div">사진 등록하기</div>
+      <div class="sub_div">프로필 사진 1장을 추가 해주세요(필수)</div>
+      <div class="photo-grid">
+        <div
+          v-for="(photo, index) in photos"
+          :key="index"
+          class="photo-box"
+          @mouseenter="showOverlay(index)"
+          @mouseleave="hideOverlay(index)"
+        >
+          <div
+            v-if="photo && validPictureOverlayIndex === index"
+            @click.stop="showDetailView(index)"
+            class="valid-picture-overlay"
+          >
+            <img src="icon/picture/detailviewIcon.png" alt="Detail View" />
+            <img
+              src="icon/picture/editIcon.png"
+              @click.stop="openFileDialog(index)"
+              alt="Edit"
+            />
+            <img
+              src="icon/picture/trashIcon.png"
+              @click.stop="clickToTrashIcon(index)"
+              alt="Delete"
+            />
+          </div>
 
-    <!-- 아이콘만 있음 -->
-    <div class="one-line">
-      <div class="style_guide_button_one" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
+          <div
+            v-if="
+              photosMinimumIndex === index && validPictureOverlayIndex === index
+            "
+            class="valid-picture-overlay"
+          >
+            <img
+              src="icon/picture/addIcon.png"
+              @click="openFileDialog(index)"
+              alt="example"
+            />
+          </div>
+          <img v-if="photo" :src="photo" class="uploaded-photo" />
+        </div>
       </div>
 
-      <div class="style_guide_button_two" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-      </div>
+      <!-- 확대된 이미지 표시 -->
+      <ImageModal
+        :image="selectedImage"
+        :isVisible="isModalVisible"
+        @close="isModalVisible = false"
+      />
 
-      <div class="style_guide_button_three" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_white_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
+      <div class="instructions">
+        <div class="example-photo">
+          <img src="icon/picture/OImage.png" alt="example" />
+          <div class="selection-circle">
+            <img src="/icon/picture/OIcon.svg" alt="O" class="x-icon" />
+          </div>
+        </div>
+        <div class="example-photo">
+          <img src="icon/picture/XImage.png" alt="example" />
+          <div class="selection-circle">
+            <img src="/icon/picture/XIcon.svg" alt="X" class="x-icon" />
+          </div>
+        </div>
       </div>
-
-      <div class="style_guide_button_four" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
+      <div class="description_div">
+        여럿이 찍은 사진이 아닌 독사진을 올려주세요
       </div>
-
-      <div class="style_guide_button_five" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_grey_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-      </div>
-
-      <div class="style_guide_button_six" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-      </div>
-
-      <div class="style_guide_button_seven" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-      </div>
+      <button class="submitButton" @click="clickToPost()">
+        이상형을 만나러 가보실까요?
+      </button>
+      <input
+        type="file"
+        ref="fileInput"
+        accept="image/*"
+        @change="onFileChange"
+        style="display: none"
+      />
     </div>
-
-    <!-- 텍스트만 있음 -->
-    <div class="one-line">
-      <div class="only-text-div_one" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_one">User</div>
-      </div>
-
-      <div class="only-text-div_two" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_two">User</div>
-      </div>
-
-      <div class="only-text-div_three" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_three">User</div>
-      </div>
-
-      <div class="only-text-div_four" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_four">User</div>
-      </div>
-
-      <div class="only-text-div_five" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_five">User</div>
-      </div>
-
-      <div class="only-text-div_six" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_six">User</div>
-      </div>
-
-      <div class="only-text-div_seven" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_seven">User</div>
-      </div>
-    </div>
-
-    <!-- 아이콘 텍스트 둘 다 있음 -->
-    <div class="one-line">
-      <div class="icon-text-div_one" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          
-        />
-        <div class="only-text-div_style_guide_button_one">User</div>
-      </div>
-
-      <div class="only-text-div_two" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-        <div class="only-text-div_style_guide_button_two">User</div>
-      </div>
-
-      <div class="only-text-div_three" ref="iconDiv">
-        <img
-          src="/icon/styleguide/search_white_1616.svg"
-          class="only-icon-div-img"
-          @load="resizeDiv"
-        />
-        <div class="only-text-div_style_guide_button_three">User</div>
-      </div>
-
-      <div class="only-text-div_four" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_four">
-          <img
-            src="/icon/styleguide/search_1616.svg"
-            class="only-icon-div-img"
-            @load="resizeDiv"
-          />User
-        </div>
-      </div>
-
-      <div class="only-text-div_five" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_five">
-          <img
-            src="/icon/styleguide/search_grey_1616.svg"
-            class="only-icon-div-img"
-            @load="resizeDiv"
-          />User
-        </div>
-      </div>
-
-      <div class="only-text-div_six" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_six">
-          <img
-            src="/icon/styleguide/search_1616.svg"
-            class="only-icon-div-img"
-            @load="resizeDiv"
-          />User
-        </div>
-      </div>
-
-      <div class="only-text-div_seven" ref="iconDiv">
-        <div class="only-text-div_style_guide_button_seven">
-          <img
-            src="/icon/styleguide/search_1616.svg"
-            class="only-icon-div-img"
-            @load="resizeDiv"
-          />User
-        </div>
-      </div>
-     
-
-    </div>
-     <div class="temp">
-        gfdgdg
-      </div>
   </div>
 </template>
   
-<script>
+  <script>
+import axios from "axios";
 export default {
+  data() {
+    return {
+      photos: [null, null, null, null, null, null], // 사진을 저장할 배열
+      currentIndex: null, // 현재 선택한 인덱스
+
+      validPictureOverlayIndex: null,
+      isModalVisible: false,
+    };
+  },
+
+  computed: {
+    photosMinimumIndex() {
+      return this.photos.findIndex((photo) => photo === null);
+    },
+  },
+
   methods: {
-    // 원형 만들기
-    resizeDiv(event) {
-      const img = event.target;
-      const div = img.parentElement;
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
-      const maxSize = Math.max(imgWidth, imgHeight);
-      // 이미지 크기
-      // div.style.width = `${maxSize + 10}px`;
-      // div.style.height = `${maxSize + 10}px`;
-      div.style.width = `${maxSize}px`;
-      div.style.height = `${maxSize}px`;
+    showOverlay(index) {
+      this.validPictureOverlayIndex = index;
+    },
+    hideOverlay(index) {
+      this.validPictureOverlayIndex = null;
+      console.log("hideOverlay(index) {: ", index);
+    },
+
+    clickToTrashIcon(index) {
+      if (index === this.photos.length - 1) {
+        this.photos[index] = null;
+        return;
+      }
+      if (this.photos[index]) {
+        for (let i = index; i < this.photos.length - 1; i++) {
+          this.photos[i] = this.photos[i + 1];
+        }
+        this.photos[this.photos.length - 1] = null; // 마지막 요소는 null로 설정
+      }
+    },
+
+    showDetailView(index) {
+      this.selectedImage = this.photos[index];
+      this.isModalVisible = true;
+    },
+
+    closeDetailView() {
+      console.log("closeDetailView() {");
+      this.isImageExpanded = false;
+      this.selectedImage = null;
+    },
+
+    openFileDialog(index) {
+      this.currentIndex = index;
+      this.$refs.fileInput.click();
+    },
+    onFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          this.photos[this.currentIndex] = e.target.result;
+        };
+      }
+    },
+    dataURLtoBlob(dataURL) {
+      const parts = dataURL.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    },
+    // Blob처리 해서 요청을 보낸다.
+    async clickToPost() {
+      let photoList = [];
+
+      for (let i of this.photos) {
+        if (i) {
+          photoList.push(this.dataURLtoBlob(i));
+        }
+      }
+
+      if (photoList.length == 0) {
+        alert("하나 이상의 사진을 등록해야 합니다.");
+        return;
+      }
+
+      await this.patchRequestForMulter("/user/enterphoto", photoList, {
+        access_token: this.$getAccessToken(),
+        fileType: "profile",
+      });
+    },
+    // axios로 요청을 보내고 받음.
+    /**
+     *
+     * @param endpoint : url이 들어감.
+     * @param payload : formdata가 들어감
+     * @param importantHeaders : Content-type: multipart/form-data
+     */
+    async patchRequest(endpoint, payload = null, importantHeaders = {}) {
+      try {
+        const config = { headers: importantHeaders };
+        const response = await axios.post(endpoint, payload, config);
+        console.log(response);
+        if (response.status >= 400) {
+          this.$router.push({
+            name: "ErrorPage",
+            query: { message: response.data.message },
+          });
+        } else {
+          this.$router.push({
+            name: "MainPage",
+          });
+        }
+        return response.data;
+      } catch (error) {
+        alert("예기치 못한 에러가 발생하였습니다.");
+      }
+    },
+    // 요청을 보내기 위한 HTTP request 디자인 + HTTP 요청을 보내는 함수 발동
+    async patchRequestForMulter(url, images, additionalInfo) {
+      const formData = this.makeFormDataForMulter(images, additionalInfo);
+      await this.patchRequest(url, formData, {
+        "Content-Type": "multipart/form-data",
+      });
+    },
+    makeFormDataForMulter(images, additionalInfo) {
+      const formData = new FormData();
+
+      if (Array.isArray(images)) {
+        images.forEach((image, index) => {
+          formData.append("image", image, `image${index}.png`);
+        });
+      } else {
+        formData.append("image", images, "image.png");
+        formData.append("imageIndex", 0);
+      }
+
+      if (additionalInfo) {
+        Object.keys(additionalInfo).forEach((key) => {
+          formData.append(key, additionalInfo[key]);
+        });
+      }
+      return formData;
     },
   },
 };
 </script>
-
-
-
-<style scoped>
-
-.temp {
-  background: var(--gradient);
-  /* box-shadow: var(--gradient); */
-  width: 300px;
-  height: 70px;
-  border-radius: 10px;
-  color: white;
-}
-
-
-.tempDiv {
+  
+  <style scoped>
+.safety_zone {
+  min-width: 600px;
   width: 600px;
-  margin: 100px auto;
+  margin: 0 auto;
+  padding: 0 25px;
+  padding-top: 54px;
+  padding-bottom: 46px;
+  background-color: white;
 }
 
-.one-line {
+.heade_div {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.sub_div {
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-top: 50px;
+  text-align: left;
+}
+
+.photo-upload-container {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 35px;
+  grid-row-gap: 23px;
+  margin: 20px 0;
+  margin-top: 7px;
+}
+
+.photo-box {
+  width: 100%;
+  height: 150px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
   display: flex;
-  gap: 30px;
-  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
 }
 
-.only-icon-div {
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
+.uploaded-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.valid-picture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  gap: 10px;
+  z-index: 999;
+}
+
+.instructions {
+  display: flex;
+  /* margin-bottom: 5px; */
+  justify-content: center;
+  gap: 20px;
+}
+
+.example-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.example-photo img {
+  border-radius: 10px;
+}
+
+.selection-circle {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+}
+
+.description_div {
+  font-size: 12px;
+  margin-bottom: 40px;
+  margin-top: 20px;
+  color: #484848;
+}
+
+.submitButton {
+  background-image: var(--gradient);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 18px 0px;
+  font-size: 22px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* .expanded-image-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
+  z-index: 1000;
 }
 
-.only-text-div {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-}
-
-/* 첫번째 줄 icon */
-
-.style_guide_button_one {
-  border: 1px solid var(--purple_sub);
-  background-color: var(--purple_sub);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_two {
-  border: 1px solid var(--purple_main);
-  background-color: var(--purple_sub_light);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_three {
-  border: 1px solid var(--purple_main);
-  background-color: var(--purple_main);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_four {
-  border: 1px solid var(--grey_main);
-  background-color: var(--grey_main);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_five {
-  border: 1px solid var(--grey_main);
-  background-color: var(--grey_main);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_six {
-  border: 1px solid var(--purple_main);
-  background-color: var(--white_main);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-.style_guide_button_seven {
-  border: 1px solid var(--white_main);
-  background-color: var(--white_main);
-  box-shadow: var(--box-shadow_purple_main);
-
-  display: inline;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: content-box;
-  padding: 9px;
-}
-
-/* 두번째 줄 icon + text */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-.only-text-div_one {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--purple_sub);
-  border: 1px solid var(--purple_sub);
-}
-
-.only-text-div_style_guide_button_one {
-  color: var(--purple_main);
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_two {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--purple_sub-light);
-  border: 1px solid var(--purple_main);
-}
-
-.only-text-div_style_guide_button_two {
-  color: var(--purple_main);
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_three {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--purple_main);
-  border: 1px solid var(--purple_main);
-}
-
-.only-text-div_style_guide_button_three {
-  color: var(--white_main);
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_four {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--grey_main);
-  border: 1px solid var(--grey_main);
-}
-
-.only-text-div_style_guide_button_four {
-  color: var(--purple_main);
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_five {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--grey_main);
-  border: 1px solid var(--grey_main);
-}
-
-.only-text-div_style_guide_button_five {
-  color: var(--grey_sub_dark);
-  /* color: red; */
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_six {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--white_main);
-  border: 1px solid var(--purple_main);
-}
-
-.only-text-div_style_guide_button_six {
-  color: var(--purple_main);
-}
-/* 여기까지가 가져가시면 됩니다 */
-
-/* icon + text 아이콘 하나만 가져가려면 여기서부터 */
-
-.only-text-div_seven {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  background-color: var(--white_main);
-  border: 1px solid var(--white_main);
-  box-shadow: var(--box-shadow_purple_main);
-}
-
-.only-text-div_style_guide_button_seven {
-  color: var(--purple_main);
-}
-
-/* 여기까지가 가져가시면 됩니다 */
-
-
-.icon-text-div_one {
-  box-sizing: content-box;
-  border-radius: 40px;
-  display: inline;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 7px 14px;
-  line-height: 100%;
-  border: 1px solid var(--purple_main);
-  /* align-items: baseline; */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-.only-icon-div-img {
-  display: block;
-  width: auto;
-  height: auto;
-}
+.expanded-image {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 10px;
+} */
 </style>
+  
