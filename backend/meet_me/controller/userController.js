@@ -220,7 +220,7 @@ exports.profileInput = async(req,res)=>{
         let query = '';
         let result = [];
         let responseBody = {};
-
+        console.log("requestBody" + JSON.stringify(req.body));
         //ProfileInput에서 불러옴
         let user_id = req.body.user_id
         let user_nickname = req.body.user_nickname;
