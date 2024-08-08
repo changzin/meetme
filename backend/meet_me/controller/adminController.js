@@ -34,7 +34,7 @@ exports.userList = async (req, res)=>{
                 FROM 
                     user u
                 WHERE
-                    u.user_email LIKE ? OR u.user_nickname LIKE ?
+                    (u.user_email LIKE ? OR u.user_nickname LIKE ?) AND user_type != 'admin'
                 ORDER BY 
                     u.user_create_date desc
                 LIMIT ? OFFSET ?`;
