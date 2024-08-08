@@ -58,6 +58,12 @@
                             회원탈퇴
                         </div>
                     </div>
+                    <div class="mypage_button" @click='logout'>
+                        <img class="button_icon" src="/icon/admin/blackout.svg" width="56">
+                        <div class="button_icon">
+                            로그아웃
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,6 +92,12 @@ export default {
                 console.log(err);
             }
         },
+        logout(){
+            alert("회원 탈퇴하였습니다.ㄴ")
+            this.$cookies.remove("meetMeCookie")
+            this.$store.commit("user", null);            
+            this.$router.push({name: "loginuser"})
+        }
     }
 
 }
