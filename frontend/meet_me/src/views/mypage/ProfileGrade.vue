@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="class_button">
+            <div class="class_button" @click="makeReGrade">
                 <span class="class">새로 측정하기</span>
             </div>
         </div>
@@ -69,6 +69,22 @@ export default {
                 console.log(this.userData)
                 console.log(this.userImage)
             }catch(err){
+                console.log(err);
+            }
+        },
+        async makeReGrade(){
+            try{
+                const result = await this.$api('/user/regrade', {access_token: this.$getAccessToken()}, "POST");
+                if (result.status == 200){
+                    await this.getUser();
+                    alert("재측정 완료되었습니다.")
+                }
+                else{
+                    alert("재측정에 실패하였습니다. 다시 시도해 주세요.");
+                }
+            }
+            catch(err){
+                alert("재측정에 실패하였습니다. 다시 시도해 주세요.");
                 console.log(err);
             }
         }
@@ -199,7 +215,7 @@ img{
     display: flex;
     justify-content: center;
     align-items: center;
-    
+    cursor: pointer;
 }
 
 .class {

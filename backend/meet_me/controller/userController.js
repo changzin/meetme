@@ -884,3 +884,85 @@ exports.getAlarm = async(req, res)=>{
       conn.release();
     }
 }
+
+exports.userVerify = async (req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        
+        query = `SELECT user_email_verified, user_profile_entered, user_block, user_type
+                FROM user
+                WHERE user_id=?`;
+        result = await db(conn, query, [userId]);
+        if (result[0]){
+            responseBody = {
+                status: 200,
+                userCoin: result[0]
+            };
+        }
+        else{
+            throw new Error("인증 실패!")
+        }
+        
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }
+}
+
+exports.regrade = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `UPDATE user
+                    SET user_grade_id = (user_grade_id+1)%3+1
+                    WHERE user_id= ?`;
+        result = await db(conn, query, [userId]);
+        
+        responseBody = {
+            status: 200,
+            message: "변경 완료되었습니다."
+        };
+        
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }
+}
