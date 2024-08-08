@@ -373,8 +373,6 @@ exports.featureEdit = async(req, res) => {
     }
 }
 
-
-
 exports.getHeart = async(req, res) => {
     const conn = await getConn();
     try{
@@ -384,12 +382,13 @@ exports.getHeart = async(req, res) => {
         await conn.beginTransaction();
         const userId = req.body.user_id;
                 //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
-        query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching
+        query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching,
+                (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id ORDER BY i.user_image_id limit 1) AS user_image_path
                 FROM heart as h 
                 JOIN user AS u ON u.user_id = h.user_id2
 				LEFT OUTER JOIN matching AS m ON h.user_id1 = m.user_id1 AND h.user_id2 = m.user_id2
                 WHERE h.user_id1 = ?
-                ORDER BY h.heart_create_date`
+                ORDER BY h.heart_create_date;`
 
         result = await db(conn, query, [userId]);
         responseBody = {
@@ -439,6 +438,39 @@ exports.sendMatching = async(req, res) => {
 
         responseBody = {
             status : 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }catch(err){
+        console.log(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message : err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }finally{
+        conn.release();
+    }
+}
+
+exports.acceptMatching = async(req, res) => {
+    const conn = await getConn();
+    try{
+        let query = '';
+        let result = [];
+        let responseBody = {};
+        await conn.beginTransaction();
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+                //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
+        query = `UPDATE matching SET matching_success = 'T' WHERE user_id1 = ? AND user_id2 = ?`
+
+        result = await db(conn, query, [userId2, userId]);
+        responseBody = {
+            status : 200,
+            heart : result,
         };
         await conn.commit();
         res.status(200).json(responseBody);
@@ -527,6 +559,45 @@ exports.deleteHeart = async(req, res)=>{
     }   
 }
 
+exports.deleteAlarm = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+
+        query = `DELETE FROM alarm
+                WHERE user_id = ? AND alarm_id = ?`
+        result = await db(conn, query, [userId, userId2]);
+
+        responseBody = {
+            status: 200,
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+
+
 exports.enterPhoto = async(req, res)=>{
     const conn = await getConn();
     try{
@@ -580,4 +651,64 @@ exports.enterPhoto = async(req, res)=>{
 }
 
 
+exports.getAlarm = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
 
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+
+        query = `(SELECT al.*, u.user_nickname, i.user_image_path, m.user_id1 AS send_user_id, m.matching_success
+                FROM alarm AS al
+                JOIN matching AS m ON al.matching_id = m.matching_id
+                JOIN user AS u ON u.user_id = m.user_id1
+                JOIN (SELECT user_id, user_image_path
+                FROM user_image AS ui
+                WHERE user_image_id = (
+                SELECT MIN(user_image_id)
+                FROM user_image
+                WHERE user_id = ui.user_id
+                )) AS i ON m.user_id1 = i.user_id
+                WHERE al.user_id = ?
+                                
+                UNION 
+
+                SELECT al.*, u.user_nickname, i.user_image_path, h.user_id1 AS send_user_id, null
+                FROM alarm AS al
+                JOIN heart AS h ON al.heart_id = h.heart_id
+                JOIN user AS u ON u.user_id = h.user_id1
+                JOIN (SELECT user_id, user_image_path
+                FROM user_image AS ui
+                WHERE user_image_id = (
+                SELECT MIN(user_image_id)
+                FROM user_image
+                WHERE user_id = ui.user_id
+                )) AS i ON h.user_id1 = i.user_id
+                WHERE al.user_id = ?) ORDER BY alarm_create_date`
+        result = await db(conn, query, [userId, userId]);
+
+        responseBody = {
+            status: 200,
+            alarm: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}

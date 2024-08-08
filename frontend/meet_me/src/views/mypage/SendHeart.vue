@@ -121,11 +121,13 @@ export default {
     text-align: start;
     display: flex;
     align-items: center;
+    width: 320px;
 }
 
 .status {
     font-weight: 400;
     padding: 0 10px 0 10px;
+    word-break: break-all;
 }
 
 .live {

@@ -32,6 +32,7 @@ import RecommendList from '../views/RecommendList.vue'
 import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
 import ForgotPassword from '../views/nouser/ForgotPassword.vue'
+import AlarmList from '../views/AlarmList.vue'
 
 const routes = [
   {
@@ -181,6 +182,11 @@ const routes = [
     path: '/featureedit',
     name: 'FeatureEdit',
     component: FeatureEdit
+  },
+  {
+    path: '/alarmlist',
+    name: 'AlarmList',
+    component: AlarmList
   }
 ]
 

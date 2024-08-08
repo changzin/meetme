@@ -157,10 +157,9 @@
                 
                 this.isImageTwoVisible2 = !this.isImageTwoVisible2;
                 
-                
                 try{
-
-                    await this.$api(`/recommend/sendmatching`, {user_id: 1, user_id2}, "POST");
+                    await this.$api(`/recommend/sendmatching`, {access_token: this.$getAccessToken() , user_id2}, "POST");
+                    await this.getRecommendList();
                 }catch(err){
                     console.error(err);
                 }
@@ -219,13 +218,14 @@
     }
     .image_tab {
         margin-top: 5px;
-        width: 150px;
+        width: 510px;
         height: 18px;
         background-color: rgba(183, 67, 67, 0);
         border-radius: 100px;
         position: absolute;
         display: flex;
         top: 0;
+        gap: 15px;
         left: 50%;
         transform: translate(-50%, 0);
         z-index: 3;
@@ -234,7 +234,7 @@
         padding: 6px;
     }
     .number {
-        width: 20px;
+        width: 100%;
         height: 2px;
         border-radius: 100px;
         background-color: slategrey;
@@ -243,7 +243,7 @@
     }
     
     .number2 {
-        width: 20px;
+        width: 100%;
         height: 2px;
         border-radius: 100px;
         background-color: rgb(252, 252, 252);
