@@ -322,8 +322,8 @@
             <option class="dropdown_item" value="null" selected disabled hidden>
               문신 여부
             </option>
-            <option class="dropdown_item" value="T">문신 허용</option>
-            <option class="dropdown_item" value="F">문신 안됨</option>
+            <option class="dropdown_item" value="T">문신 있음</option>
+            <option class="dropdown_item" value="F">문신 없음</option>
           </select>
         </div>
 
@@ -596,33 +596,7 @@ export default {
     clearActive() {
       this.activeInput = null;
       this.assignId();
-      console.log(
-        "MBTI" +
-          this.selectedMbti + " " +
-          "연봉" +
-          this.selectAnnualIncome + " " +
-          "혈액형" +
-          this.selectedBloodType + " " + 
-          "종교" +
-          this.selectedReligion + " " +
-          "주량" +
-          this.selectedDrinking + " " +
-          "나이" +
-          this.inputAge + " " +
-          "키" +
-          this.inputHeight + " " +
-          "몸무게" +
-          this.inputWeight + " " +
-          "흡연" +
-          this.selectedSmoke + " " +
-          "문신" +
-          this.selectedTartoo + " " +
-          "자기소개" +
-          this.inputUserIntroduction + " " +
-          "닉네임" +
-          this.inputNickname
-          
-      );
+
     },
     assignId() {
       this.user_mbti_id = this.selectedMbti;
