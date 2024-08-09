@@ -77,10 +77,12 @@ export default {
     return {
       newChat: "", // 보낸 메세지
       chatData: [],
-      userSocketId: "" // 현재 사용자의 socketId
+      userSocketId: "", // 현재 사용자의 socketId
+      userData: {},
+      myuserId: ""
     };
   },
-  created() {
+  async created() {
     this.connectToServer();
 
     // socketId 확인
@@ -100,19 +102,38 @@ export default {
     this.$socket.off("receiveMessage");
     this.$socket.off("connect");
   },
+  
   methods: {
     chatModal() {
       this.$store.commit("setModalOn");
     },
-    sendChat() {
+    async sendChat() {
+
+      const now = new Date();
+      const chatDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
       const message = {
         text: this.newChat,
-        socketId: this.$socket.id
+        image: "",
       };
       this.$socket.emit("sendMessage", { message });
       this.newChat = "";
       console.log("챗데이터", this.chatData);
       this.scrollToBottom();
+      console.log(chatDate);
+
+      const requestBody = {
+        roomId :"1",
+        userId: this.$getAccessToken(),
+        chatDate: chatDate,
+        text: this.newChat,
+        chatView: "T",
+        image: ""
+      };
+
+      const response = await this.$api(`/chat/saveChat`, requestBody, "post");   
+      console.log("챗데이터", response);
+
+
     },
     scrollToBottom() {
       this.$nextTick(() => {

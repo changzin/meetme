@@ -6,6 +6,8 @@ const recommendRouter = require('./recommendRouter');
 
 const mainRouter = require('./mainRouter');
 
+const chatRouter = require('./chatRouter');
+
 
 
 const userFeatureRouter = require('./userFeatureRouter');
@@ -20,8 +22,8 @@ router.use("/recommend", recommendRouter);
 
 router.use("/main", mainRouter);
 
-router.use("/userFeature", userFeatureRouter)
+router.use("/userFeature", userFeatureRouter);
 
-
+router.use("/chatl", chatRouter);
 
 module.exports = router;

@@ -34,10 +34,6 @@ const socketSetup = (server) => {
         })
     })
 
-    // io.emit("receiveMessage", {
-    //     message_content: "message"
-
-    // })
     };
 
 module.exports = socketSetup;

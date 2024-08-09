@@ -6,100 +6,74 @@
             <input class="search_box" type="text" placeholder="검색" />
         </div>    
         <div class="container_chat">
+          <div v-for="(roomList, index) in roomList" :key="index">
             <div class="chat_list">
-                <div class="profile_circle"></div>
+                <img class="profile_circle" :src="this.$imageFileFormat(roomList.user_image_path)">
                 <div class="chat_container">
-                    <div class="chat_name">안녕</div>
+                    <div class="chat_name">{{ roomList.user_nickname }}</div>
                     <div class="chat_content">
                         <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
                         <div class="chat_content_time">·2달전</div>
                     </div>
                 </div>
             </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsf</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-            <div class="chat_list">
-                <div class="profile_circle"></div>
-                <div class="chat_container">
-                    <div class="chat_name">안녕</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
+          </div>         
         </div>
     </div>
 </template>
 <script>
+export default {
+  data() {
+    return {
+      roomList: [], // 보낸 메세지
+    };
+  },
+  async created() {
+    this.connectToServer();
+    this.getchatRoomList(); 
+
+    // receiveMessage 리스너를 설정
+    this.$socket.on("receiveMessage", (data) => {
+      console.log("New message data:", data);
+      // data.message에서 실제 메시지 문자열을 추출하여 업데이트
+      this.chatData.push(data.message);
+      this.scrollToBottom();
+    });
+  },
+  beforeUnmount() {
+    this.$socket.off("receiveMessage");
+    this.$socket.off("connect");
+  },
+
+  methods: {
+
+    async getchatRoomList() {
+      try{       
+
+      const requestBody = {
+          access_token: this.$getAccessToken()
+        }
+       
+      // 채팅방 리스트 가져오기
+      const response = await this.$api(`/chat/getlist`, requestBody, "post");      
+      this.roomList = response.roomList;
+      console.log("룸리스트", this.roomList);
+    // } 
+    }catch(error){
+      alert("채팅방 리스트를 불러올 수 없습니다");
+      console.error(error);
+
+    }      
+    },
+
+    connectToServer() {
+      this.$socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+    }
+  }
+};
+
 
 </script>
 <style scoped>
@@ -231,11 +205,12 @@
         /* 이미지 */
         
         .profile_circle{
-            width: 75px;
-            height: 75px;
-            border-radius: 50px;
-
-            background-color: #f5f5f5;
+          width: 65px;
+          height: 65px;
+          border-radius: 100px;
+          margin: 10px;
+          justify-content: start;
+          object-fit: cover;
         }
 
 </style>
