@@ -1,7 +1,7 @@
 <template>
     <div class="safety_zone">
         <div class="container">
-            <div class="mypage_container">
+            <div class="mypage_container" v-if="userData">
                 <div class="profile_box">
                     <img class="mini_profile" :src="userData.user_image_path ? this.$imageFileFormat(userData.user_image_path) : '/model.jpg'">
                     <div class="name_title">
@@ -93,7 +93,7 @@ export default {
             }
         },
         logout(){
-            alert("회원 탈퇴하였습니다.ㄴ")
+            alert("회원 탈퇴하였습니다.")
             this.$cookies.remove("meetMeCookie")
             this.$store.commit("user", null);            
             this.$router.push({name: "loginuser"})

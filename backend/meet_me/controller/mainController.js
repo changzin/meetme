@@ -25,12 +25,10 @@ exports.main = async(req, res)=>{
                 LIMIT 10;`;
         rand = await db(conn, query);
 
-        console.log("RAND>>>" , rand)
 
         query = `SELECT * FROM temp`;
         results = await db(conn, query);
 
-        console.log("results>>>" , results)
         
         query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;
         getHeart = await db(conn, query, [user_id1]);
@@ -55,7 +53,6 @@ exports.main = async(req, res)=>{
             for(let j = 0; j < result.length; j++){
                 results[i].user_feature_value.push(result[j].user_feature_value);
 
-                console.log(results)
 
             }
         }

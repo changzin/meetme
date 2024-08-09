@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm, idolList, idolInput, userCoin, userVerify, regrade, profileDetail} = require('../controller/userController.js');
+const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm, idolList, idolInput, userCoin, userVerify, regrade, profileDetail, addReport, addBlock} = require('../controller/userController.js');
 const { userLogin, emailDuplicateCheck, signup, emailIsVerified } = require("../controller/authController.js")
 const { userList, userBlock, userUnblock, userReport, userPayment, adminUserDetail } = require("../controller/adminController.js")
 const { handleFileUpload, insertPhoto, updatePhoto } = require('../middleware/imageHandler.js')
@@ -39,6 +39,9 @@ router.post('/getalarm', loginCheck, getAlarm);
 router.post('/coin', loginCheck, userCoin);
 router.post('/verify', loginCheck, userVerify);
 router.post('/regrade', loginCheck, regrade);
+router.post('/addreport', loginCheck, addReport);
+router.post('/addblock', loginCheck, addBlock);
+
 
 
 router.post('/profile',getProfile);
