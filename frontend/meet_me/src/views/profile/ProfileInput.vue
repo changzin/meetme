@@ -20,7 +20,7 @@
                 id="nickname"
                 type="text"
                 @focus="setActive('nickname')"
-                @blur="clearActive"
+                @blur="nicknameVerification"
                 class="select_nickname_input"
                 :class="{
                   select_nickname_input: activeInput === 'nickname',
@@ -35,7 +35,7 @@
           <div class="gender">
             <div class="sub_title">성별</div>
             <div class="select_gender">
-              <button :class="maleClass" @click="toggleGender('M')">남</button>
+              <button :class="maleClass" @click="toggleGender('M')" >남</button>
               <button :class="femaleClass" @click="toggleGender('F')">
                 여
               </button>
@@ -67,7 +67,7 @@
               id="age"
               type="number"
               @focus="setActive('age')"
-              @blur="clearActive"
+              @blur="ageVerification"
               class="select_input"
               :class="{
                 select_input: activeInput === 'age',
@@ -107,7 +107,7 @@
               id="height"
               type="number"
               @focus="setActive('height')"
-              @blur="clearActive"
+              @blur="heightVerification"
               class="select_input"
               :class="{
                 select_input: activeInput === 'height',
@@ -146,7 +146,7 @@
               id="weight"
               type="number"
               @focus="setActive('weight')"
-              @blur="clearActive"
+              @blur="weightVerification"
               class="select_input"
               :class="{
                 select_input: activeInput === 'weight',
@@ -183,7 +183,7 @@
             required
              
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value="" selected disabled hidden>
               연봉
             </option>
             <option
@@ -210,7 +210,7 @@
             v-model="form.selectedMbti"
             required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               MBTI
             </option>
             <option
@@ -236,7 +236,7 @@
             v-model="form.selectedBloodType"
             required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               혈액형
             </option>
             <option
@@ -262,7 +262,7 @@
             v-model="form.selectedReligion"
             required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               종교
             </option>
             <option
@@ -288,7 +288,7 @@
             v-model="form.selectedDrinking"
             required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               주량
             </option>
             <option
@@ -314,7 +314,7 @@
             v-model="form.selectedSmoke"
             required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               흡연 여부
             </option>
             <option class="dropdown_item" value="T">흡연</option>
@@ -332,9 +332,9 @@
               visible_dropdown_button: activeInput !== 'tartoo',
             }"
             v-model="form.selectedTartoo"
-            required
+            required="required"
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               문신 여부
             </option>
             <option class="dropdown_item" value="T">문신 있음</option>
@@ -360,7 +360,10 @@
             </button>
           </div>
         </div>
-        <div class="sub_title3">자기소개</div>
+        <div class="sub_title3">자기소개
+          <div class="text_count" id="userintroduction"> {{ textLength }} / 최대 300자</div>
+        </div>
+       
         <textarea
           id="userintroduction"
           class="select_intro"
@@ -368,6 +371,7 @@
           required
           @focus="setActive('intro')"
           @blur="clearActive"
+          @keyup="textLengthCheck"
           :class="{
             visible_select_intro: activeInput === 'intro',
             visible_select_intro: activeInput !== 'intro',
@@ -387,28 +391,30 @@ export default {
   components: {},
   data() {
     return {
-      activeGender: "M", // 초기 활성화상태 '남'
+      
       activeInput: null,
       categoryList: {},
       inputDatas : [],
       inputs:[],
+      // textLength : "",
       //항목 선택
       form:{
-        selectGender: null,
-        selectAnnualIncome: null,
-        selectedMbti: null,
-        selectedBloodType:null,
-        selectedReligion: null,
-        selectedDrinking: null,
-        selectedSmoke: null,
-        selectedTartoo: null,
+        activeGender: "M", // 초기 활성화상태 '남'
+        selectGender: "M",
+        selectAnnualIncome: "",
+        selectedMbti: "",
+        selectedBloodType: "",
+        selectedReligion: "",
+        selectedDrinking: "",
+        selectedSmoke: "",
+        selectedTartoo: "",
         //input
-        inputNickname: null,
-        inputAge: null,
-        inputWeight: null,
-        inputHeight: null,
-        inputUserIntroduction: null,
-        inputUserAddress: null,
+        inputNickname: "",
+        inputAge: "",
+        inputWeight: "",
+        inputHeight: "",
+        inputUserIntroduction: "",
+        inputUserAddress: "",
       },
       
     };
@@ -419,14 +425,19 @@ export default {
   },
   mounted() {
     this.loadDaumPostcodeScript();
+    // this.textLengthChech();
   },
   computed: {
     maleClass() {
-      return this.activeGender === "M" ? "active" : "inactive";
+      return this.form.activeGender === "M" ? "active" : "inactive";
     },
     femaleClass() {
-      return this.activeGender === "F" ? "active" : "inactive";
+      return this.form.activeGender === "F" ? "active" : "inactive";
     },
+    textLength(){
+      return this.form.inputUserIntroduction.length;
+    }
+    
   },
   methods: {
     async getCategory() {
@@ -438,131 +449,24 @@ export default {
         console.log(err);
       }
     },
-    // validateInputs() {
-    //   if(!this.inputNickname)
-
-
-
-      //  this.inputDatas = {
-      //   user_nickname: this.inputNickname,
-      //   user_gender: this.selectGender,
-      //   user_age: this.inputAge,
-      //   user_height: this.inputHeight,
-      //   user_weight: this.inputWeight,
-      //   user_annual_income: this.selectAnnualIncome,
-      //   user_mbti: this.selectedMbti,
-      //   user_blood_type: this.selectedBloodType,
-      //   user_religion: this.selectedReligion,
-      //   user_drinking: this.selectedDrinking,
-      //   user_smoke: this.selectedSmoke,
-      //   user_tartoo: this.selectedTartoo,
-      //   user_address: this.inputUserAddress,
-      //   user_introduction: this.inputUserIntroduction,
-      // };
-      
-      // for (let key in this.inputDatas) {
-      //   if (
-      //     !this.inputDatas
-      //   ) {
-      //     // let keyKorenName = this.korean(key);
-      //     console.error(`${key} 입력값이 유효하지 않습니다.`);
-      //     // alert(keyKorenName + "" + "정보를 입력해주세요");
-
-      //     return false;
-      //   } else if (
-      //     this.inputDatas
-      //   ) {
-      //     console.log(`${key} 입력` )
-      //     return true;
-      //   }
-      // }
-    // },
-    // korean(category) {
-    //   if (category == "user_nickname") {
-    //     return "닉네임";
-    //   }
-    //   if (category == "user_gender") {
-    //     return "성별";
-    //   }
-    //   if (category == "user_age") {
-    //     return "나이";
-    //   }
-    //   if (category == "user_height") {
-    //     return "키";
-    //   }
-    //   if (category == "user_weight") {
-    //     return "몸무게";
-    //   }
-    //   if (category == "user_annual_income") {
-    //     return "MBTI";
-    //   }
-    //   if (category == "user_mbti") {
-    //     return "MBTI";
-    //   }
-    //   if (category == "user_blood_type") {
-    //     return "혈액형";
-    //   }
-    //   if (category == "user_religion") {
-    //     return "종교";
-    //   }
-    //   if (category == "user_drinking") {
-    //     return "주량";
-    //   }
-    //   if (category == "user_smoke") {
-    //     return "흡연 여부";
-    //   }
-    //   if (category == "user_tartoo") {
-    //     return "문신 여부";
-    //   }
-    //   if (category == "user_address") {
-    //     return "주소";
-    //   }
-    //   if (category == "user_introduction") {
-    //     return "자기 소개";
-    //   }
-    // },
-    // async validateAndPostProfile() {
-    //    if (
-    //      !this.form.selectGender || 
-      //   !this.form.selectAnnualIncome ||
-      //   !this.form.selectedMbti ||
-      //   !this.form.selectedBloodType ||
-      //   !this.form.selectedReligion ||
-      //   !this.form.selectedDrinking ||
-      //   !this.form.selectedSmoke ||
-      //   !this.form.selectedTartoo ||
-      //   !this.form.inputAge ||
-      //   !this.form.inputNickname ||
-      //   !this.form.inputWeight ||
-      //   !this.form.inputHeight ||
-      //   !this.form.inputUserIntroduction ||
-      //   !this.form.inputUserAddress
-      // ){
-      //   alert("모든 필드를 입력하세요.");
-      //   return 
-      // }else{
-      //   await this.postUserProfile()
-      //   console.log(this.postUserProfile());
-      // }
-    // },
-    // async validateAndPostProfile() {
-    //   if ( this.validateInputs()!== null) {
-    //     this.postUserProfile();
-    //   } else {
-    //     alert(" dd")
-    //     console.log(this.validateInputs());
-    //   }
-    // },
-
     async postUserProfile() {
       try {
-        console.log("this.form.inputNickname" +this.form.inputNickname);
-        if(this.form.inputNickname || this.form.selectGender || this.form.inputAge ||
-        this.form.selectedMbti || this.form.selectedBloodType || this.form.inputHeight ||
-        this.form.inputWeight || this.form.selectAnnualIncome || this.form.selectedSmoke ||
-        this.form.selectedSmoke || this.form.selectedDrinking || this.form.selectedTartoo ||
-        this.form.selectedReligion || this.form.inputUserIntroduction || this.form.inputUserAddress 
-        === !null || !undefined){
+        console.log(this.form.selectGender)
+        if(this.form.selectGender === undefined){
+          alert("성별을 선택해주세요")
+        }else if(this.form.inputAge <= 19){
+          alert("만 19세 이상 이용가능합니다.")
+        }else if(this.form.inputAge > 100){
+          alert("100세 이하 이용 가능합니다.")
+        }else if(this.form.inputHeight < 100){
+          alert("키 100 이상 입력해주세요")
+        }else if(this.form.inputHeight > 250){
+          alert("키 정보를 다시 입력해주세요")
+        }else if(this.form.inputWeight > 200){
+          alert("몸무게 200 이하 입력해주세요")
+        }else if(this.form.inputUserIntroduction.length > 300){
+          alert("자기소개 300글 이하로 입력해주세요")
+        }else{
           const requestBody = {
           access_token: this.$getAccessToken(),
           user_nickname: this.form.inputNickname,
@@ -580,30 +484,35 @@ export default {
           user_introduction: this.form.inputUserIntroduction,
           user_add: this.form.inputUserAddress,
         };
-        const request = await this.$api(
-          "/user/profileinput",
-          requestBody,
-          "POST"
-        );
-        console.log(request);
-        if (request.status === 200) {
-          this.$router.push({
-            name: "idol",
-          });
-        }
+          const request = await this.$api(
+            "/user/profileinput",
+            requestBody,
+            "POST"
+          );
+          console.log(request);
+          if (request.status === 200) {
+            this.$router.push({
+              name: "idol",
+            });
+          }
         }
         
       } catch (err) {
-        alert("정보를 입력해주세요");
+        alert("정보를 다시 확인해주세요");
         console.log(err);
       }
     },
 
     //성별 선택
     toggleGender(gender) {
-      this.activeGender = gender;
-      this.form.selectGender = this.activeGender;
-      console.log(this.selectGender);
+      
+      this.form.activeGender = gender;
+       console.log(gender);
+       console.log(this.form.activeGender);
+        this.form.selectGender = this.form.activeGender;
+      
+     
+      console.log(this.form.selectGender);
     },
     loadDaumPostcodeScript() {
       const script = document.createElement("script");
@@ -643,6 +552,46 @@ export default {
     setActive(inputName) {
       this.activeInput = inputName;
     },
+    textLengthCheck(){
+      if( this.form.inputUserIntroduction.length > 300)
+      alert("최대 300자까지 입력 가능합니다.")
+        this.form.inputUserIntroduction=this.form.inputUserIntroduction.substring(0,300);
+    },
+
+    ageVerification(){
+      if(this.form.inputAge <=19){
+        alert("만 19세 이상 이용 가능합니다")
+        this.activeInput = null;
+      }else if(this.form.inputAge > 100){
+        alert("100세 이하 이용 가능합니다.")
+      }
+    },
+    heightVerification(){
+      if(this.form.inputHeight < 100){
+        alert("키 100 이상 입력해주세요")
+        this.activeInput = null;   
+      }else if(this.form.inputHeight > 250){
+        alert("키 정보를 다시 입력해주세요");
+      }
+    },
+    weightVerification(){
+      if(this.form.inputWeight > 200){
+        alert("몸무게 200 이하 입력해주세요")
+        this.activeInput = null;
+      }
+    },
+    nicknameVerification(){
+      if(this.form.inputNickname.length > 12){
+        alert("닉네임 12자 제한입니다.")
+        this.activeInput = null;
+      }
+    },
+    // textVerification(){
+    //   if(this.inputUserIntroduction.length > 300){
+    //        alert("300자를 넘을 수 없습니다.")
+    //        this.activeInput = null;
+    //     }
+    // },
     clearActive() {
       this.activeInput = null;
       this.assignId();
@@ -668,22 +617,17 @@ export default {
           "문신" +
           this.form.selectedTartoo + " " +
           "자기소개" +
-          this.form.inputUserIntroduction 
-          
+          this.form.inputUserIntroduction + " "+
+          "성별" +
+          this.form.selectGender  
       );
-
     },
     assignId() {
       this.user_mbti_id = this.form.selectedMbti;
-      console.log(this.user_mbti_id);
       this.user_annual_income_id = this.form.selectAnnualIncome;
-      console.log(this.user_annual_income_id)
       this.user_blood_type_id = this.form.selectedBloodType;
-      console.log(this.user_blood_type_id)
       this.user_religion_id = this.form.selectedReligion;
-      console.log(this.user_religion_id)
       this.user_drinking_id = this.form.selectedDrinking;
-      console.log(this.user_drinking_id)
     },
   },
 };
@@ -729,7 +673,7 @@ div.container0 {
   border: none;
   background: none;
   border-radius: 10px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.23);
+  
 }
 .card_box {
   /* border: 1px solid red; */
@@ -817,6 +761,8 @@ div.sub_title2 {
 }
 div.sub_title3 {
   /* border: 1px solid red; */
+  display: grid;
+  grid-template-columns: 80px 100px;
   font-size: 16px;
   font-weight: 500;
   /* margin-left: 16px; */
@@ -825,7 +771,12 @@ div.sub_title3 {
   margin-left: 17px;
   margin-bottom: 10px;
 }
-
+.text_count{
+  font-size:12px;
+  align-content: center;
+  text-align: start;
+  color: #848282;
+}
 div.container_essential {
   /* border: 1px solid red; */
   display: grid;
