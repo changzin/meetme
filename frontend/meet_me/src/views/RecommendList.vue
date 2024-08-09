@@ -189,6 +189,15 @@ export default {
                 console.error(err);
             }
         },
+        async clickeToProfileDetail(user_id2){
+            try{
+                await this.$router.push({name : 'ProfileDetail' , query : {data: this.$encrypt(user_id2)}})
+            }
+            catch(err){
+                console.error(err);
+            }
+            
+        }
     }
     
 }
