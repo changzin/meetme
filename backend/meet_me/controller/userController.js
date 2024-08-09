@@ -893,7 +893,7 @@ exports.profileDetail = async(req, res) => {
         let responseBody = {};
         await conn.beginTransaction();
         
-        const userId = req.body.user_id;
+        const userId = req.body.user_id2;
         
 
         query = `SELECT u.user_nickname, u.user_age, u.user_add, u.user_introduction, g.user_grade_value,
@@ -916,7 +916,7 @@ exports.profileDetail = async(req, res) => {
                 JOIN user_religion AS r ON u.user_religion_id = r.user_religion_id
                 JOIN user_drinking AS d ON u.user_drinking_id = d.user_drinking_id
                 WHERE u.user_id = ?
-                LIMIT 1;`;
+                LIMIT 1`;
                 
         result = await db(conn, query, [userId]);
         result[0].user_image_paths = result[0].user_image_paths.split(',');

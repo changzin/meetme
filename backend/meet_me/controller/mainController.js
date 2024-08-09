@@ -20,9 +20,9 @@ exports.main = async(req, res)=>{
                 FROM meet_me.user u
                 LEFT JOIN user_block ub
                 ON u.user_id = ub.user_id2 AND ub.user_id1 = @logged_in_user_id
-                WHERE u.user_id != @logged_in_user_id AND u.user_gender != (SELECT user_gender FROM user WHERE user_id=@logged_in_user_id) AND u.user_block != 'T' AND ub.user_id2 IS NULL
+                WHERE u.user_id != @logged_in_user_id AND u.user_gender != (SELECT user_gender FROM user WHERE user_id=@logged_in_user_id) AND u.user_block != 'T' AND ub.user_id2 IS NULL AND u.user_type != 'admin'
                 ORDER BY RAND()
-                LIMIT 10;`;
+                LIMIT 10`;
         rand = await db(conn, query);
 
         console.log("RAND>>>" , rand)
