@@ -8,18 +8,13 @@
 
         <div class="main_image">
             <div class="image_tab">
-                <div :class="{number2: index == 0, number: index != 0}"></div>
-                <div :class="{number2: index == 1, number: index != 1}"></div>
-                <div :class="{number2: index == 2, number: index != 2}"></div>
-                <div :class="{number2: index == 3, number: index != 3}"></div>
-                <div :class="{number2: index == 4, number: index != 4}"></div>
-                <div :class="{number2: index == 5, number: index != 5}"></div>
+                <div v-for="(item, i) in userImg.length" :key="i" :class="{number2: index == i, number: index != i}"></div>
             </div>
                 <div class="prev_button" @click="count(-1)">
                 </div>
                 <div class="next_button" @click="count(1)">
                 </div>
-                <img :src="user_image[index]" @click="count(1)">
+                <img :src="this.$imageFileFormat(userImg[index])" @click="count(1)">
                 <div class="report">
                     <img src="/icon/main_recommend/report.svg" @click="viewReportModal()" class="icon_report" >
                 </div>
@@ -27,40 +22,38 @@
                     <img src="/icon/main_recommend/block.svg" @click="block(17)" class="icon_block">
                 </div>
         </div>
-        <div class="user_name">
-            장원영,23
+        <div class="user_name" >
+            {{userData.user_nickname}},{{ userData.user_age }}
         </div>
         <div class="region">
-            종로
+            {{ userData.user_add }}
         </div>
         <div class="profile_box">
-            <div class="profile">장원영 귀여워 장원영 귀여워장원영 귀여워장원영장원영 귀여워 장원영 귀여워장원영 귀여워장원영장원영 귀여워 장원영 귀여워장원영 귀여워 장원영 귀여워장원영 귀여워장원영장원영 귀여워 장원영 귀여워장원영 귀여워장원영장원영 귀여워 장원영 귀여워장원영 귀여워장원영장원영 귀여워 장원영 귀여워장장원영 귀여워 장원영 귀여워장원영 귀여워장원영원영 귀여워장원영장원영 귀여워장원영</div>
+            <div class="profile">{{ userData.user_introduction }}</div>
         </div>
         <div class="information_title">
             기본 정보
         </div>
         <div class="information_box">
-            <div class="information">대학교</div>
-            <div class="information_A">160cm</div>
-            <div class="information_B">슬림</div>
-            <div class="information_C">가끔 마셔요</div>
-            <div class="information_D">비흡연자</div>
-            <div class="information_E">무교</div>
+            <div class="information">{{ userData.user_height}}</div>
+            <div class="information_A">{{ userData.user_weight}}</div>
+            <div class="information_B">{{ userData.user_mbti_value }}</div>
+            <div class="information_C">{{ userData.user_religion_value }}</div>
+            <div class="information_D" v-if="(userData.user_smoke) === 'T'">흡연</div>
+            <div class="information_D" v-if="(userData.user_smoke) === 'F'">비흡연</div>
+            <div class="information_E" v-if="(userData.user_tartoo) === 'T'">문신있음</div>
+            <div class="information_E" v-if="(userData.user_tartoo) === 'F'">문신없음</div>
         </div>
         <div class="point">
             특징
         </div>
-        <div class="point_box">
-            <div class="point_box_A">뭐든 잘먹어요</div>
-            <div class="point_box_A">패션 샌스가 좋아요</div>
-            <div class="point_box_A">대화를 잘해요</div>
-            <div class="point_box_A">요리를 잘해요</div>
-            <div class="point_box_A">혼자 잘놀아요</div>
-            <div class="point_box_A">유머 감각이 있어요</div>
-            <div class="point_box_A">표현을 잘해요</div>
-            <div class="point_box_A">웃음이 많아요</div>
+        <div v-if="userFeature.length > 0">
+        <div class="point_box" >
+            <div class="point_box_A" v-for="(feature, i) in userFeature" :key="i">{{feature}}</div>
+            
         </div>
     </div>
+</div>
     <MeetHeader />
 </template>
 <script>
@@ -68,27 +61,25 @@
 export default {	
     data() {
         return {
+            userImg : [],
             sampleData : '',
-            user_image : [
-                "/model3.png",
-                "/model.jpg",
-                "/model2.jpg",
-                "/model5.jpg",
-                "/model6.jpg",
-                "/images.jpg"
-            ],
             index: 0,
+
             selected_user_index : null,
             reportData : {
                 user_id : this.$getAccessToken(),
                 user_id2 : 17,
             },
             reportModalVisible : false,
+            userData: {},
+            user_feature_ids: [],
+            userFeature: [],
+
         };
     },
     beforeCreate() {},
-    created() {
-        this.userList();
+    async created() {
+        await this.userList();
     },
     beforeMount() {},
     mounted() {},
@@ -99,20 +90,23 @@ export default {
     methods: {
         count(cnt){
             this.index += cnt;
-            if(this.index == 6){
+            if(this.index == this.userImg.length){
                 return this.index = 0;
             }else if(this.index < 0) {
-                return this.index = 5;
+                return this.index = this.userImg.length-1;
             }
         },
         async userList(){
             try{
-                const result = await this.$api(`/user/profiledetail` , {access_token: this.$getAccessToken()} , "POST");
-                
-                this.userData = result.user;
-                console.log("this.userData>>>>>>", this.userData)
 
-            }catch(err){
+                let user_id2 = this.$route.query.data
+                user_id2 = this.$decrypt(user_id2)
+
+                const result = await this.$api(`/user/profiledetail` , {access_token: this.$getAccessToken() , user_id2} , "POST");
+                this.userData = result.user;
+                this.userImg = this.userData.user_image_paths;
+                this.userFeature = this.userData.user_feature_ids
+        }catch(err){
                 console.log(err);
             }
             

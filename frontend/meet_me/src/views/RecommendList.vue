@@ -160,15 +160,11 @@ export default {
                 console.error(err);
             }
         },
-        async sendMatching(user_id2){
-            
-            this.isImageTwoVisible2 = !this.isImageTwoVisible2;
-            
-            
-            try{
-
-                await this.$api(`/recommend/sendmatching`, {user_id: 1, user_id2}, "POST");
-            }catch(err){
+        async sendMatching(user_id2) {
+            try {
+                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
+                await this.getRecommendList();
+            } catch (err) {
                 console.error(err);
             }
         },
@@ -193,6 +189,15 @@ export default {
                 console.error(err);
             }
         },
+        async clickeToProfileDetail(user_id2){
+            try{
+                await this.$router.push({name : 'ProfileDetail' , query : {data: this.$encrypt(user_id2)}})
+            }
+            catch(err){
+                console.error(err);
+            }
+            
+        }
     }
     
 }
