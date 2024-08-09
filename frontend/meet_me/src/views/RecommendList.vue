@@ -57,219 +57,144 @@
     </div>
 </template>
 <script>
-import CryptoJS from 'crypto-js';
-
-export default {
+    
+export default {	
     data() {
         return {
+            // visibleModal: false,
+            isImageTwoVisible: false, //이미지
+            isImageTwoVisible2: false, //이미지
+            // recommendList: [],
             user_id1: '',
             user_id2: '',
-            results: [],
-            sampleData: '',
+            results:[],
+            sampleData : '',
+            // user_image : [
+            //     "/model3.png",
+            //     "/model.jpg",
+            //     "/model2.jpg",
+            //     "/model5.jpg",
+            //     "/model6.jpg",
+            //     "/images.jpg"
+            // ],
             index: 0,
             heartData: {},
         };
-
+        
     },
+    beforeCreate() {},
+    created() {},
+    beforeMount() {},
     mounted() {
         this.getRecommendList();
         this.getHeart();
-        this.clickeToProfileDetail();
     },
     methods: {
-        count(cnt, user) {
-            user.index += cnt;
+    
+        handleClose() {
+            this.visibleModal = false;
+        },
+        count(cnt, user){
+            user.index += cnt;            
 
-            if (user.index == user.user_image_path.length) {
+            if(user.index == user.user_image_path.length){
                 return user.index = 0;
-            } else if (user.index < 0) {
-                return user.index = user.user_image_path.length - 1;
+            }else if(user.index < 0) {
+                return user.index = user.user_image_path.length-1;
             }
         },
 
-        async getRecommendList() {
-            try {
-                let requestBody = {
-                    access_token: this.$getAccessToken()
-                };
-                const result = await this.$api(`/recommend/list`, requestBody, "POST");
-                this.recommendList = result;
-                this.results = result.results;
-                let heartList = result.getHeart;
-                let matchingList = result.getMatching
-                this.results = result.results.map(user => {
-                    user.index = 0;  // 각 사용자에 인덱스 속성을 추가
-                    return user;
-                });
-                console.log("results>>>>>", this.recommendList)
-
-                for (let i in heartList) {
-                    for (let j in this.results) {
-                        if (this.results[j].user_id2 == heartList[i].heart_status) {
-                            this.results[j].giveHeart = true;
-                        }
+        async getRecommendList(){
+                try{
+                    let requestBody = {
+                        access_token: this.$getAccessToken()
+                    };
+                    const result = await this.$api(`/recommend/list`, requestBody , "POST");
+                    this.recommendList = result;
+                    this.results = result.results;
+                    let heartList = result.getHeart;
+                    let matchingList = result.getMatching
+                    this.results = result.results.map(user => {
+                        user.index = 0;  // 각 사용자에 인덱스 속성을 추가
+                        return user;
+                    });
+                    
+                    
+                    for(let i in heartList){
+                        for(let j in this.results){
+                            if(this.results[j].user_id2 == heartList[i].heart_status){
+                                this.results[j].giveHeart = true;
+                            }                                                                
+                        }                            
                     }
-                }
-                for (let i in matchingList) {
-                    for (let j in this.results) {
-                        if (this.results[j].user_id2 == matchingList[i].matching_status) {
-                            this.results[j].giveMatching = true;
-                        }
+                    for(let i in matchingList){
+                        for(let j in this.results){
+                            if(this.results[j].user_id2 == matchingList[i].matching_status){
+                                this.results[j].giveMatching = true;
+                            }                                                                
+                        }                            
                     }
+                    
                 }
-
-            }
-            catch (err) {
-                console.error(err);
+                catch(err){
+                    console.error(err);
             }
         },
 
-        async heart(user_id2) {
+        async heart(user_id2){  
             // this.visibleModal = !this.visibleModal;
-            // this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
+            this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
-            try {
+            try{
                 let requestBody = {
                     access_token: this.$getAccessToken(), //user_id = 나
                     user_id2
                 };
 
-                    const result = await this.$api(`/recommend/heart`, requestBody , "POST");
-                    this.heartData = result,
-                    this.message = result.message;
-                    await this.getRecommendList();
-                }
-                catch(err){
-                    console.error(err);
-                }
-            },
-            async sendMatching(user_id2){
-                
-                this.isImageTwoVisible2 = !this.isImageTwoVisible2;
-                
-                try{
-                    await this.$api(`/recommend/sendmatching`, {access_token: this.$getAccessToken() , user_id2}, "POST");
-                    await this.getRecommendList();
-                }catch(err){
-                    console.error(err);
-                }
-            },
-            async getHeart(){
-                const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
-                this.heartData = result.heart;
-                console.log("this.heartData" ,this.heartData)
-            },
-            async userDelete(user_id2){  
-                try{
-                    let requestBody = {
-                        access_token: this.$getAccessToken(),
-                        user_id2
-                    };
-
-                    const result = await this.$api(`/recommend/userdelete`, requestBody , "POST");
-                    this.delete = result,
-                    this.message = result.message;
-                    await this.getRecommendList();
-                }
-                catch(err){
-                    console.error(err);
-                }
-            },
-        }
-        
-    }
-
- 
-
-
-                const result = await this.$api(`/recommend/heart`, requestBody, "POST");
+                const result = await this.$api(`/recommend/heart`, requestBody , "POST");
                 this.heartData = result,
-                    this.message = result.message;
+                this.message = result.message;
                 await this.getRecommendList();
             }
-            catch (err) {
+            catch(err){
                 console.error(err);
             }
         },
-        async sendMatching(user_id2) {
-            try {
+        async sendMatching(user_id2){
+            
+            this.isImageTwoVisible2 = !this.isImageTwoVisible2;
+            
+            
+            try{
 
-                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
-                await this.getRecommendList();
-            } catch (err) {
+                await this.$api(`/recommend/sendmatching`, {user_id: 1, user_id2}, "POST");
+            }catch(err){
                 console.error(err);
             }
         },
-        async getHeart() {
-            const result = await this.$api(`/user/getheart`, { access_token: this.$getAccessToken() }, "POST");
+        async getHeart(){
+            const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
             this.heartData = result.heart;
-            console.log("this.heartData", this.heartData)
+            console.log("this.heartData" ,this.heartData)
         },
-        async userDelete(user_id2) {
-            try {
+        async userDelete(user_id2){  
+            try{
                 let requestBody = {
                     access_token: this.$getAccessToken(),
                     user_id2
                 };
 
-                const result = await this.$api(`/recommend/userdelete`, requestBody, "POST");
+                const result = await this.$api(`/recommend/userdelete`, requestBody , "POST");
                 this.delete = result,
                 this.message = result.message;
                 await this.getRecommendList();
             }
-            catch (err) {
+            catch(err){
                 console.error(err);
             }
         },
-
-        clickeToProfileDetail(user_id2) {
-            const data = {user_id2};
-            
-            // 암호화
-            const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), process.env.VUE_APP_CRYPTO_SECRET_KEY).toString();
-
-            
-            const bytes  = CryptoJS.AES.decrypt(ciphertext, process.env.VUE_APP_CRYPTO_SECRET_KEY);
-            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-            
-            console.log("decryptedData", decryptedData); // [{id: 1}, {id: 2}]
-      
-            // Decrypt
-            // const bytes  = CryptoJS.AES.decrypt(ciphertext, process.env.VUE_APP_CRYPTO_SECRET_KEY);
-            // const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-            
-            // console.log("decryptedData", decryptedData); // [{id: 1}, {id: 2}]
-               
-            /*
-            env
-            암호화키 : aldfsjlsjfdliskjfisdfjol
-            
-            RecommendList.vue
-            user_id = 10;
-            user_id + 암호화키 -> 암호화 -> fnjskhdrfhuisdhfniusdhfnislukdhfnjsk
-
-            ProfileDetail.vue
-            user_id = fnjskhdrfhuisdhfniusdhfnislukdhfnjsk;
-            fnjskhdrfhuisdhfniusdhfnislukdhfnjsk -> 복호화해주는 함수를 실햄함 + 암호화키 ->  user_id = 10;
-
-
-            */
-            /*
-            클라이언트
-            password =  qwer;
-            password + 클라이언트_암호화키 -> 암호화 -> fnjskhdrfhuisdhfniusdhfnislukdhfnjsk
-
-            서버
-            fnjskhdrfhuisdhfniusdhfnislukdhfnjsk -> 서버_암호화키 -> 암호화 -> jkgiohfuj98odx8gyhfdx87iughfisd
-
-            데이터베이스 inset into jkgiohfuj98odx8gyhfdx87iughfisd
-            */
-            
-
-            // this.$router.push({ name: 'ProfileDetail'} ,);
-        }
     }
-
+    
 }
 
 </script>
