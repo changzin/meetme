@@ -75,11 +75,15 @@ export default {
                 "/model6.jpg",
                 "/images.jpg"
             ],
-            index: 0
+            index: 0,
+            selected_user_index : null,
+
         };
     },
     beforeCreate() {},
-    created() {},
+    created() {
+        this.userList();
+    },
     beforeMount() {},
     mounted() {},
     beforeUpdate() {},
@@ -94,6 +98,18 @@ export default {
             }else if(this.index < 0) {
                 return this.index = 5;
             }
+        },
+        async userList(){
+            try{
+                
+                const result = await this.$api(`/user/profiledetail` , {access_token: this.$getAccessToken() } , "POST");
+                
+                this.userData = result.user;
+                console.log("this.userData>>>>>>", this.userData)
+            }catch(err){
+                console.log(err);
+            }
+            
         }
     }
 }

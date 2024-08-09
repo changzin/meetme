@@ -129,6 +129,7 @@ exports.sendMatching = async(req, res) => { //매칭 신청
         let responseBody = {};
 
         const userId = req.body.user_id;
+        console.log("userId>>>>" , userId)
         const userId2 = req.body.user_id2;
 
         query = `SELECT user_id1, user_id2 FROM matching
@@ -145,6 +146,7 @@ exports.sendMatching = async(req, res) => { //매칭 신청
 
         responseBody = {
             status : 200,
+            message: "매칭신청 잘 보냈습니다 ^^",
         };
         await conn.commit();
         res.status(200).json(responseBody);
