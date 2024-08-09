@@ -1,39 +1,43 @@
 const SocketIO = require("socket.io");
-
-module.exports = (server) => {
+const socketSetup = (server) => {
     const io = SocketIO(server, {
         path: '/socket.io',
         cors: {
-            origin: 'http://localhost:8080', // 프론트엔드 서버 주소
+            origin: '*', // 프론트엔드 서버 주소
             methods: ['GET', 'POST'],
-            credentials: true
         }
     });
+    // app.set("io", io);
+    // const chat = io.of("/chat");
 
-    io.on("connection", (socket) => {
-        const req = socket.request;
-        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-        console.log("새로운 클라이언트 접속", ip, socket.id, req.ip);
+    io.on("connection", (socket) =>{
+        // console.log("chat 네임스페이스에 접속");
+        console.log("a user connected", socket.id);
 
-        // 클라이언트가 연결을 해제했을 때
-        socket.on("disconnect", () => {
-            console.log("클라이언트 접속 해제", ip, socket.id);
-            clearInterval(socket.interval); // 오타 수정
-        });
-
-        // 오류 발생 시
-        socket.on("error", (error) => {
-            console.error(error);
-        });
-
-        // 클라이언트로부터 "reply" 이벤트 수신
-        socket.on("reply", (data) => {
+        socket.on("join", (data) =>{
+            // socket.join(data);
             console.log(data);
         });
 
-        // 3초마다 클라이언트에게 메시지 전송
-        socket.interval = setInterval(() => {
-            socket.emit("news", "hello socket.io");
-        }, 3000);
-    });
-};
+        socket.on("sendMessage", (data) =>{
+            // socket.join(data);
+            const { message } = data;
+            console.log("sendMessage :", message);
+            
+            io.emit("receiveMessage", {message});
+        });
+
+        
+
+        socket.on("disconnect", () =>{
+            console.log("chat 네임스페이스 접속 해제")
+        })
+    })
+
+    // io.emit("receiveMessage", {
+    //     message_content: "message"
+
+    // })
+    };
+
+module.exports = socketSetup;

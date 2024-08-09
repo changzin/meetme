@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require("path");
 
 const indexRouter = require('./router');
-const socket = require("./util/socket");
+const socketSetup = require("./util/socket");
 
 // .env 폴더 설정
 dotenv.config();
@@ -53,4 +53,5 @@ const server = app.listen(app.get('port'), ()=>{
     console.log(app.get('port'), 'port listening...')
 });
 
-socket(server);
+
+socketSetup(server, app);
