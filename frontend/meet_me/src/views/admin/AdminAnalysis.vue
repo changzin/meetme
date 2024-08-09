@@ -10,19 +10,43 @@
                 <div class="admin_analysis_graph_content">
                     <div class="admin_analysis_graph_box">
                         <div class="admin_graph_header">신규 회원 추이</div>
-                        <div class="admin_graph_content"></div>
+                        <div class="admin_graph_content">
+                            <GChart
+                            type="LineChart"
+                            :data="newUserTimeLineData"
+                            class="analysis_chart"
+                            />
+                        </div>
                     </div>
                     <div class="admin_analysis_graph_box">
-                        <div class="admin_graph_header">신규 회원 추이</div>
-                        <div class="admin_graph_content"></div>
+                        <div class="admin_graph_header">회원 남녀 비율</div>
+                        <div class="admin_graph_content">
+                            <GChart
+                            type="PieChart"
+                            :data="userGenderRateData"
+                            class="analysis_chart"
+                            />
+                        </div>
                     </div>
                     <div class="admin_analysis_graph_box">
-                        <div class="admin_graph_header">신규 회원 추이</div>
-                        <div class="admin_graph_content"></div>
+                        <div class="admin_graph_header">매칭 수 추이</div>
+                        <div class="admin_graph_content">
+                            <GChart
+                            type="LineChart"
+                            :data="matchingAmountTimeLineData"
+                            class="analysis_chart"
+                            />
+                        </div>
                     </div>
                     <div class="admin_analysis_graph_box">
-                        <div class="admin_graph_header">신규 회원 추이</div>
-                        <div class="admin_graph_content"></div>
+                        <div class="admin_graph_header">사용자 연령대 분석</div>
+                        <div class="admin_graph_content">
+                            <GChart
+                            type="ColumnChart"
+                            :data="userGenderAmountData"
+                            class="analysis_chart"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -30,10 +54,37 @@
     </div>
     </template>    
     <script>
-    
+    import { GChart } from 'vue-google-charts';
     export default {
+        components:{
+            GChart
+        },
         data() {
             return {
+                userGenderRateData: [
+                    ['성별', '회원수'],
+                    ['남자', 10],
+                    ['여자', 5]
+                ],
+                newUserTimeLineData: [
+                    ['날짜', '신규 회원 수'],
+                    ['YYYY-MM-DD', 0]
+                ],
+                matchingAmountTimeLineData: [
+                    ['날짜', '신규 회원 수'],
+                    ['YYYY-MM-DD', 0]
+                ],
+                userGenderAmountData:[
+                    ['Element', '회원수', { role: 'style' }],
+                    ['20대 남자', 300, 'blue'],
+                    ['20대 여자', 110, 'red'],
+                    ['', 0, 'white'],
+                    ['30대 남자', 200, 'blue'],
+                    ['30대 여자', 100, 'red'],
+                    ['', 0, 'white'],
+                    ['40대 남자', 50, 'blue'],
+                    ['40대 여자', 20, 'red'],
+                ]
             }
         }
     }
@@ -87,6 +138,10 @@
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
+}
+.analysis_chart{
+    width:100%;
+    height: 100%;
 }
 @media (max-width: 1200px) {
   .web_body{

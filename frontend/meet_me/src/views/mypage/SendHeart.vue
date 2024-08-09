@@ -4,8 +4,11 @@
             <div class="title">
                 보낸 좋아요
             </div>
+            <div class="heart_null" v-if="heartData.length == 0">
+                <h4>보낸 좋아요가 없습니다.</h4>
+            </div>
             <div class="profile_box" v-for="(heart, i) in heartData" :key="i">
-                <img class="mini_profile" src="/model.jpg">
+                <img class="mini_profile" :src="heart.user_image_path ? this.$imageFileFormat(heart.user_image_path) : 'model3.png'">
                 <div class="name_title">
                     <div class="status">
                         {{heart.user_nickname}}에게 좋아요를 보냈습니다.
@@ -50,19 +53,19 @@ export default {
     methods: {
         async sendMatching(user_id2){
             try{
-                await this.$api(`/user/sendmatching`, {user_id: 1, user_id2}, "POST");
+                await this.$api(`/user/sendmatching`, {access_token : this.$getAccessToken() , user_id2}, "POST");
                 await this.getHeart();
             }catch(err){
                 alert('매칭신청이 중복 되었습니다.');
             }
         },
         async getHeart(){
-            const result = await this.$api(`/user/getheart`, {user_id: 1},"POST");
+            const result = await this.$api(`/user/getheart`, {access_token : this.$getAccessToken()},"POST");
             this.heartData = result.heart;
         },
         async deleteMatching(user_id2){
             try{
-                await this.$api(`/user/deletematching`, {user_id: 1, user_id2}, "POST");
+                await this.$api(`/user/deletematching`, {access_token : this.$getAccessToken() , user_id2}, "POST");
                 await this.getHeart();
             }catch(err){
                 alert('매칭취소가 실패 했습니다.')
@@ -70,7 +73,7 @@ export default {
         },
         async deleteHeart(user_id2){
             try{
-                await this.$api(`/user/deleteheart`, {user_id: 1, user_id2}, "POST");
+                await this.$api(`/user/deleteheart`, {access_token : this.$getAccessToken() , user_id2}, "POST");
                 await this.getHeart();
             }catch(err){
                 alert('좋아요 삭제 실패');
@@ -118,11 +121,13 @@ export default {
     text-align: start;
     display: flex;
     align-items: center;
+    width: 320px;
 }
 
 .status {
     font-weight: 400;
     padding: 0 10px 0 10px;
+    word-break: break-all;
 }
 
 .live {
@@ -160,6 +165,10 @@ export default {
     background-color: #9d88b300;
     padding-bottom: 5px;
     
+}
+
+.heart_null {
+    padding-top: 50px;
 }
 
 </style>

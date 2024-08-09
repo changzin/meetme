@@ -391,7 +391,7 @@
 
         <div class="feature_box">
             <div v-for="(feature, i) in userData.user_feature_ids" :key="i">
-                <div class="select_box2">{{this.featureList[feature-1]}}</div>
+                <div class="select_box2" @click="this.$router.push({name: 'FeatureEdit'})">{{this.featureList[feature-1]}}</div>
             </div>
         </div>
       
@@ -455,7 +455,7 @@ export default {
           }
         }
         // this.profile = result.user.user_image_paths;
-        console.log(this.userData.user_image_paths.length);
+        console.log(this.userData);
       } catch (err) {
         console.log(err);
       }
@@ -487,7 +487,7 @@ export default {
           { userInfo, access_token: this.$getAccessToken() },
           "POST"
         );
-        this.getUser();
+        await this.getUser();
 
       } catch (err) {
         console.log(err);
@@ -526,6 +526,15 @@ export default {
         console.error("Daum Postcode 스크립트가 로드되지 않았습니다.");
         }
     },
+    // async goToFeatureEdit(){
+    //   try{
+    //     const feature_id = this.userData.user_feature_ids;
+    //     await this.$api(`/user/featureedit`, {access_token: this.$getAccessToken(), feature_id}, 'POST');
+    //     console.log('ddd')
+    //   }catch(err){
+    //     console.log(err)
+    //   }
+    // },
 
     showOverlay(index) {
       this.validPictureOverlayIndex = index;
@@ -1117,6 +1126,7 @@ select option {
         text-align: center;
         border: none;
         font-size: 14px;
+        cursor: pointer;
     }
 
 .class_button {

@@ -10,10 +10,10 @@ exports.chatGptService = async (file) => {
                 "https://api.openai.com/v1/chat/completions",
                 requestBody,
                 {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                },
+                  headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                  },
                 }
             )
             .then((response) => {
