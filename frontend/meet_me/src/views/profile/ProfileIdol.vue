@@ -1,6 +1,6 @@
 <template>
   <div class="container0">
-    <div class="card_box">
+    <form class="card_box" @submit.prevent="postIdolList()">
       <div class="container_top">
         <div class="title">이상형 선택</div>
       </div>
@@ -19,9 +19,10 @@
               visible_dropdown_button: activeInput === 'age',
               visible_dropdown_button: activeInput !== 'age',
             }"
-            v-model="selectedIdolAge"
+            v-model="form.selectedIdolAge"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               연령대
             </option>
             <option class="dropdown_item" v-for="(idolAge, i) in idolList.user_idol_age_values " :key="i" :value="i + 1">
@@ -39,9 +40,10 @@
               visible_dropdown_button: activeInput === 'annual_income',
               visible_dropdown_button: activeInput !== 'annual_income',
             }"
-            v-model="selectedAnnualIncome"
+            v-model="form.selectedAnnualIncome"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               연봉
             </option>
             <option class="dropdown_item" v-for="(
@@ -66,9 +68,10 @@
               visible_dropdown_button: activeInput === 'height',
               visible_dropdown_button: activeInput !== 'height',
             }"
-            v-model="selectedIdolHeight"
+            v-model="form.selectedIdolHeight"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               키
             </option>
             <option class="dropdown_item" v-for="(idolHeight, i) in idolList.user_idol_height_values" :key="i" :value="i + 1" >
@@ -86,9 +89,10 @@
               visible_dropdown_button: activeInput === 'weight',
               visible_dropdown_button: activeInput !== 'weight',
             }"
-            v-model="selectedIdolWeight"
+            v-model="form.selectedIdolWeight"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               몸무게
             </option>
             <option class="dropdown_item" v-for="(idolWeight, i) in idolList.user_idol_weight_values" :key="i" :value="i + 1">
@@ -111,9 +115,10 @@
               visible_dropdown_button: activeInput === 'MBTI',
               visible_dropdown_button: activeInput !== 'MBTI',
             }"
-            v-model="selectedMbti"
+            v-model="form.selectedMbti"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               MBTI
             </option>
             <option class="dropdown_item" v-for="(idolMbti, i) in idolList.user_mbti_values" :key="i" :value="i + 1">
@@ -132,9 +137,10 @@
               visible_dropdown_button: activeInput === 'blood_type',
               visible_dropdown_button: activeInput !== 'blood_type',
             }"
-            v-model="selectedBloodType"
+            v-model="form.selectedBloodType"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               혈액형
             </option>
             <option
@@ -157,9 +163,10 @@
               visible_dropdown_button: activeInput === 'religion',
               visible_dropdown_button: activeInput !== 'religion',
             }"
-            v-model="selectedReligion"
+            v-model="form.selectedReligion"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               종교
             </option>
             <option
@@ -182,9 +189,10 @@
               visible_dropdown_button: activeInput === 'drinking',
               visible_dropdown_button: activeInput !== 'drinking',
             }"
-            v-model="selectedDrinking"
+            v-model="form.selectedDrinking"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               주량
             </option>
             <option
@@ -207,9 +215,10 @@
               visible_dropdown_button: activeInput === 'smoke',
               visible_dropdown_button: activeInput !== 'smoke',
             }"
-            v-model="selectedSmoke"
+            v-model="form.selectedSmoke"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value=""  disabled hidden>
               흡연 여부
             </option>
             <option class="dropdown_item" value="T">흡연</option>
@@ -226,9 +235,10 @@
               visible_dropdown_button: activeInput === 'tartoo',
               visible_dropdown_button: activeInput !== 'tartoo',
             }"
-            v-model="selectedTartoo"
+            v-model="form.selectedTartoo"
+            required
           >
-            <option class="dropdown_item" value="null" selected disabled hidden>
+            <option class="dropdown_item" value="" selected disabled hidden>
               문신 여부
             </option>
             <option class="dropdown_item" value="T">문신 허용</option>
@@ -238,9 +248,9 @@
           <!-- 선택된 상태 -->
       </div>
       <div class="container_bottom">
-        <button class="next" @click="postIdolList()">다음으로</button>
+        <button class="next" type="submit">다음으로</button>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 <script>
@@ -251,16 +261,18 @@ export default {
     return {
         activeInput: null,
         idolList : {},
-        selectedIdolAge : null,
-        selectedIdolHeight : null,
-        selectedIdolWeight : null,
-        selectedAnnualIncome : null,
-        selectedMbti : null,
-        selectedBloodType : null,
-        selectedReligion : null,
-        selectedDrinking : null,
-        selectedSmoke : null,
-        selectedTartoo : null,
+        form:{
+          selectedIdolAge : "",
+          selectedIdolHeight : "",
+          selectedIdolWeight : "",
+          selectedAnnualIncome : "",
+          selectedMbti : "",
+          selectedBloodType : "",
+          selectedReligion : "",
+          selectedDrinking : "",
+          selectedSmoke : "",
+          selectedTartoo : "",
+        },
         userIdol:{}
         
     };
@@ -290,16 +302,16 @@ export default {
         try{
             const requestBody ={
                 access_token: this.$getAccessToken(),
-                user_mbti_id : this.selectedMbti,
-                user_annual_income_id : this.selectedAnnualIncome,
-                user_blood_type_id : this.selectedBloodType,
-                user_religion_id : this.selectedReligion,
-                user_drinking_id : this.selectedDrinking,
-                user_idol_age_id : this.selectedIdolAge,
-                user_idol_height_id : this.selectedIdolHeight,
-                user_idol_weight_id : this.selectedIdolWeight,
-                user_idol_smoke: this.selectedSmoke,
-                user_idol_tartoo: this.selectedTartoo,
+                user_mbti_id : this.form.selectedMbti,
+                user_annual_income_id : this.form.selectedAnnualIncome,
+                user_blood_type_id : this.form.selectedBloodType,
+                user_religion_id : this.form.selectedReligion,
+                user_drinking_id : this.form.selectedDrinking,
+                user_idol_age_id : this.form.selectedIdolAge,
+                user_idol_height_id : this.form.selectedIdolHeight,
+                user_idol_weight_id : this.form.selectedIdolWeight,
+                user_idol_smoke: this.form.selectedSmoke,
+                user_idol_tartoo: this.form.selectedTartoo,
             };
             const request = await this.$api(`/user/idolinput`,requestBody,"POST")
             console.log(request);
@@ -307,7 +319,7 @@ export default {
             if(request.status === 200){
                 this.userIdol = request.userIdol
                 this.$router.push({
-                    name:"profilephoto",
+                  path: '/feature'
                 })
             }
         }catch(err){
@@ -328,37 +340,37 @@ export default {
       this.assignId();
       console.log(
         "MBTI" +
-          this.selectedMbti + " " +
+          this.form.selectedMbti + " " +
           "연봉" +
-          this.selectedAnnualIncome + " " +
+          this.form.selectedAnnualIncome + " " +
           "혈액형" +
-          this.selectedBloodType + " " + 
+          this.form.selectedBloodType + " " + 
           "종교" +
-          this.selectedReligion + " " +
+          this.form.selectedReligion + " " +
           "주량" +
-          this.selectedDrinking + " " +
+          this.form.selectedDrinking + " " +
           "나이" +
-          this.selectedIdolAge + " " +
+          this.form.selectedIdolAge + " " +
           "키" +
-          this.selectedIdolHeight + " " +
+          this.form.selectedIdolHeight + " " +
           "몸무게" +
-          this.selectedIdolWeight + " " +
+          this.form.selectedIdolWeight + " " +
           "흡연" +
-          this.selectedSmoke + " " +
+          this.form.selectedSmoke + " " +
           "문신" +
-          this.selectedTartoo + " " 
+          this.form.selectedTartoo + " " 
           
       );
     },
     assignId() {
-      this.user_mbti_id = this.selectedMbti;
-      this.user_annual_income_id = this.selectedAnnualIncome;
-      this.user_blood_type_id = this.selectedBloodType;
-      this.user_religion_id = this.selectedReligion;
-      this.user_drinking_id = this.selectedDrinking;
-      this.user_idol_age_values = this.selectedIdolAge;
-      this.user_idol_height_values = this.selectedIdolHeight;
-      this.user_idol_weight_values = this.selectedIdolWeight;
+      this.user_mbti_id = this.form.selectedMbti;
+      this.user_annual_income_id = this.form.selectedAnnualIncome;
+      this.user_blood_type_id = this.form.selectedBloodType;
+      this.user_religion_id = this.form.selectedReligion;
+      this.user_drinking_id = this.form.selectedDrinking;
+      this.user_idol_age_values = this.form.selectedIdolAge;
+      this.user_idol_height_values = this.form.selectedIdolHeight;
+      this.user_idol_weight_values = this.form.selectedIdolWeight;
       
     },
   },
