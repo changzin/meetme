@@ -1023,3 +1023,82 @@ exports.regrade = async(req, res)=>{
         conn.release();
     }
 }
+
+exports.addReport = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+        const report = req.body.report;
+
+        query = `INSERT 
+                INTO report(user_id1, user_id2, report_content)
+                VALUES(?, ?, ?)`;
+        result = await db(conn, query,[userId, userId2, report]);
+
+        responseBody = {
+            status: 200,
+            reportList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}
+
+exports.addBlock = async(req, res)=>{
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const userId2 = req.body.user_id2;
+
+        query = `INSERT 
+                INTO user_block(user_id1, user_id2)
+                VALUES(?, ?)`;
+        result = await db(conn, query,[userId, userId2]);
+
+        responseBody = {
+            status: 200,
+            reportList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+}

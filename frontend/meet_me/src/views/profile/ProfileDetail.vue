@@ -4,6 +4,8 @@
             <div class="main_title">프로필 상세보기</div>
         </div>
 
+        <ReportModal :data="this.reportData" v-if="reportModalVisible" @close="closeReportModal()"/>   
+
         <div class="main_image">
             <div class="image_tab">
                 <div v-for="(item, i) in userImg.length" :key="i" :class="{number2: index == i, number: index != i}"></div>
@@ -14,10 +16,10 @@
                 </div>
                 <img :src="this.$imageFileFormat(userImg[index])" @click="count(1)">
                 <div class="report">
-                    <img src="/icon/main_recommend/report.svg" @click="this.$router.push({ name:'SelectModal'})" class="icon_report" >
+                    <img src="/icon/main_recommend/report.svg" @click="viewReportModal()" class="icon_report" >
                 </div>
                 <div class="block">
-                    <img src="/icon/main_recommend/block.svg" @click="this.$router.push({ name:'SelectModal'})" class="icon_block">
+                    <img src="/icon/main_recommend/block.svg" @click="block(17)" class="icon_block">
                 </div>
         </div>
         <div class="user_name" >
@@ -62,6 +64,13 @@ export default {
             userImg : [],
             sampleData : '',
             index: 0,
+
+            selected_user_index : null,
+            reportData : {
+                user_id : this.$getAccessToken(),
+                user_id2 : 17,
+            },
+            reportModalVisible : false,
             userData: {},
             user_feature_ids: [],
             userFeature: [],
@@ -89,6 +98,7 @@ export default {
         },
         async userList(){
             try{
+
                 let user_id2 = this.$route.query.data
                 user_id2 = this.$decrypt(user_id2)
 
@@ -96,10 +106,25 @@ export default {
                 this.userData = result.user;
                 this.userImg = this.userData.user_image_paths;
                 this.userFeature = this.userData.user_feature_ids
-            }catch(err){
+        }catch(err){
                 console.log(err);
             }
             
+        },
+        async block(){
+            try{
+                await this.$api(`/user/addblock`, {access_token: this.$getAccessToken(), user_id2 : 17}, "POST"); //17에 this.$route.query({ ... }) 넣으세요
+                alert('유저를 차단하였습니다.');
+                this.$router.push({name: 'MainPage'});
+            }catch(err){
+                console.log(err)
+            }
+        },
+        async viewReportModal(){
+            this.reportModalVisible = true;
+        },
+        closeReportModal(){
+            this.reportModalVisible = false;
         }
     }
 }

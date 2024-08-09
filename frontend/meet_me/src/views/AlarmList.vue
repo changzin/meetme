@@ -1,6 +1,6 @@
 <template>
     <div class="safety_zone">
-        <div class="container">
+        <div class="container" v-if="alarmData">
             <div class="title">
                 알림
             </div>
