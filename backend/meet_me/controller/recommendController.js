@@ -67,7 +67,6 @@ exports.recommend = async(req, res)=>{
             getHeart : getHeart,
             getMatching : getMatching
         };
-        console.log("responseBody <>>>>>" , responseBody)
         await conn.commit();
         res.status(200).json(responseBody);
     }
@@ -129,7 +128,6 @@ exports.sendMatching = async(req, res) => { //매칭 신청
         let responseBody = {};
 
         const userId = req.body.user_id;
-        console.log("userId>>>>" , userId)
         const userId2 = req.body.user_id2;
 
         query = `SELECT user_id1, user_id2 FROM matching

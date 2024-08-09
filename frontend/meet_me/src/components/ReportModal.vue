@@ -27,10 +27,6 @@
                 </div>
             </div>
         </div>          
-        {{data}}
-
-
-
         </div>
       </div>
     </div>

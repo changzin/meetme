@@ -15,7 +15,7 @@ import ChatModal from './views/chat/ChatModal.vue'
 import MemberReportModal from './components/MemberReportModal.vue'
 import MemberPayModal from './components/MemberPayModal.vue'
 import MemberDetailModal from './components/MemberDetailModal.vue'
-import ReportModal from './views/profile/ReportModal.vue'
+import ReportModal from './components/ReportModal.vue'
 
 import ImageModal from './components/ImageModal.vue'
 import ProfileImageModal from './components/ProfileImageModal.vue'
