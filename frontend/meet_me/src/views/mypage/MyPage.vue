@@ -28,7 +28,7 @@
                             {{userData.user_grade_value}}
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'mypagestore'})">
                         <img class="button_icon" src="/icon/mypage/main/store.svg">
                         <div class="button_icon">
                             스토어
@@ -56,6 +56,12 @@
                         <img class="button_icon" src="/icon/mypage/main/warning.svg">
                         <div class="button_icon">
                             회원탈퇴
+                        </div>
+                    </div>
+                    <div class="mypage_button" @click='logout'>
+                        <img class="button_icon" src="/icon/admin/blackout.svg" width="56">
+                        <div class="button_icon">
+                            로그아웃
                         </div>
                     </div>
                 </div>
@@ -86,6 +92,12 @@ export default {
                 console.log(err);
             }
         },
+        logout(){
+            alert("회원 탈퇴하였습니다.ㄴ")
+            this.$cookies.remove("meetMeCookie")
+            this.$store.commit("user", null);            
+            this.$router.push({name: "loginuser"})
+        }
     }
 
 }

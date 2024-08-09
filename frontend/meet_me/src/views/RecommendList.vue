@@ -134,6 +134,54 @@ export default {
                     user_id2
                 };
 
+                    const result = await this.$api(`/recommend/heart`, requestBody , "POST");
+                    this.heartData = result,
+                    this.message = result.message;
+                    await this.getRecommendList();
+                }
+                catch(err){
+                    console.error(err);
+                }
+            },
+            async sendMatching(user_id2){
+                
+                this.isImageTwoVisible2 = !this.isImageTwoVisible2;
+                
+                try{
+                    await this.$api(`/recommend/sendmatching`, {access_token: this.$getAccessToken() , user_id2}, "POST");
+                    await this.getRecommendList();
+                }catch(err){
+                    console.error(err);
+                }
+            },
+            async getHeart(){
+                const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
+                this.heartData = result.heart;
+                console.log("this.heartData" ,this.heartData)
+            },
+            async userDelete(user_id2){  
+                try{
+                    let requestBody = {
+                        access_token: this.$getAccessToken(),
+                        user_id2
+                    };
+
+                    const result = await this.$api(`/recommend/userdelete`, requestBody , "POST");
+                    this.delete = result,
+                    this.message = result.message;
+                    await this.getRecommendList();
+                }
+                catch(err){
+                    console.error(err);
+                }
+            },
+        }
+        
+    }
+
+ 
+
+
                 const result = await this.$api(`/recommend/heart`, requestBody, "POST");
                 this.heartData = result,
                     this.message = result.message;
@@ -185,12 +233,7 @@ export default {
             const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
             
             console.log("decryptedData", decryptedData); // [{id: 1}, {id: 2}]
-        
-            
-
-
-
-
+      
             // Decrypt
             // const bytes  = CryptoJS.AES.decrypt(ciphertext, process.env.VUE_APP_CRYPTO_SECRET_KEY);
             // const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -211,7 +254,6 @@ export default {
 
 
             */
-
             /*
             클라이언트
             password =  qwer;
@@ -261,39 +303,39 @@ export default {
 }
 
 .image_tab {
-    margin-top: 5px;
-    width: 150px;
-    height: 18px;
-    background-color: rgba(183, 67, 67, 0);
-    border-radius: 100px;
-    position: absolute;
-    display: flex;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: 3;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px;
-}
-
-.number {
-    width: 20px;
-    height: 2px;
-    border-radius: 100px;
-    background-color: slategrey;
-    display: flex;
-    justify-content: space-between;
-}
-
-.number2 {
-    width: 20px;
-    height: 2px;
-    border-radius: 100px;
-    background-color: rgb(252, 252, 252);
-    display: flex;
-    justify-content: space-between;
-}
+        margin-top: 5px;
+        width: 510px;
+        height: 18px;
+        background-color: rgba(183, 67, 67, 0);
+        border-radius: 100px;
+        position: absolute;
+        display: flex;
+        top: 0;
+        gap: 15px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 3;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px;
+   }
+    .number {
+        width: 100%;
+        height: 2px;
+        border-radius: 100px;
+        background-color: slategrey;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .number2 {
+        width: 100%;
+        height: 2px;
+        border-radius: 100px;
+        background-color: rgb(252, 252, 252);
+        display: flex;
+        justify-content: space-between;
+    }
 
 .main_image {
     width: 568px;
