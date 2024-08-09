@@ -86,8 +86,8 @@ exports.userLogin = async(req, res)=>{
             // 겹치는 이메일이 없다면 회원가입
             if(result.length == 0){
                 query = `INSERT 
-                        INTO user(user_email, user_type)
-                        VALUES(?, ?)`;
+                        INTO user(user_email, user_type, user_email_verified)
+                        VALUES(?, ?, 'T')`;
                 result = await db(conn, query, [email, loginType]);
                 console.log(email, loginType, result);
 

@@ -9,11 +9,11 @@
                 </div>
                 <div class="admin_analysis_graph_content">
                     <div class="admin_analysis_graph_box">
-                        <div class="admin_graph_header">신규 회원 추이</div>
+                        <div class="admin_graph_header">매출 분석</div>
                         <div class="admin_graph_content">
                             <GChart
                             type="LineChart"
-                            :data="newUserTimeLineData"
+                            :data="monthlyProfitData"
                             class="analysis_chart"
                             />
                         </div>
@@ -33,7 +33,7 @@
                         <div class="admin_graph_content">
                             <GChart
                             type="LineChart"
-                            :data="matchingAmountTimeLineData"
+                            :data="monthlyMatchingData"
                             class="analysis_chart"
                             />
                         </div>
@@ -43,7 +43,7 @@
                         <div class="admin_graph_content">
                             <GChart
                             type="ColumnChart"
-                            :data="userGenderAmountData"
+                            :data="genderAgeData"
                             class="analysis_chart"
                             />
                         </div>
@@ -63,28 +63,48 @@
             return {
                 userGenderRateData: [
                     ['성별', '회원수'],
-                    ['남자', 10],
-                    ['여자', 5]
                 ],
-                newUserTimeLineData: [
-                    ['날짜', '신규 회원 수'],
-                    ['YYYY-MM-DD', 0]
+                monthlyProfitData: [
+                    ['날짜', '매출'],
                 ],
-                matchingAmountTimeLineData: [
-                    ['날짜', '신규 회원 수'],
-                    ['YYYY-MM-DD', 0]
+                monthlyMatchingData: [
+                    ['날짜', '매칭 수'],
                 ],
-                userGenderAmountData:[
+                genderAgeData:[
                     ['Element', '회원수', { role: 'style' }],
-                    ['20대 남자', 300, 'blue'],
-                    ['20대 여자', 110, 'red'],
-                    ['', 0, 'white'],
-                    ['30대 남자', 200, 'blue'],
-                    ['30대 여자', 100, 'red'],
-                    ['', 0, 'white'],
-                    ['40대 남자', 50, 'blue'],
-                    ['40대 여자', 20, 'red'],
                 ]
+            }
+        },
+        async created(){
+            await this.getAnalysisData();
+        },
+        methods: {
+            async getAnalysisData(){
+                try{
+                    const requestBody = {
+                        access_token: this.$getAccessToken()
+                    }
+                    const result = await this.$api('/analysis', requestBody, "POST");
+                    result.genderRateData.map(
+                        (data) => this.userGenderRateData.push([(data.user_gender=='M') ? '남자' : '여자', data.amount])
+                    );
+
+                    result.monthlyProfitData.map(
+                        (data) => this.monthlyProfitData.push([data.date, Number(data.monthly_profit)])
+                    );
+                    result.monthlyMatchingData.map(
+                        (data) => this.monthlyMatchingData.push([data.date, Number(data.monthly_success)])
+                    );
+                    result.genderAgeData.map(
+                        (data) => this.genderAgeData.push([`${data.age}대 ${(data.user_gender=='M') ? '남자' : '여자'}`, Number(data.amount), (data.user_gender=='M') ? 'blue' : 'red' ])
+                    );
+                    console.log(this.genderAgeData);
+
+                }
+                catch(err){
+                    console.error(err);
+                    alert("분석 데이터를 불러올 수 없습니다.")
+                }
             }
         }
     }

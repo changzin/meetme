@@ -5,7 +5,7 @@ const userStoryRouter = require("./userStoryRouter");
 const recommendRouter = require('./recommendRouter');
 
 const mainRouter = require('./mainRouter');
-
+const analysisRouter = require('./analysisRouter');
 
 
 const userFeatureRouter = require('./userFeatureRouter');
@@ -22,6 +22,7 @@ router.use("/main", mainRouter);
 
 router.use("/userFeature", userFeatureRouter)
 
+router.use("/analysis", analysisRouter)
 
 
 module.exports = router;
