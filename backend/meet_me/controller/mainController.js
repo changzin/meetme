@@ -79,7 +79,6 @@ exports.main = async(req, res)=>{
             
         };
 
-        console.log("responseBody >>>" ,responseBody )
 
         await conn.commit();
         res.status(200).json(responseBody);
@@ -142,9 +141,7 @@ exports.sendMatching = async(req, res) => { //매칭 신청
         let responseBody = {};
 
         const userId = req.body.user_id;
-        console.log("userId>>>" , userId)
         const userId2 = req.body.user_id2;
-        console.log("userId2>>>" , userId2)
 
         query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;

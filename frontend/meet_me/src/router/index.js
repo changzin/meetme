@@ -14,9 +14,9 @@ import FeatureEdit from '../views/mypage/FeatureEdit.vue'
 import ChatRoom from '../views/chat/ChatRoom.vue'
 import ChatList from '../views/chat/ChatList.vue'
 
-import MainPage from '../views/MainPage.vue'
+import MainPage from '../views/main/MainPage.vue'
 import LoginUser from '../views/nouser/LoginUser.vue'
-import TempView from '../views/TempView.vue'
+// import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
@@ -28,7 +28,7 @@ import Modal from '../components/Modal.vue'
 import SelectModal from '../components/SelectModal.vue'
 import UserFeature from '../views/profile/UserFeature.vue'
 
-import RecommendList from '../views/RecommendList.vue'
+import RecommendList from '../views/recommend/RecommendList.vue'
 import ProfileDetail from '../views/profile/ProfileDetail.vue'
 import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
 import ForgotPassword from '../views/nouser/ForgotPassword.vue'
@@ -109,11 +109,11 @@ const routes = [
     name:'userfeature',
     component:UserFeature
   },
-  {
-    path: '/tempview',
-    name: 'TempView',
-    component: TempView
-  },
+  // {
+  //   path: '/tempview',
+  //   name: 'TempView',
+  //   component: TempView
+  // },
   {
     path: '/reactiveweb',
     name: 'ReactiveWeb',
