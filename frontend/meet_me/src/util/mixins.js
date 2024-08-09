@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import CryptoJS from 'crypto-js';
 axios.defaults.baseURL = 'http://localhost:9090';
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -174,5 +174,20 @@ export default{
 
             return prefix + currency + String(v) + String(d);
         },
+
+        // 암호화 함수
+        $encrypt(data){
+            const beforeData = {data: data}
+            const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(beforeData), process.env.VUE_APP_CRYPTO_SECRET_KEY).toString();
+
+            return encryptedData;
+        },
+
+        // 복호화 함수
+        $decrypt(encryptedData){
+            const bytes  = CryptoJS.AES.decrypt(encryptedData, process.env.VUE_APP_CRYPTO_SECRET_KEY);
+            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            return decryptedData['data'];
+        }
     }
 }
