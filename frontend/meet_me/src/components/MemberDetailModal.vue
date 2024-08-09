@@ -185,6 +185,7 @@
             <!-- <div v-for="(img, i) in 6" :key="i">
               <img class="edit_profile" :src="profile[i] ? this.$imageFileFormat(profile[i]) : '/model.jpg'"/>
             </div> -->
+            
           </div>
         </div>
       </div>
