@@ -202,7 +202,7 @@ export default {
         },
 
         goToSignUp(){
-            this.$router.push({name:"signup"})
+            this.$router.push({name:"terms"})
         },
         goToForgotPassword(){
             this.$router.push({name:"forgotpassword"})
