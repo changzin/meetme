@@ -820,14 +820,15 @@ exports.userCoin = async (req, res) => {
 
     const userId = req.body.user_id;
 
-    query = `SELECT user_coin
-                FROM user
-                WHERE user_id=?`;
+    query = `SELECT user_coin, user_nickname
+            FROM user
+            WHERE user_id=?`;
     result = await db(conn, query, [userId]);
     if (result[0].user_coin) {
       responseBody = {
         status: 200,
         userCoin: result[0].user_coin,
+        user_nickname:result[0].user_nickname,
       };
     } else {
       throw new Error("유저의 코인 정보를 불러올 수 없습니다.");
