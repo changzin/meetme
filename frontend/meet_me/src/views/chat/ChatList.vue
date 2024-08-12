@@ -7,7 +7,7 @@
         </div>    
         <div class="container_chat">
           <div v-for="(roomList, index) in roomList" :key="index">
-            <div class="chat_list">
+            <div class="chat_list" @click="clickeToChatRoom(roomList.chat_list_id)">
                 <img class="profile_circle" :src="this.$imageFileFormat(roomList.user_image_path)">
                 <div class="chat_container">
                     <div class="chat_name">{{ roomList.user_nickname }}</div>
@@ -36,13 +36,14 @@ export default {
     this.$socket.on("receiveMessage", (data) => {
       console.log("New message data:", data);
       // data.message에서 실제 메시지 문자열을 추출하여 업데이트
-      this.chatData.push(data.message);
-      this.scrollToBottom();
+      // this.chatData.push(data.message);
+      // this.scrollToBottom();
     });
   },
   beforeUnmount() {
     this.$socket.off("receiveMessage");
     this.$socket.off("connect");
+
   },
 
   methods: {
@@ -65,6 +66,14 @@ export default {
 
     }      
     },
+    async clickeToChatRoom(chat_list_id){
+            try{
+                await this.$router.push({name : 'Chatroom' , query : {data: this.$encrypt(chat_list_id)}});
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
 
     connectToServer() {
       this.$socket.on("connect", () => {

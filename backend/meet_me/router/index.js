@@ -24,6 +24,6 @@ router.use("/main", mainRouter);
 
 router.use("/userFeature", userFeatureRouter);
 
-router.use("/chatl", chatRouter);
+router.use("/chat", chatRouter);
 
 module.exports = router;

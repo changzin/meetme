@@ -108,6 +108,38 @@ export default{
             
             return year + "-" + month + "-" + date + " ";
         },
+        $timeFormatChat(value) {
+            if (value == null) {
+                return null;
+            }
+            const format = new Date(value);
+            
+            // 월과 일 처리
+            var month = format.getMonth() + 1;
+            if (month < 10) 
+                month = '0' + month;
+        
+            var date = format.getDate();
+            if (date < 10) 
+                date = '0' + date;
+        
+            // 시간 처리
+            var hour = format.getHours();
+            var period = "오전";
+            if (hour >= 12) {
+                period = "오후";
+                hour = hour > 12 ? hour - 12 : hour;
+            }
+            if (hour < 10) 
+                hour = '0' + hour;
+        
+            // 분 처리
+            var min = format.getMinutes();
+            if (min < 10) 
+                min = '0' + min;
+                
+            return period + " " + hour + "시 " + min + "분";
+        },
 
         $imageFileFormat(image_path){
             return process.env.VUE_APP_SERVER_URL + '/' + image_path;
