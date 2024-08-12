@@ -63,6 +63,7 @@ export default {
             sampleData : '',
             index: 0,
             heartData: {},
+            userCoin: 0,
         };
         
     },
@@ -71,6 +72,7 @@ export default {
     beforeMount() {},
     mounted() {
         this.getMainList();
+        this.getCoin();
     },
     beforeUpdate() {},
     updated() {},
@@ -105,8 +107,6 @@ export default {
                             return user;
                         });
                         
-                        console.log("asdf",this.List);
-                        console.log("asdfs",heartList);
                         for(let i in heartList){
                             for(let j in this.List){
                                 if(this.List[j].user_id == heartList[i].heart_status){
@@ -135,37 +135,51 @@ export default {
                 // this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
                 try{
+                    if (this.userCoin < 100){
+                        alert("사용자의 보유 코인이 모자랍니다!")
+                        this.$router.push({name: 'mypagestore'});
+                        return;
+                    }
                     let requestBody = {
                         access_token: this.$getAccessToken(), //user_id = 나
-                        user_id2: user.user_id
+                        user_id2: user.user_id,
+                        useCoin: 100
                     };
 
                     const result = await this.$api(`/main/heart`, requestBody , "POST");
-                    this.heartData = result,
-                    this.message = result.message;
-
-                    user.giveHeart = true;
-                    alert('좋아요 신청 완료.');
+                    if(result.status == 200){
+                        await this.getMainList();
+                        await this.getCoin();
+                        alert('좋아요 신청 완료.');
+                    }
+                    else{
+                        alert(result.message)
+                    }                       
                 }
-                
                 catch(err){
                     console.error(err);
                 }
             },
             async sendMatching(user){
                 try{
-
-                    await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id}, "POST");
-                    user.giveMatching = true;
-                    alert('매칭 신청 완료.');
+                    if (this.userCoin < 300){
+                        alert("사용자의 보유 코인이 모자랍니다!")
+                        this.$router.push({name: 'mypagestore'});
+                        return;
+                    }
+                    const result = await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id, useCoin: 300}, "POST");
+                    if (result.status == 200){
+                        await this.getMainList();
+                        await this.getCoin();    
+                        alert('매칭 신청 완료.');
+                    }
+                    else{
+                        alert('에러로 인해 매칭 신청을 보내지 못했습니다.');
+                    }
+                    
                 }catch(err){
                     console.error(err);
                 }
-            },
-            async getHeart(){
-                const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
-                this.heartData = result.heart;
-                console.log("this.heartData" ,this.heartData)
             },
             async userDelete(user_id2){  
                 try{
@@ -187,15 +201,29 @@ export default {
                     console.error(err);
                 }
             },
-            async clickeToProfileDetail(user_id){
+        async clickeToProfileDetail(user_id){
             try{
                 await this.$router.push({name : 'ProfileDetail' , query : {data: this.$encrypt(user_id)}})
             }
             catch(err){
                 console.error(err);
             }
-            
-        }
+        },
+        async getCoin(){
+            try{
+                const result = await this.$api('/user/coin', {access_token: this.$getAccessToken()}, "POST");
+                if (result.status == 200){
+                    this.userCoin = result.userCoin;    
+                }
+                else{
+                    alert("유저의 코인 정보를 불러올 수 없습니다.");
+                }
+            }
+            catch(err){
+                alert("유저의 코인 정보를 불러올 수 없습니다.");
+                console.log(err);
+            }
+        },
     }
 }
 </script>

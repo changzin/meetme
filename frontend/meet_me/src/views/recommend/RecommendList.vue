@@ -154,9 +154,16 @@ export default {
             this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
             try{
+                if (this.userCoin < 100){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+
                 let requestBody = {
                     access_token: this.$getAccessToken(), //user_id = 나
-                    user_id2
+                    user_id2,
+                    useCoin: 100
                 };
 
                 const result = await this.$api(`/recommend/heart`, requestBody , "POST");
@@ -173,7 +180,12 @@ export default {
         },
         async sendMatching(user_id2) {
             try {
-                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
+                if (this.userCoin < 300){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2, useCoin: 300 }, "POST");
                 alert('매칭 신청 완료.');
                 await this.getRecommendList();
                 await this.getHeart();
@@ -231,11 +243,12 @@ export default {
         },
         async reroll(){
             try{
-                const result = await this.$api('/user/reroll', {access_token: this.$getAccessToken(), use_coin: 300}, "POST");
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
                     return;
                 }
+                const result = await this.$api('/user/reroll', {access_token: this.$getAccessToken(), use_coin: 300}, "POST");
                 if (result.status == 200){
                     alert("리롤 완료했습니다.")
                     await this.getRecommendList();

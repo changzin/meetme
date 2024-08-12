@@ -100,9 +100,15 @@ exports.heart = async(req, res) => { //좋아요/하트 신청
         let query = '';
         let result = [];
         let responseBody = {};
-
+        
         const userId = req.body.user_id;
         const user_id2 = req.body.user_id2;
+        const useCoin = req.body.useCoin;
+
+        query = `UPDATE user
+                SET user_coin = user_coin - ?
+                WHERE user_id=?`;
+        result = await db(conn, query, [useCoin , userId]);
 
         query = `INSERT IGNORE INTO heart (user_id1, user_id2) 
                 VALUES (?, ?)`;

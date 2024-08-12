@@ -590,6 +590,12 @@ exports.sendMatching = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
+    const useCoin = req.body.useCoin;
+
+    query = `UPDATE user
+    SET user_coin = user_coin - ?
+    WHERE user_id=?`;
+    result = await db(conn, query, [useCoin , userId]);
 
     query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
@@ -631,10 +637,16 @@ exports.acceptMatching = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
+    
+    // 내가 채팅방 개설
+    query = `INSERT INTO chat_list(user_id1, user_id2) VALUES(?, ?)`;
+    result = await db(conn, query, [userId, userId2]);
+
     //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
     query = `UPDATE matching SET matching_success = 'T' WHERE user_id1 = ? AND user_id2 = ?`;
 
     result = await db(conn, query, [userId2, userId]);
+
     responseBody = {
       status: 200,
       heart: result,
@@ -1134,22 +1146,11 @@ exports.reRollList = async(req, res)=>{
         throw new Error("이미 결제하였습니다.")
     }
 
-    query = `SELECT user_coin
-                FROM user
-                WHERE user_id=?`;
-    result = await db(conn, query, [userId]);
-
-
-    if (result[0].user_coin >= useCoin){
-      query = `UPDATE user
-                SET user_coin = ?,
-                    user_reroll = NOW()
-                WHERE user_id=?`;
-      result = await db(conn, query, [result[0].user_coin - useCoin , userId]);
-    }
-    else{
-      throw new Error("코인 수가 모자랍니다.")
-    }
+    query = `UPDATE user
+              SET user_coin = ?,
+                  user_reroll = NOW()
+              WHERE user_id=?`;
+    result = await db(conn, query, [result[0].user_coin - useCoin , userId]);
 
     responseBody = {
       status: 200,
