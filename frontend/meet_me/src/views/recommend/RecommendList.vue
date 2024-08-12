@@ -51,6 +51,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="class_button" @click="reroll" v-if="results.length!=20">
+                    <span class="class">더 추천받기</span>
+                </div>
+                <div class="class_button" v-if="results.length==20">
+                    <span class="class">더 추천받기 상태가 활성화된 상태입니다.</span>
+                </div>
             </div>
             <MeetHeader />
         </div>
@@ -79,6 +85,7 @@ export default {
             // ],
             index: 0,
             heartData: {},
+            userCoin: 0
         };
         
     },
@@ -88,6 +95,7 @@ export default {
     mounted() {
         this.getRecommendList();
         this.getHeart();
+        this.getCoin()
     },
     methods: {
     
@@ -146,15 +154,25 @@ export default {
             this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
             try{
+                if (this.userCoin < 100){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+
                 let requestBody = {
                     access_token: this.$getAccessToken(), //user_id = 나
-                    user_id2
+                    user_id2,
+                    useCoin: 100
                 };
 
                 const result = await this.$api(`/recommend/heart`, requestBody , "POST");
                 this.heartData = result,
                 this.message = result.message;
+                alert('좋아요 신청 완료.');
                 await this.getRecommendList();
+                await this.getHeart();
+                await this.getCoin()
             }
             catch(err){
                 console.error(err);
@@ -162,8 +180,16 @@ export default {
         },
         async sendMatching(user_id2) {
             try {
-                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
+                if (this.userCoin < 300){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2, useCoin: 300 }, "POST");
+                alert('매칭 신청 완료.');
                 await this.getRecommendList();
+                await this.getHeart();
+                await this.getCoin()
             } catch (err) {
                 console.error(err);
             }
@@ -184,6 +210,8 @@ export default {
                 this.delete = result,
                 this.message = result.message;
                 await this.getRecommendList();
+                await this.getHeart();
+                await this.getCoin()
             }
             catch(err){
                 console.error(err);
@@ -197,6 +225,44 @@ export default {
                 console.error(err);
             }
             
+        },
+        async getCoin(){
+            try{
+                const result = await this.$api('/user/coin', {access_token: this.$getAccessToken()}, "POST");
+                if (result.status == 200){
+                    this.userCoin = result.userCoin;    
+                }
+                else{
+                    alert("유저의 코인 정보를 불러올 수 없습니다.");
+                }
+            }
+            catch(err){
+                alert("유저의 코인 정보를 불러올 수 없습니다.");
+                console.log(err);
+            }
+        },
+        async reroll(){
+            try{
+                if (this.userCoin < 300){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+                const result = await this.$api('/user/reroll', {access_token: this.$getAccessToken(), useCoin: 300}, "POST");
+                if (result.status == 200){
+                    alert("리롤 완료했습니다.")
+                    await this.getRecommendList();
+                    await this.getHeart();
+                    await this.getCoin();
+                }
+                else{
+                    alert("유저의 코인 정보를 불러올 수 없습니다.");
+                }
+            }
+            catch(err){
+                alert("유저의 코인 정보를 불러올 수 없습니다.");
+                console.log(err);
+            }
         }
     }
     
@@ -407,5 +473,20 @@ export default {
 .modal-popup .modal {
     width: 400px;
     height: 220px;
+}
+.class_button {
+    border-radius: 10px;
+    width: 540px;
+    height: 60px;
+    margin: 0 auto;
+    background-image: linear-gradient(to right,#497af5 ,#884afb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.class {
+    color: #F1EFF6;
 }
 </style>

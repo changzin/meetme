@@ -48,11 +48,13 @@ export default {
         return {
             heartData : [],
             alarmData : {}, // 
+            userCoin: 0
         };
     },
     beforeCreate() {},
     async created() {
         await this.getAlarm();
+        await this.getCoin();
     },
     beforeMount() {},
     mounted() {},
@@ -63,13 +65,20 @@ export default {
     methods: {
         async sendMatching(user_id2){
             try{
-                const result = await this.$api(`/user/sendmatching`, {access_token : this.$getAccessToken() , user_id2}, "POST");
+                if (this.userCoin < 300){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+
+                const result = await this.$api(`/user/sendmatching`, {access_token : this.$getAccessToken() , user_id2, useCoin: 300}, "POST");
                 if(result.status == 400){
                     alert('매칭신청을 이미 보냈습니다.');
                 }else {
                     alert('매칭신청을 보냈습니다.');
                 }
                 await this.getAlarm();
+                await this.getCoin();
             }catch(err){
                 console.log(err)
             }
@@ -100,7 +109,21 @@ export default {
                 console.log(err)
             }
         },
-
+        async getCoin(){
+            try{
+                const result = await this.$api('/user/coin', {access_token: this.$getAccessToken()}, "POST");
+                if (result.status == 200){
+                    this.userCoin = result.userCoin;    
+                }
+                else{
+                    alert("유저의 코인 정보를 불러올 수 없습니다.");
+                }
+            }
+            catch(err){
+                alert("유저의 코인 정보를 불러올 수 없습니다.");
+                console.log(err);
+            }
+        },
     }
 }
 </script>

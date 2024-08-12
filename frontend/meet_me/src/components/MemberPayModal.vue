@@ -57,7 +57,6 @@ export default {
     }
   },
   created(){
-    console.log("asdf");
   },
   methods: {
     x_click() {
