@@ -22,7 +22,7 @@
                         <img src="/icon/mypage/store/coin.svg" >
                         <div class="store_row_content">
                             <div class="regular_black_font store_product_coin_value">{{$numberFormat(coinProduct.coin_product_price)}}코인</div>
-                            <div class="matching_button">{{$numberFormat(coinProduct.coin_product_amount)}}원</div>
+                            <div class="matching_button" @click="requestPay(coinProduct)">{{$numberFormat(coinProduct.coin_product_amount)}}원</div>
                         </div>
                     </div>
                 </div>
@@ -32,11 +32,13 @@
     </div>
 </template>
 <script>
+// import axios from 'axios';
 export default {	
     data() {
         return {
             coin: 0,
-            coinProductList: []
+            coinProductList: [],
+            userNickname: {},
         };
     },
     async created() {
@@ -53,7 +55,7 @@ export default {
                     this.coinProductList = result.coinProductList;
                 }
                 else{
-                    throw new Error("불러올 수 없습니다")
+                    throw new Error("불러올 수 없습니다")   
                 }
             }
             catch(err){
@@ -69,6 +71,7 @@ export default {
                 
                 if (result.status==200){
                     this.coin = result.userCoin;
+                    this.userNickname = result.user_nickname;
                 }
                 else{
                     throw new Error("불러올 수 없습니다")
@@ -77,7 +80,67 @@ export default {
             catch(err){
                 console.error(err);
             }
-        }
+        },
+        async requestPay(coinProduct){
+            
+        // //결제데모를 사용 시 실제로 결제가 되기 때문에 앞쪽으로 빼놓음.
+            try {
+                let requestBody = {
+                    access_token: this.$getAccessToken(),                                
+                    coin_product_id: coinProduct.coin_product_id,
+                    coinUpdate: coinProduct.coin_product_price,
+
+                };
+                await this.$api("/payment/intopayment", requestBody, "POST");
+            } catch (err) {
+                console.error("결제 처리 중 오류:", err);
+            }
+            await this.getCoinProduct();
+            await this.getCoin();
+            
+            
+            let name = this.$numberFormat(coinProduct.coin_product_price)
+            let amount = this.$numberFormat(coinProduct.coin_product_amount)
+            let buyer_name = this.userNickname
+            const IMP = window.IMP;
+            IMP.init("imp17750140");
+            
+            IMP.request_pay(
+                {
+                    pg: "html5_inicis",
+                    pay_method: "card",
+                    name: name + '코인',
+                    amount: amount,
+                    buyer_name: buyer_name,
+                    buyer_tel: "010-1234-1234",
+                    buyer_addr: "0",
+                    buyer_postcode: "123",
+                },
+                async (rsp) => {  // 콜백 함수에 async 추가
+                    if (rsp.success) {
+                        console.log("rsp>>>", rsp);
+                        try {
+                            let requestBody = {
+                                access_token: this.$getAccessToken(),
+                                coin_product_id: this.coin_product.coin_product_id,
+                                payment_id: this.payment.payment_id,
+                            };
+
+                            
+                            let result = await this.$api("/payment/intopayment", requestBody, "POST");
+                            console.log("requestBody>>>", requestBody);
+                            console.log(result);
+                        } catch (err) {
+                            console.error("결제 처리 중 오류:", err);
+                        }
+                    } else {
+                        console.error("결제 실패:", rsp.error_msg);  // rsp.success가 false인 경우 처리 추가
+                    }
+                }
+            );
+        },
+
+
     }
 }
 </script>

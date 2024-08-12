@@ -3,6 +3,7 @@ const userRouter = require('./userRouter');
 const coinProductRouter = require('./coinProductRouter');
 const userStoryRouter = require("./userStoryRouter");
 const recommendRouter = require('./recommendRouter');
+const paymentRouter = require('./paymentRouter');
 
 const mainRouter = require('./mainRouter');
 const analysisRouter = require('./analysisRouter');
@@ -17,6 +18,7 @@ router.use("/user", userRouter);
 router.use("/coinproduct", coinProductRouter);
 router.use("/userstory", userStoryRouter);
 router.use("/recommend", recommendRouter);
+router.use("/payment", paymentRouter);
 
 router.use("/main", mainRouter);
 
