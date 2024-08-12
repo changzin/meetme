@@ -122,6 +122,7 @@ td{
 }
 .x_click_div {
   width: 20px;
+  cursor: pointer;
   height: 20px;
 }
 .container {
