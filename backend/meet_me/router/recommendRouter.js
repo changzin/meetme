@@ -1,5 +1,6 @@
 const express = require('express');
-const { recommend , heart , sendMatching , heartCheck , userDelete} = require('../controller/recommendController.js');
+const { recommend , heart , heartCheck , userDelete} = require('../controller/recommendController.js');
+const { sendMatching } = require("../controller/userController.js")
 const { loginCheck } = require('../middleware/login.js');
 
 const router = express.Router();

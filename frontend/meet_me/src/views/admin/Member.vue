@@ -1,7 +1,9 @@
 <template>
 <div class="web_body">
     <AdminHeader />
+
     <MemberReportModal :data="this.reportData" v-if="reportModalVisible" @close="closeReportModal()"/>
+    
     <MemberPayModal :data="this.payData" v-if="payModalVisible" @close="closePayModal()"/>
     <MemberDetailModal :data="this.detailData" v-if="detailModalVisible" @close="closeDetailModal()"/>
     <div class="admin_web_inner_flex">

@@ -15,12 +15,22 @@ import ChatModal from './views/chat/ChatModal.vue'
 import MemberReportModal from './components/MemberReportModal.vue'
 import MemberPayModal from './components/MemberPayModal.vue'
 import MemberDetailModal from './components/MemberDetailModal.vue'
-import ReportModal from './views/profile/ReportModal.vue'
+import ReportModal from './components/ReportModal.vue'
 
 import ImageModal from './components/ImageModal.vue'
 import ProfileImageModal from './components/ProfileImageModal.vue'
 
 import AlertModal from './components/AlertModal.vue'
+
+// 소켓
+
+import { initializeSocket, getSocket } from './utils/socket'; 
+
+
+// 소켓 초기화
+initializeSocket();
+
+
 
 
 const app = createApp(App);
@@ -45,8 +55,14 @@ app.component('AlertModal', AlertModal);
 
 
 app.component('ChatModal', ChatModal);
-
+// 소켓을 글로벌 프로퍼티로 등록
+app.config.globalProperties.$socket = getSocket();
 
 // createApp(App).use(router).mount('#app')
 app.use(router).mount('#app');
 window.Kakao.init(process.env.VUE_APP_KAKAO_APP_KEY);
+
+
+
+
+

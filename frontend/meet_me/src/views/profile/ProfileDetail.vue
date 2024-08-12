@@ -19,7 +19,7 @@
                     <img src="/icon/main_recommend/report.svg" @click="viewReportModal()" class="icon_report" >
                 </div>
                 <div class="block">
-                    <img src="/icon/main_recommend/block.svg" @click="block(17)" class="icon_block">
+                    <img src="/icon/main_recommend/block.svg" @click="block(user_id2)" class="icon_block">
                 </div>
         </div>
         <div class="user_name" >
@@ -35,8 +35,8 @@
             기본 정보
         </div>
         <div class="information_box">
-            <div class="information">{{ userData.user_height}}</div>
-            <div class="information_A">{{ userData.user_weight}}</div>
+            <div class="information">{{ userData.user_height}} cm</div>
+            <div class="information_A">{{ userData.user_weight}} kg</div>
             <div class="information_B">{{ userData.user_mbti_value }}</div>
             <div class="information_C">{{ userData.user_religion_value }}</div>
             <div class="information_D" v-if="(userData.user_smoke) === 'T'">흡연</div>
@@ -64,11 +64,11 @@ export default {
             userImg : [],
             sampleData : '',
             index: 0,
-
+            user: {},
             selected_user_index : null,
             reportData : {
                 user_id : this.$getAccessToken(),
-                user_id2 : 17,
+                user_id2 : {}
             },
             reportModalVisible : false,
             userData: {},
@@ -101,7 +101,7 @@ export default {
 
                 let user_id2 = this.$route.query.data
                 user_id2 = this.$decrypt(user_id2)
-
+                this.reportData.user_id2 = user_id2;
                 const result = await this.$api(`/user/profiledetail` , {access_token: this.$getAccessToken() , user_id2} , "POST");
                 this.userData = result.user;
                 this.userImg = this.userData.user_image_paths;
@@ -113,7 +113,11 @@ export default {
         },
         async block(){
             try{
-                await this.$api(`/user/addblock`, {access_token: this.$getAccessToken(), user_id2 : 17}, "POST"); //17에 this.$route.query({ ... }) 넣으세요
+                
+                let user_id2 = this.$route.query.data
+                user_id2 = this.$decrypt(user_id2)
+
+                await this.$api(`/user/addblock`, {access_token: this.$getAccessToken(), user_id2 }, "POST"); //17에 this.$route.query({ ... }) 넣으세요
                 alert('유저를 차단하였습니다.');
                 this.$router.push({name: 'MainPage'});
             }catch(err){
@@ -121,6 +125,7 @@ export default {
             }
         },
         async viewReportModal(){
+            
             this.reportModalVisible = true;
         },
         closeReportModal(){
@@ -325,6 +330,9 @@ export default {
     left: 529px;
     z-index: 2;
     top: 10px;
+  }
+  .icon_block:hover{
+    cursor: pointer;
   }
 
 </style>

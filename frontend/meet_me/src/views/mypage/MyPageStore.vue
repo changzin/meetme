@@ -21,8 +21,8 @@
                     <div class="store_coin_row" v-for="(coinProduct, i) in coinProductList" :key="i">
                         <img src="/icon/mypage/store/coin.svg" >
                         <div class="store_row_content">
-                            <div class="regular_black_font store_product_coin_value">{{$numberFormat(coinProduct.coin_product_amount)}}코인</div>
-                            <div class="matching_button">{{$numberFormat(coinProduct.coin_product_price)}}원</div>
+                            <div class="regular_black_font store_product_coin_value">{{$numberFormat(coinProduct.coin_product_price)}}코인</div>
+                            <div class="matching_button">{{$numberFormat(coinProduct.coin_product_amount)}}원</div>
                         </div>
                     </div>
                 </div>

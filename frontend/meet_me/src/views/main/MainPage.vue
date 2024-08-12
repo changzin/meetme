@@ -18,7 +18,7 @@
                     <div class="next_button" @click="count(1, user)">
                     </div>
                     <img :src="this.$imageFileFormat(user.user_image_path[user.index])" @click="count(1, user)">
-                    <div class="name" @click="this.$router.push({ name:'ProfileDetail'})">
+                    <div class="name" @click="clickeToProfileDetail(user.user_id)">
                         {{user.user_nickname}} , {{ user.user_age }}
                     </div>
                     <div class="category">
@@ -156,7 +156,9 @@ export default {
                     this.message = result.message;
 
                     user.giveHeart = true;
+                    alert('좋아요 신청 완료.');
                 }
+                
                 catch(err){
                     console.error(err);
                 }
@@ -166,7 +168,7 @@ export default {
 
                     await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id}, "POST");
                     user.giveMatching = true;
-
+                    alert('매칭 신청 완료.');
                 }catch(err){
                     console.error(err);
                 }
@@ -196,6 +198,15 @@ export default {
                     console.error(err);
                 }
             },
+            async clickeToProfileDetail(user_id){
+            try{
+                await this.$router.push({name : 'ProfileDetail' , query : {data: this.$encrypt(user_id)}})
+            }
+            catch(err){
+                console.error(err);
+            }
+            
+        }
     }
 }
 </script>

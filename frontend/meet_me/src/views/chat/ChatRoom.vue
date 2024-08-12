@@ -1,127 +1,134 @@
-<template> 
-    <div class="container0">
-      <MeetHeader  class="header_font" />
-      <ChatModal />
-        <div class="container_top">
-          <div class="box_name">
-            <div class="container_top_content">
-              <div class="back_icon" @click="this.$router.push({path: '/chatlist/'})"><img src="../../../public/icon/chat/back.svg"></div>
-              <div class="top_name">상대방1</div>
-              <div class="out_icon" @click="chatModal()"><img src="../../../public/icon/chat/out.svg"></div>
-            </div>
+<template>
+  <div class="container0">
+    <MeetHeader class="header_font" />
+    <ChatModal />
+    <div class="container_top">
+      <div class="box_name">
+        <div class="container_top_content">
+          <div class="back_icon" @click="this.$router.push({ path: '/chatlist/' })">
+            <img src="../../../public/icon/chat/back.svg" />
           </div>
-        </div>
-          <div class="container_white">
-            <div class="container_middle">
-              <div class="middle_left">
-                <div class="profile_circle"></div>
-                <div class="middle_left_content">
-                  <div class="left_name">상대방</div>
-                  <div class="middle_left_content2">
-                    <div class="box_content_left">
-                      안녕하세요
-                    </div>
-                    <div class="time">오후 10:24</div>
-                    <div class="cehck_icon"><img src="../../../public/icon/chat/check.svg"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="middle_left_hidden">
-                <div class="profile_circle_hidden"></div>
-                <div class="middle_left_content">
-                  <div class="left_name_hidden">상대방</div>
-                  <div class="middle_left_content2">
-                    <div class="box_content_left">
-                      안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
-                      안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
-                      안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요
-                    </div>
-                    <div class="time">오후 10:29</div>
-                    <div class="cehck_icon"><img src="../../../public/icon/chat/check.svg"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="middle_left">
-                <div class="profile_circle"></div>
-                <div class="middle_left_content">
-                  <div class="left_name">상대방</div>
-                  <div class="middle_left_content2">
-                    <div class="box_content_left">
-                      대답좀
-                    </div>
-                    <div class="time">오후 10:30</div>
-                    <div class="cehck_icon"><img src="../../../public/icon/chat/check.svg"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="day">
-                <div class="box_day">2024년 12월 3일</div>
-              </div>
-              <div class="middle_right">
-                <div class="middle_left_content2">
-                  <div class="check_icon"></div>
-                  <div class="time">오후 10:29</div>
-                  <div class="box_content_right">
-                    말걸지마아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아
-                  </div>
-                </div>
-              </div>
-              <div class="middle_right">
-                <div class="middle_left_content2">
-                  <div class="check_icon"></div>
-                  <div class="time">오후 10:29</div>
-                  <div class="box_content_right">
-                    아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아
-                  </div>
-                </div>
-              </div>
-              <div class="middle_right">
-                <div class="middle_left_content2">
-                  <div class="check_icon"></div>
-                  <div class="time">오후 10:29</div>
-                  <div class="box_content_right">
-                    다시놀자
-                  </div>
-                </div>
-              </div>              
-          </div> 
-        </div>
-        <div class="container_bottom">
-          <div class="container_bottom_box">
-            <div class="gallery_icon"><img src="../../../public/icon/chat/gallery.svg"></div>
-            <input class="box_chat" placeholder="메시지를 입력하세요" />
-            <div class="send_icon"><img src="../../../public/icon/chat/send.svg"></div>
+          <div class="top_name">상대방1</div>
+          <div class="out_icon" @click="chatModal()">
+            <img src="../../../public/icon/chat/out.svg" />
           </div>
         </div>
       </div>
-  </template>  
+    </div>
+    <div class="container_white">
+      <div class="container_middle" ref="containerMiddle">
+        <div v-for="(chatData, index) in chatData" :key="index">
+          <!-- 상대방의 메시지일 경우 -->
+          <div v-if="chatData.socketId !== userSocketId">
+            <div class="middle_left">
+              <div class="profile_circle"></div>
+              <div class="middle_left_content">
+                <div class="left_name">{{ chatData.socketId }}</div>
+                <div class="middle_left_content2">
+                  <div class="box_content_left">
+                    {{ chatData.text }}
+                  </div>
+                  <div class="time">오후 10:30</div>
+                  <div class="check_icon">
+                    <img src="../../../public/icon/chat/check.svg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 사용자의 메시지일 경우 -->
+          <div v-else>
+            <div class="middle_right">
+              <div class="middle_right_content">
+                <div class="check_icon"></div>
+                <div class="time">오후 10:29</div>
+                <div class="box_content_right">{{ chatData.text }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="chat-form" @submit.prevent="sendChat">
+      <div class="container_bottom">
+        <div class="container_bottom_box">
+          <div class="gallery_icon">
+            <img src="../../../public/icon/chat/gallery.svg" />
+          </div>
+          <input
+            class="box_chat"
+            v-model="newChat"
+            placeholder="메시지를 입력하세요"
+          />
+          <div class="send_icon" @click="sendChat">
+            <img src="../../../public/icon/chat/send.svg" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</template>
+
 <script>
-
-import io from 'socket.io-client';
-
 export default {
-  data(){
+  data() {
     return {
-      socket: null
-    }
+      newChat: "", // 보낸 메세지
+      chatData: [],
+      userSocketId: "" // 현재 사용자의 socketId
+    };
   },
-  created(){
-    this.socket = io.connect("http://localhost:9090", {
-      path: "/socket.io"
+  created() {
+    this.connectToServer();
+
+    // socketId 확인
+    this.$socket.on("connect", () => {
+      this.userSocketId = this.$socket.id;
     });
-    this.socket.on("news", (data) =>{
-      console.log(data);
-      this.socket.emit("reply", "HELLO node.js")
-    })
+
+    // receiveMessage 리스너를 설정
+    this.$socket.on("receiveMessage", (data) => {
+      console.log("New message data:", data);
+      // data.message에서 실제 메시지 문자열을 추출하여 업데이트
+      this.chatData.push(data.message);
+      this.scrollToBottom();
+    });
+  },
+  beforeUnmount() {
+    this.$socket.off("receiveMessage");
+    this.$socket.off("connect");
   },
   methods: {
-    chatModal(){
+    chatModal() {
       this.$store.commit("setModalOn");
-    }      
-  },
-}
-
+    },
+    sendChat() {
+      const message = {
+        text: this.newChat,
+        socketId: this.$socket.id
+      };
+      this.$socket.emit("sendMessage", { message });
+      this.newChat = "";
+      console.log("챗데이터", this.chatData);
+      this.scrollToBottom();
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.containerMiddle;
+        container.scrollTop = container.scrollHeight;
+      });
+    },
+    connectToServer() {
+      this.$socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+    }
+  }
+};
 </script>
+
 <style scoped>
     /* hidden 속성들은 추후 자바스크립트로 합침*/
 
@@ -143,9 +150,7 @@ export default {
         font-weight: bold;
         color: white;
     }
-    .time{
-       color: #888888;
-    }
+
 
     /* div */
     html, body {
@@ -193,21 +198,27 @@ export default {
         display: none;
     }   
 
+    /* 상대방채팅 */
      div.middle_left{
         display: grid;
         grid-template-columns: 80px auto;
         margin-top: 40px;
         /* border: 1px solid red; */
      }
-     div.middle_left_hidden{
-        display: grid;
-        grid-template-columns: 80px auto;
-        /* border: 1px solid red; */
-     }
-     
-     div.middle_left_content{
+      .profile_circle{
+      width: 70px;
+      height: 70px;
+      border-radius: 50px;
+      background-color: #f5f5f5;
+      cursor: pointer;
+      }
+      div.middle_left_content{
         /* border: 1px solid orange; */
         max-width: 405px;
+     }
+     div.left_name{
+        text-align: left;
+        font-weight: bold;
      }
      div.middle_left_content2{
         /* border: 1px solid red; */
@@ -216,13 +227,57 @@ export default {
         align-items: flex-end;
         margin-top: 10px;
         word-break: break-all;
-
      }
-     div.left_name{
-        text-align: left;
-        font-weight: bold;
-
+     .box_content_left{
+        width: auto;
+        max-width: 280px;
+        background-color: #f5f5f5;
+        display: inline-block;
+        padding: 10px;
+        box-sizing: border-box;
+        border-top-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;     
+        text-align: left; 
      }
+     .time{
+       color: #888888;
+    }
+    .check_icon{
+        width: 16px;
+        height: 16px;
+        /* background-color: aqua; */
+     }
+
+     /* 나의 채팅 */
+     div.middle_right{
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 30px;
+        /* border: 1px solid red; */
+     }
+     div.middle_right_content{
+        /* border: 1px solid orange; */
+        display: flex;
+        gap: 5px;
+        align-items: flex-end;
+        margin-top: 10px;
+        word-break: break-all;
+     }
+
+
+
+
+
+     div.middle_left_hidden{
+        display: grid;
+        grid-template-columns: 80px auto;
+        /* border: 1px solid red; */
+     }
+     
+ 
+
+
 
      div.left_name_hidden{
         font-weight: bold;
@@ -234,12 +289,7 @@ export default {
         justify-content: center;
         color:red
      }
-     div.middle_right{
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 30px;
-        /* border: 1px solid red; */
-     }
+
      div.container_bottom{
         /* border: 1px solid blue; */
         display: grid;
@@ -264,18 +314,7 @@ export default {
         word-break: break-all;
         border-radius: 10px 10px 0px 0px;
      }
-     .box_content_left{
-        width: auto;
-        max-width: 280px;
-        background-color: #f5f5f5;
-        display: inline-block;
-        padding: 10px;
-        box-sizing: border-box;
-        border-top-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;     
-        text-align: left; 
-     }
+
      .box_content_right{
         width: auto;
         max-width: 280px;
@@ -323,11 +362,7 @@ export default {
         cursor: pointer;
         
      }
-     .check_icon{
-        width: 16px;
-        height: 16px;
-        /* background-color: aqua; */
-     }
+
      .gallery_icon{
         width: 48px;
         height: 48px;
