@@ -1,6 +1,8 @@
 const express = require('express');
-const { main , heart , sendMatching , heartCheck , userDelete} = require('../controller/mainController.js');
+const { main , heartCheck , userDelete} = require('../controller/mainController.js');
+const { heart } = require('../controller/recommendController.js')
 const { loginCheck } = require('../middleware/login.js');
+const { sendMatching } = require("../controller/userController.js")
 
 const router = express.Router();
 

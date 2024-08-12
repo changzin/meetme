@@ -5,16 +5,17 @@
                 <div class="title">
                     MEET ME
                 </div>
-                <form class="input_box" style="margin-bottom: 20px;">
-                    <img src="icon/login/user.svg" class="icon">
-                    <input type="text" class="input_text" placeholder="이메일" v-model="email">
+                <form style="width:346px; padding: 0" @submit="login">
+                    <div class="input_box" style="margin-bottom: 20px;">
+                        <img src="icon/login/user.svg" class="icon">
+                        <input type="text" class="input_text" placeholder="이메일" v-model="email">
+                    </div>
+                    <div class="input_box">
+                        <img src="/icon/login/password.svg" class="icon" >
+                        <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
+                    </div>
+                    <input type="submit" class="login_button" value="로그인" @click="login">
                 </form>
-                <form class="input_box">
-                    <img src="/icon/login/password.svg" class="icon" >
-                    <input type="password" class="input_text" placeholder="비밀번호" v-model="password">
-                </form>
-                
-                <input type="submit" class="login_button" value="로그인" @click="login">
                     
                 <div class="option" >
                     <img src="/icon/login/checkbox.svg" class="icon_login" v-if="!remain" @click="toggleRemain">
@@ -62,8 +63,9 @@ export default {
         toggleRemain(){
             this.remain = !this.remain;
         },
-        async login(){
+        async login(event){
                 // 파이어베이스로 먼저 인증을 시작한다.
+                event.preventDefault();
                 try{
                     const auth = await getAuth(firebaseApp);
                     // 파이어베이스 로그인 함수 (실패하면 에러 발생)
