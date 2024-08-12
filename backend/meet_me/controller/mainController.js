@@ -6,28 +6,16 @@ exports.main = async(req, res)=>{
         await conn.beginTransaction();
         let query = '';
         let result = [];
+        let results = [];
         let responseBody = {};
         let user_id1 = req.body.user_id;
-        
-        query = `SET @logged_in_user_id = 1`;
-        user = await db(conn, query); //나중에 로그인한 유저 변수 지정해줘야함
-        
-        query = `DROP TEMPORARY TABLE IF EXISTS temp`;
-        temp = await db(conn, query);
-        
-        query = `CREATE TEMPORARY TABLE temp AS
-                SELECT u.user_id, u.user_nickname, u.user_age, u.user_gender, u.user_block, ub.user_id1, ub.user_id2
-                FROM meet_me.user u
-                LEFT JOIN user_block ub
-                ON u.user_id = ub.user_id2 AND ub.user_id1 = @logged_in_user_id
-                WHERE u.user_id != @logged_in_user_id AND u.user_gender != (SELECT user_gender FROM user WHERE user_id=@logged_in_user_id) AND u.user_block != 'T' AND ub.user_id2 IS NULL AND u.user_type != 'admin'
-                ORDER BY RAND()
-                LIMIT 10`;
-        rand = await db(conn, query);
 
-
-        query = `SELECT * FROM temp`;
-        results = await db(conn, query);
+        query = `SELECT u.user_id, u.user_nickname, u.user_age, u.user_gender
+                FROM user AS u
+                JOIN main_list AS m 
+                ON u.user_id = m.user_id
+                AND u.user_gender != (SELECT user_gender FROM user WHERE user_id = ?)`;
+        results = await db(conn, query, [user_id1]);
 
         
         query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;
