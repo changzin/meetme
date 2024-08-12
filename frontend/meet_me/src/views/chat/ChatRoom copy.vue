@@ -105,7 +105,7 @@ export default {
   methods: {
     chatModal(){
       this.$store.commit("setModalOn");
-    }      
+    },      
   },
 }
 

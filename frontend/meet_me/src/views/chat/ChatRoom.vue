@@ -8,7 +8,7 @@
           <div class="back_icon" @click="this.$router.push({ path: '/chatlist/' })">
             <img src="../../../public/icon/chat/back.svg" />
           </div>
-          <div class="top_name">상대방1</div>
+          <div class="top_name">{{ this.otherUserName }}</div>
           <div class="out_icon" @click="chatModal()">
             <img src="../../../public/icon/chat/out.svg" />
           </div>
@@ -17,18 +17,19 @@
     </div>
     <div class="container_white">
       <div class="container_middle" ref="containerMiddle">
-        <div v-for="(chatData, index) in chatData" :key="index">
+        <!--불러온 채팅-->
+        <div v-for="(messageList, index) in messageList" :key="index">
           <!-- 상대방의 메시지일 경우 -->
-          <div v-if="chatData.socketId !== userSocketId">
+          <div v-if="myuserId !== messageList.user_id">
             <div class="middle_left">
-              <div class="profile_circle"></div>
+              <img class="profile_circle" :src="this.$imageFileFormat(this.otherUserImage)">
               <div class="middle_left_content">
-                <div class="left_name">{{ chatData.socketId }}</div>
+                <div class="left_name">{{ messageList.user_nickname }}</div>
                 <div class="middle_left_content2">
                   <div class="box_content_left">
-                    {{ chatData.text }}
+                    {{ messageList.chat_content }}
                   </div>
-                  <div class="time">오후 10:30</div>
+                  <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
                   <div class="check_icon">
                     <img src="../../../public/icon/chat/check.svg" />
                   </div>
@@ -42,7 +43,40 @@
             <div class="middle_right">
               <div class="middle_right_content">
                 <div class="check_icon"></div>
-                <div class="time">오후 10:29</div>
+                <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
+                <div class="box_content_right"> {{ messageList.chat_content }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--실시간 채팅-->
+        <div v-for="(chatData, index) in chatData" :key="index">
+          <!-- 상대방의 메시지일 경우 -->
+          <div v-if="myuserId !== chatData.userId">
+            <div class="middle_left">
+              <img class="profile_circle" :src="this.$imageFileFormat(this.otherUserImage)">
+              <div class="middle_left_content">
+                <div class="left_name">{{ this.otherUserName }}</div>
+                <div class="middle_left_content2">
+                  <div class="box_content_left">
+                    {{ chatData.text }}
+                  </div>
+                  <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
+                  <div class="check_icon">
+                    <img src="../../../public/icon/chat/check.svg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 사용자의 메시지일 경우 -->
+          <div v-else>
+            <div class="middle_right">
+              <div class="middle_right_content">
+                <div class="check_icon"></div>
+                <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
                 <div class="box_content_right">{{ chatData.text }}</div>
               </div>
             </div>
@@ -77,11 +111,22 @@ export default {
     return {
       newChat: "", // 보낸 메세지
       chatData: [],
-      userSocketId: "" // 현재 사용자의 socketId
+      userSocketId: "", // 현재 사용자의 socketId
+      userData: {},
+      myuserId: "",
+      chatUserId : "",
+      chatDate : "",
+      messageList: [],
+      otherUserName: "",
+      otherUserImage:""
+
     };
   },
-  created() {
+  async created() {
     this.connectToServer();
+    this.getUserId();
+    this.getMessageList();
+    this.getOtherUserInfo();
 
     // socketId 확인
     this.$socket.on("connect", () => {
@@ -100,20 +145,108 @@ export default {
     this.$socket.off("receiveMessage");
     this.$socket.off("connect");
   },
+  
   methods: {
     chatModal() {
       this.$store.commit("setModalOn");
     },
-    sendChat() {
-      const message = {
-        text: this.newChat,
-        socketId: this.$socket.id
-      };
-      this.$socket.emit("sendMessage", { message });
-      this.newChat = "";
-      console.log("챗데이터", this.chatData);
-      this.scrollToBottom();
+
+    async getUserId(){
+        try{
+        const requestBody = {
+          access_token : this.$getAccessToken()
+        };
+
+        const response = await this.$api(`/chat/finduser`, requestBody, "post"); 
+        console.log("유저아이디", response);
+        this.myuserId = response.userId;
+        }catch(error){
+          console.error("로그인 상태가 아닙니다");
+        }
     },
+    async getOtherUserInfo() {
+      try{       
+
+      const requestBody = {
+          access_token: this.$getAccessToken()
+        }
+       
+      // 상대 유저 정보 가져오기
+      const response = await this.$api(`/chat/getotheruserinfo`, requestBody, "post");      
+      this.otherUserInfo = response.otherUserInfo[0];
+      this.otherUserName =  this.otherUserInfo.user_nickname;   
+      this.otherUserImage = this.otherUserInfo.user_image_path;
+      console.log(this.otherUserInfo);
+    
+    // } 
+    }catch(error){
+      alert("잘못된 접근입니다");
+      console.error(error);
+
+    }      
+    },
+    
+    async getMessageList() {
+    try {
+      let chat_list_id = this.$route.query.data
+      chat_list_id = this.$decrypt(chat_list_id)
+      
+      const requestBody = {
+        chatListId : chat_list_id,
+
+        access_token : this.$getAccessToken()
+      };
+
+      const response = await this.$api(`/chat/getmessage`, requestBody, "post");   
+      this.messageList = response.messageList;
+      console.log("메세지리스트", this.messageList);
+      this.scrollToBottom();
+    } catch (error) {
+      console.error("Error in sendChat:", error);
+    }
+  },
+    
+
+    async sendChat() {
+   try {
+    // 먼저 getUserId 메소드를 호출하여 userId를 가져옵니다.
+    await this.getUserId();
+
+    const now = new Date();
+    const chatDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    
+    // message 객체에 userId를 포함시킵니다.
+    const message = {
+      text: this.newChat,
+      image: "",
+      userId: this.myuserId, // 가져온 userId를 여기에 포함합니다.
+      chatDate
+      
+    };
+
+    // 소켓을 통해 message 객체를 전송합니다.
+    this.$socket.emit("sendMessage", { message });
+
+    this.scrollToBottom();
+
+    const requestBody = {
+      roomId: "1",
+      access_token: this.$getAccessToken(),
+      chatDate: chatDate,
+      text: this.newChat,
+      chatView: "T",
+      image: ""
+    };
+    console.log("지금챗", this.newChat);
+
+    const response = await this.$api(`/chat/saveChat`, requestBody, "post");   
+    this.chatUserId = response.userId;
+    this.newChat = "";
+  } catch (error) {
+    console.error("Error in sendChat:", error);
+  }
+  },
+
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.containerMiddle;
@@ -124,7 +257,8 @@ export default {
       this.$socket.on("connect", () => {
         console.log("Connected to server");
       });
-    }
+    },
+    
   }
 };
 </script>
@@ -388,19 +522,20 @@ export default {
     /* 이미지 */
 
     .profile_circle{
-    width: 70px;
-    height: 70px;
-    border-radius: 50px;
-    background-color: #f5f5f5;
-    cursor: pointer;
-    }
-    .profile_circle_hidden{
-    width: 70px;
-    height: 70px;
-    border-radius: 50px;
-    background-color: #f5f5f5;
-    visibility: hidden;
-    }
+          width: 65px;
+          height: 65px;
+          border-radius: 100px;
+          margin: 10px;
+          justify-content: start;
+          object-fit: cover;
+        }
+      .profile_circle_hidden{
+      width: 70px;
+      height: 70px;
+      border-radius: 50px;
+      background-color: #f5f5f5;
+      visibility: hidden;
+      }
   
 </style>
 

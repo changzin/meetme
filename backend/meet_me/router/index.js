@@ -6,6 +6,9 @@ const recommendRouter = require('./recommendRouter');
 const paymentRouter = require('./paymentRouter');
 
 const mainRouter = require('./mainRouter');
+
+const chatRouter = require('./chatRouter');
+
 const analysisRouter = require('./analysisRouter');
 
 
@@ -22,9 +25,12 @@ router.use("/payment", paymentRouter);
 
 router.use("/main", mainRouter);
 
+
 router.use("/userFeature", userFeatureRouter)
 
 router.use("/analysis", analysisRouter)
 
+
+router.use("/chat", chatRouter);
 
 module.exports = router;

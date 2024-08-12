@@ -1,4 +1,7 @@
 const SocketIO = require("socket.io");
+
+const {getOUserInfo} = require("../controller/chatController");
+
 const socketSetup = (server) => {
     const io = SocketIO(server, {
         path: '/socket.io',
@@ -19,11 +22,12 @@ const socketSetup = (server) => {
             console.log(data);
         });
 
-        socket.on("sendMessage", (data) =>{
+        socket.on("sendMessage", async (data) =>{
             // socket.join(data);
-            const { message } = data;
-            console.log("sendMessage :", message);
+            const { message } = data;     
+
             
+            console.log("sendMessage :", message);
             io.emit("receiveMessage", {message});
         });
 
@@ -34,10 +38,6 @@ const socketSetup = (server) => {
         })
     })
 
-    // io.emit("receiveMessage", {
-    //     message_content: "message"
-
-    // })
     };
 
 module.exports = socketSetup;
