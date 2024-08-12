@@ -35,13 +35,13 @@
                         </div>
                     </div>
                     <div class="mypage_button" @click="this.$router.push({name: 'SendHeart'})">
-                        <img class="button_icon" src="/icon/mypage/main/heart.svg">
+                        <img class="button_icon_heart" src="/icon/mobile_header/solid-heart.svg" style="width: 57px;">
                         <div class="button_icon">
                             보낸 좋아요
                         </div>
                     </div>
                     <div class="mypage_button" @click="this.$router.push({name: 'Qna'})">
-                        <img class="button_icon" src="/icon/mypage/main/letter.svg">
+                        <img class="button_icon_letter" src="/icon/mypage/main/letter.svg" style="width: 60px;">
                         <div class="button_icon">
                             자주 묻는 질문
                         </div>
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="mypage_button">
-                        <img class="button_icon" src="/icon/mypage/main/warning.svg">
+                        <img class="button_icon_warning" src="/icon/mypage/main/warning.svg" width="60">
                         <div class="button_icon">
                             회원탈퇴
                         </div>
@@ -177,6 +177,20 @@ export default {
 
 .button_icon {
     padding: 15px;
+    display: flex;
+}
+
+.button_icon_heart {
+    padding: 14px 13px 14px 13px;
+    display: flex;
+}
+
+.button_icon_letter {
+    padding: 14px 16px 14px 10px;
+    display: flex;
+}
+.button_icon_warning {
+    padding: 14px 16px 14px 7px;
     display: flex;
 }
 

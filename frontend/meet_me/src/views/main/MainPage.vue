@@ -64,11 +64,14 @@ export default {
             index: 0,
             heartData: {},
             userCoin: 0,
+            currentDate: this.getTodayDate()
         };
         
     },
     beforeCreate() {},
-    created() {},
+    created() {
+        this.getTodayDate();
+    },
     beforeMount() {},
     mounted() {
         this.getMainList();
@@ -79,6 +82,14 @@ export default {
     beforeUnmount() {},
     unmounted() {},
     methods: {
+        getTodayDate() {
+            // 현재 날짜를 YYYY-MM-DD 형식으로 반환
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // 월을 2자리로 포맷
+            const day = String(today.getDate()).padStart(2, '0'); // 일을 2자리로 포맷
+            return `${year}-${month}-${day}`;
+        },
         count(cnt, user){
             user.index += cnt;            
 
@@ -94,9 +105,9 @@ export default {
                             access_token: this.$getAccessToken()
                         };
                         const result = await this.$api(`/main/list`, requestBody , "POST");
-                        this.recommendList = result
                         
                         this.List = result.mainList
+                        console.log(this.List);
 
                         // this.recommendList = result;
                         // this.results = result.results;
