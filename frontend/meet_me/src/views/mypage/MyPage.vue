@@ -93,7 +93,7 @@ export default {
             }
         },
         logout(){
-            alert("회원 탈퇴하였습니다.")
+            alert("로그아웃하였습니다.")
             this.$cookies.remove("meetMeCookie")
             this.$store.commit("user", null);            
             this.$router.push({name: "loginuser"})
