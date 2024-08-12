@@ -79,7 +79,6 @@ exports.main = async(req, res)=>{
             
         };
 
-        console.log("responseBody >>>" ,responseBody )
 
         await conn.commit();
         res.status(200).json(responseBody);

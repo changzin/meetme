@@ -162,6 +162,7 @@ export default {
                 const result = await this.$api(`/recommend/heart`, requestBody , "POST");
                 this.heartData = result,
                 this.message = result.message;
+                alert('좋아요 신청 완료.');
                 await this.getRecommendList();
                 await this.getHeart();
                 await this.getCoin()
@@ -173,6 +174,7 @@ export default {
         async sendMatching(user_id2) {
             try {
                 await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
+                alert('매칭 신청 완료.');
                 await this.getRecommendList();
                 await this.getHeart();
                 await this.getCoin()
