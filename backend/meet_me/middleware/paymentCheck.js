@@ -1,6 +1,5 @@
 const {getConn, db} = require("../util/db");
 
-// requestBody의 accessToken을 중간에서 user_id로 넣어주는 미들웨어, accessToken이 필요한 컨트롤러에서 인증 처리 + user_id를 찾는 중복 쿼리를 줄일 수 있다.
 exports.paymentCheck = async (req, res, next) => {
   const conn = await getConn();
   try {

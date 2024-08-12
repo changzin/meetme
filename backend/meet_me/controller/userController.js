@@ -836,15 +836,14 @@ exports.userCoin = async (req, res) => {
             WHERE user_id=?`;
     result = await db(conn, query, [userId]);
 
-    if (result[0].user_coin) {
-      responseBody = {
-        status: 200,
-        userCoin: result[0].user_coin,
-        user_nickname:result[0].user_nickname,
-      };
-    } else {
-      throw new Error("유저의 코인 정보를 불러올 수 없습니다.");
-    }
+    
+    responseBody = {
+      status: 200,
+      userCoin: result[0].user_coin,
+      user_nickname:result[0].user_nickname,
+    };
+    
+    
 
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1140,7 +1139,7 @@ exports.reRollList = async(req, res)=>{
     let responseBody = {};
 
     const userId = req.body.user_id;
-    const useCoin = req.body.use_coin;
+    const useCoin = req.body.useCoin;
 
     query = `SELECT DATE_FORMAT(user_reroll, '%Y-%m-%d') AS last_date
                 FROM user
@@ -1152,10 +1151,10 @@ exports.reRollList = async(req, res)=>{
     }
 
     query = `UPDATE user
-              SET user_coin = ?,
+              SET user_coin = user_coin - ?,
                   user_reroll = NOW()
               WHERE user_id=?`;
-    result = await db(conn, query, [result[0].user_coin - useCoin , userId]);
+    result = await db(conn, query, [useCoin , userId]);
 
     responseBody = {
       status: 200,
