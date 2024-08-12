@@ -248,7 +248,7 @@ export default {
                     this.$router.push({name: 'mypagestore'});
                     return;
                 }
-                const result = await this.$api('/user/reroll', {access_token: this.$getAccessToken(), use_coin: 300}, "POST");
+                const result = await this.$api('/user/reroll', {access_token: this.$getAccessToken(), useCoin: 300}, "POST");
                 if (result.status == 200){
                     alert("리롤 완료했습니다.")
                     await this.getRecommendList();
