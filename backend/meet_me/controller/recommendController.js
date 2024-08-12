@@ -12,7 +12,7 @@ exports.recommend = async(req, res)=>{
         
         
         
-        query = `call get_user_recommend_list(1)`;
+        query = `call get_user_recommend_list(?)`;
         result = await db(conn, query, [user_id1]);
         
         query = `SELECT u2.user_id, u2.user_nickname, u2.user_age, rc.user_id1, rc.user_id2
