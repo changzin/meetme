@@ -591,7 +591,6 @@ exports.sendMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
 
-    console.log(userId, userId2);
     query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
     result = await db(conn, query, [userId, userId2]);
@@ -824,14 +823,12 @@ exports.userCoin = async (req, res) => {
                 FROM user
                 WHERE user_id=?`;
     result = await db(conn, query, [userId]);
-    if (result[0].user_coin) {
-      responseBody = {
-        status: 200,
-        userCoin: result[0].user_coin,
-      };
-    } else {
-      throw new Error("유저의 코인 정보를 불러올 수 없습니다.");
-    }
+    
+    responseBody = {
+      status: 200,
+      userCoin: result[0].user_coin,
+    };
+  
     await conn.commit();
     res.status(200).json(responseBody);
   } catch (err) {
@@ -1115,3 +1112,70 @@ exports.addBlock = async (req, res) => {
     conn.release();
   }
 };
+
+exports.reRollList = async(req, res)=>{
+  const conn = await getConn();
+  try {
+    await conn.beginTransaction();
+
+    let query = "";
+    let result = [];
+    let responseBody = {};
+
+    const userId = req.body.user_id;
+    const useCoin = req.body.use_coin;
+
+    query = `SELECT DATE_FORMAT(user_reroll, '%Y-%m-%d') AS last_date
+                FROM user
+                WHERE user_id=?`;
+    result = await db(conn, query, [userId]);
+
+    if(result[0].last_date==getToday()){
+        throw new Error("이미 결제하였습니다.")
+    }
+
+    query = `SELECT user_coin
+                FROM user
+                WHERE user_id=?`;
+    result = await db(conn, query, [userId]);
+
+
+    if (result[0].user_coin >= useCoin){
+      query = `UPDATE user
+                SET user_coin = ?,
+                    user_reroll = NOW()
+                WHERE user_id=?`;
+      result = await db(conn, query, [result[0].user_coin - useCoin , userId]);
+    }
+    else{
+      throw new Error("코인 수가 모자랍니다.")
+    }
+
+    responseBody = {
+      status: 200,
+      message: "결제 완료. 추천 리스트 확장"
+    };
+    await conn.commit();
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    await conn.rollback();
+    const statusCode = err.status ? err.status : 400;
+    responseBody = {
+      status: statusCode,
+      message: err.message,
+    };
+    return res.status(statusCode).json(responseBody);
+  } finally {
+    conn.release();
+  }  
+}
+
+function getToday(){
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = ("0" + (1 + date.getMonth())).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
+
+  return `${year}-${month}-${day}`;
+}
