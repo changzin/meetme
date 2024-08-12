@@ -1,381 +1,411 @@
 <template>
-  <div>
-    <MeetHeader />
     <div class="safety_zone">
-      <div class="heade_div">사진 등록하기</div>
-      <div class="sub_div">프로필 사진 1장을 추가 해주세요(필수)</div>
-      <div class="photo-grid">
-        <div
-          v-for="(photo, index) in photos"
-          :key="index"
-          class="photo-box"
-          @mouseenter="showOverlay(index)"
-          @mouseleave="hideOverlay(index)"
-        >
-          <div
-            v-if="photo && validPictureOverlayIndex === index"
-            @click.stop="showDetailView(index)"
-            class="valid-picture-overlay"
-          >
-            <img src="icon/picture/detailviewIcon.png" alt="Detail View" />
-            <img
-              src="icon/picture/editIcon.png"
-              @click.stop="openFileDialog(index)"
-              alt="Edit"
-            />
-            <img
-              src="icon/picture/trashIcon.png"
-              @click.stop="clickToTrashIcon(index)"
-              alt="Delete"
-            />
-          </div>
+        <div class="container">
+            <div class="title">
+                오늘의 추천
+                <img class="title_img" src="/icon/main_recommend/fier.svg">
+            </div>
+            <div v-if="results.length > 0">
+                <div class="main_image next_img" v-for="(user, i) in results" :key="i">
+                    <div class="image_tab">
+                        <div v-for="(image_paths, j) in user.user_image_path" :key="j"
+                            :class="{ number2: user.index == j, number: user.index != j }"></div>
+                    </div>
+                    <div class="prev_button" @click="count(-1, user)">
+                    </div>
+                    <div class="next_button" @click="count(1, user)">
+                    </div>
+                    <img :src="this.$imageFileFormat(user.user_image_path[user.index])" @click="count(1, user)">
+                    <div class="name" @click="clickeToProfileDetail(user.user_id2)">
+                        {{ user.user_nickname }} , {{ user.user_age }}
+                    </div>
+                    <div class="category">
+                        <div class="category_A" v-if="user.user_feature_value[0]">{{ user.user_feature_value[0] }}
+                        </div>
+                        <div class="category_B" v-if="user.user_feature_value[1]">{{ user.user_feature_value[1] }}
+                        </div>
+                        <div class="category2">
+                            <div class="category_C" v-if="user.user_feature_value[2]">{{ user.user_feature_value[2] }}
+                            </div>
+                            <div class="category_D" v-if="user.user_feature_value[3]">{{ user.user_feature_value[3] }}
+                            </div>
+                        </div>
+                    </div>
 
-          <div
-            v-if="
-              photosMinimumIndex === index && validPictureOverlayIndex === index
-            "
-            class="valid-picture-overlay"
-          >
-            <img
-              src="icon/picture/addIcon.png"
-              @click="openFileDialog(index)"
-              alt="example"
-            />
-          </div>
-          <img v-if="photo" :src="photo" class="uploaded-photo" />
-        </div>
-      </div>
+                    <div class="action_btn_container">
+                        <div class="button">
+                            <img v-if="!user.giveMatching" src="/icon/main_recommend/airplane.svg"
+                                @click="sendMatching(user.user_id2)" class="airplane">
+                            <img v-if="user.giveMatching" src="/icon/main_recommend/airplane_delete.svg"
+                                class="airplane">
 
-      <!-- 확대된 이미지 표시 -->
-      <ImageModal
-        :image="selectedImage"
-        :isVisible="isModalVisible"
-        @close="isModalVisible = false"
-      />
 
-      <div class="instructions">
-        <div class="example-photo">
-          <img src="icon/picture/OImage.png" alt="example" />
-          <div class="selection-circle">
-            <img src="/icon/picture/OIcon.svg" alt="O" class="x-icon" />
-          </div>
+                            <img v-if="!user.giveHeart" src="/icon/main_recommend/heart.svg" alt="Image 1"
+                                @click="heart(user.user_id2)" class="heart" />
+                            <img v-if="user.giveHeart" src="icon/main_recommend/heart_delete.svg" alt="Image 2"
+                                class="heart" />
+
+
+                            <img src="/icon/main_recommend/delete.svg" @click="userDelete(user.user_id2)"
+                                class="delete">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <MeetHeader />
         </div>
-        <div class="example-photo">
-          <img src="icon/picture/XImage.png" alt="example" />
-          <div class="selection-circle">
-            <img src="/icon/picture/XIcon.svg" alt="X" class="x-icon" />
-          </div>
-        </div>
-      </div>
-      <div class="description_div">
-        여럿이 찍은 사진이 아닌 독사진을 올려주세요
-      </div>
-      <button class="submitButton" @click="clickToPost()">
-        이상형을 만나러 가보실까요?
-      </button>
-      <input
-        type="file"
-        ref="fileInput"
-        accept="image/*"
-        @change="onFileChange"
-        style="display: none"
-      />
     </div>
-  </div>
 </template>
-  
-  <script>
-import axios from "axios";
-export default {
-  data() {
-    return {
-      photos: [null, null, null, null, null, null], // 사진을 저장할 배열
-      currentIndex: null, // 현재 선택한 인덱스
-
-      validPictureOverlayIndex: null,
-      isModalVisible: false,
-    };
-  },
-
-  computed: {
-    photosMinimumIndex() {
-      return this.photos.findIndex((photo) => photo === null);
-    },
-  },
-
-  methods: {
-    showOverlay(index) {
-      this.validPictureOverlayIndex = index;
-    },
-    hideOverlay(index) {
-      this.validPictureOverlayIndex = null;
-      console.log("hideOverlay(index) {: ", index);
-    },
-
-    clickToTrashIcon(index) {
-      if (index === this.photos.length - 1) {
-        this.photos[index] = null;
-        return;
-      }
-      if (this.photos[index]) {
-        for (let i = index; i < this.photos.length - 1; i++) {
-          this.photos[i] = this.photos[i + 1];
-        }
-        this.photos[this.photos.length - 1] = null; // 마지막 요소는 null로 설정
-      }
-    },
-
-    showDetailView(index) {
-      this.selectedImage = this.photos[index];
-      this.isModalVisible = true;
-    },
-
-    closeDetailView() {
-      console.log("closeDetailView() {");
-      this.isImageExpanded = false;
-      this.selectedImage = null;
-    },
-
-    openFileDialog(index) {
-      this.currentIndex = index;
-      this.$refs.fileInput.click();
-    },
-    onFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-          this.photos[this.currentIndex] = e.target.result;
+<script>
+    
+export default {	
+    data() {
+        return {
+            // visibleModal: false,
+            isImageTwoVisible: false, //이미지
+            isImageTwoVisible2: false, //이미지
+            // recommendList: [],
+            user_id1: '',
+            user_id2: '',
+            results:[],
+            sampleData : '',
+            // user_image : [
+            //     "/model3.png",
+            //     "/model.jpg",
+            //     "/model2.jpg",
+            //     "/model5.jpg",
+            //     "/model6.jpg",
+            //     "/images.jpg"
+            // ],
+            index: 0,
+            heartData: {},
         };
-      }
+        
     },
-    dataURLtoBlob(dataURL) {
-      const parts = dataURL.split(",");
-      const mime = parts[0].match(/:(.*?);/)[1];
-      const bstr = atob(parts[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new Blob([u8arr], { type: mime });
+    beforeCreate() {},
+    created() {},
+    beforeMount() {},
+    mounted() {
+        this.getRecommendList();
+        this.getHeart();
     },
-    // Blob처리 해서 요청을 보낸다.
-    async clickToPost() {
-      let photoList = [];
+    methods: {
+    
+        handleClose() {
+            this.visibleModal = false;
+        },
+        count(cnt, user){
+            user.index += cnt;            
 
-      for (let i of this.photos) {
-        if (i) {
-          photoList.push(this.dataURLtoBlob(i));
+            if(user.index == user.user_image_path.length){
+                return user.index = 0;
+            }else if(user.index < 0) {
+                return user.index = user.user_image_path.length-1;
+            }
+        },
+
+        async getRecommendList(){
+                try{
+                    let requestBody = {
+                        access_token: this.$getAccessToken()
+                    };
+                    const result = await this.$api(`/recommend/list`, requestBody , "POST");
+                    this.recommendList = result;
+                    this.results = result.results;
+                    let heartList = result.getHeart;
+                    let matchingList = result.getMatching
+                    this.results = result.results.map(user => {
+                        user.index = 0;  // 각 사용자에 인덱스 속성을 추가
+                        return user;
+                    });
+                    
+                    
+                    for(let i in heartList){
+                        for(let j in this.results){
+                            if(this.results[j].user_id2 == heartList[i].heart_status){
+                                this.results[j].giveHeart = true;
+                            }                                                                
+                        }                            
+                    }
+                    for(let i in matchingList){
+                        for(let j in this.results){
+                            if(this.results[j].user_id2 == matchingList[i].matching_status){
+                                this.results[j].giveMatching = true;
+                            }                                                                
+                        }                            
+                    }
+                    
+                }
+                catch(err){
+                    console.error(err);
+            }
+        },
+
+        async heart(user_id2){  
+            // this.visibleModal = !this.visibleModal;
+            this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
+
+            try{
+                let requestBody = {
+                    access_token: this.$getAccessToken(), //user_id = 나
+                    user_id2
+                };
+
+                const result = await this.$api(`/recommend/heart`, requestBody , "POST");
+                this.heartData = result,
+                this.message = result.message;
+                await this.getRecommendList();
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
+        async sendMatching(user_id2) {
+            try {
+                await this.$api(`/recommend/sendmatching`, { access_token: this.$getAccessToken(), user_id2 }, "POST");
+                await this.getRecommendList();
+            } catch (err) {
+                console.error(err);
+            }
+        },
+        async getHeart(){
+            const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
+            this.heartData = result.heart;
+            console.log("this.heartData" ,this.heartData)
+        },
+        async userDelete(user_id2){  
+            try{
+                let requestBody = {
+                    access_token: this.$getAccessToken(),
+                    user_id2
+                };
+
+                const result = await this.$api(`/recommend/userdelete`, requestBody , "POST");
+                this.delete = result,
+                this.message = result.message;
+                await this.getRecommendList();
+            }
+            catch(err){
+                console.error(err);
+            }
+        },
+        async clickeToProfileDetail(user_id2){
+            try{
+                await this.$router.push({name : 'ProfileDetail' , query : {data: this.$encrypt(user_id2)}})
+            }
+            catch(err){
+                console.error(err);
+            }
+            
         }
-      }
+    }
+    
+}
 
-      if (photoList.length == 0) {
-        alert("하나 이상의 사진을 등록해야 합니다.");
-        return;
-      }
-
-      await this.patchRequestForMulter("/user/enterphoto", photoList, {
-        access_token: this.$getAccessToken(),
-        fileType: "profile",
-      });
-    },
-    // axios로 요청을 보내고 받음.
-    /**
-     *
-     * @param endpoint : url이 들어감.
-     * @param payload : formdata가 들어감
-     * @param importantHeaders : Content-type: multipart/form-data
-     */
-    async patchRequest(endpoint, payload = null, importantHeaders = {}) {
-      try {
-        const config = { headers: importantHeaders };
-        const response = await axios.post(endpoint, payload, config);
-        console.log(response);
-        if (response.status >= 400) {
-          this.$router.push({
-            name: "ErrorPage",
-            query: { message: response.data.message },
-          });
-        } else {
-          this.$router.push({
-            name: "MainPage",
-          });
-        }
-        return response.data;
-      } catch (error) {
-        alert("예기치 못한 에러가 발생하였습니다.");
-      }
-    },
-    // 요청을 보내기 위한 HTTP request 디자인 + HTTP 요청을 보내는 함수 발동
-    async patchRequestForMulter(url, images, additionalInfo) {
-      const formData = this.makeFormDataForMulter(images, additionalInfo);
-      await this.patchRequest(url, formData, {
-        "Content-Type": "multipart/form-data",
-      });
-    },
-    makeFormDataForMulter(images, additionalInfo) {
-      const formData = new FormData();
-
-      if (Array.isArray(images)) {
-        images.forEach((image, index) => {
-          formData.append("image", image, `image${index}.png`);
-        });
-      } else {
-        formData.append("image", images, "image.png");
-        formData.append("imageIndex", 0);
-      }
-
-      if (additionalInfo) {
-        Object.keys(additionalInfo).forEach((key) => {
-          formData.append(key, additionalInfo[key]);
-        });
-      }
-      return formData;
-    },
-  },
-};
 </script>
-  
-  <style scoped>
-.safety_zone {
-  min-width: 600px;
-  width: 600px;
-  margin: 0 auto;
-  padding: 0 25px;
-  padding-top: 54px;
-  padding-bottom: 46px;
-  background-color: white;
+<style scoped>
+.container {
+    min-width: 600px;
+    padding: 0 15px 0 15px;
+    justify-content: center;
 }
 
-.heade_div {
-  font-size: 24px;
-  font-weight: 700;
+.title {
+    font-size: 24;
+    font-weight: 700;
+    padding: 30px 0 15px 0;
+    margin: 0;
+    text-align: left;
+    color: #090909;
 }
 
-.sub_div {
-  font-size: 14px;
-  font-weight: 500;
-
-  margin-top: 50px;
-  text-align: left;
+.mian_title {
+    padding: 16px 0 16px 0;
+    font-size: 22px;
 }
 
-.photo-upload-container {
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
+.title_img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 3px 10px 10px -3px;
 }
 
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 35px;
-  grid-row-gap: 23px;
-  margin: 20px 0;
-  margin-top: 7px;
+.image_tab {
+        margin-top: 5px;
+        width: 510px;
+        height: 18px;
+        background-color: rgba(183, 67, 67, 0);
+        border-radius: 100px;
+        position: absolute;
+        display: flex;
+        top: 0;
+        gap: 15px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 3;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px;
+   }
+    .number {
+        width: 100%;
+        height: 2px;
+        border-radius: 100px;
+        background-color: slategrey;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .number2 {
+        width: 100%;
+        height: 2px;
+        border-radius: 100px;
+        background-color: rgb(252, 252, 252);
+        display: flex;
+        justify-content: space-between;
+    }
+
+.main_image {
+    width: 568px;
+    min-width: 540px;
+    display: flex;
+    padding: 0 8px 0 8px;
+    border-radius: 10px;
+    position: relative;
 }
 
-.photo-box {
-  width: 100%;
-  height: 150px;
-  background-color: #e0e0e0;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  position: relative;
+.main_image>img {
+    width: 568px;
+    min-width: 540px;
+    height: 700px;
+    display: block;
+    margin: 0 8px 0 8px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
-.uploaded-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.prev_button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 50%;
+    height: 100%;
+    z-index: 1;
 }
 
-.valid-picture-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  gap: 10px;
-  z-index: 999;
+.next_button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    width: 50%;
+    height: 100%;
+    z-index: 1;
 }
 
-.instructions {
-  display: flex;
-  /* margin-bottom: 5px; */
-  justify-content: center;
-  gap: 20px;
+.name {
+    cursor: pointer;
+    position: absolute;
+    z-index: 4;
+    font-size: 26px;
+    margin: 550px 0 0 36px;
+    color: #FFFFFF
 }
 
-.example-photo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+.category {
+    position: absolute;
+    z-index: 3;
+    margin: 600px 200px 0 36px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: baseline;
 }
 
-.example-photo img {
-  border-radius: 10px;
+.category2 {
+    width: 500px;
+    position: absolute;
+    z-index: 3;
+    padding-top: 25px;
+    /*margin: 600px 200px 0 36px;*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: baseline;
 }
 
-.selection-circle {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  bottom: 0;
-  transform: translateY(50%);
+.category .category_A {
+    background-color: #090909;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 3px 17px 3px 17px;
+    color: #FFFFFF;
 }
 
-.description_div {
-  font-size: 12px;
-  margin-bottom: 40px;
-  margin-top: 20px;
-  color: #484848;
+.category .category_B {
+    padding: 3px 17px 3px 17px;
+    background-color: #FF3C3C;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #FFFFFF;
+    margin-left: 15px;
 }
 
-.submitButton {
-  background-image: var(--gradient);
-  border: none;
-  border-radius: 5px;
-  color: white;
-  padding: 18px 0px;
-  font-size: 22px;
-  cursor: pointer;
-  width: 100%;
+.category .category_C {
+    padding: 3px 17px 3px 17px;
+    background-color: #07B242;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #FFFFFF;
+    margin-top: 11px;
 }
 
-/* .expanded-image-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.category .category_D {
+    padding: 3px 17px 3px 17px;
+    background-color: #7F1BFF;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #FFFFFF;
+    margin-left: 15px;
+    margin-top: 11px;
 }
 
-.expanded-image {
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 10px;
-} */
+.action_btn_container {
+    position: absolute;
+    z-index: 5;
+    bottom: 15px;
+    right: 0;
+    display: flex;
+}
+
+.action_btn_container div img {
+    width: 48px;
+    height: 48px;
+    margin-right: 23px;
+    margin-bottom: 11px;
+}
+
+.airplane {
+    cursor: pointer;
+}
+
+.heart {
+    cursor: pointer;
+}
+
+.delete {
+    cursor: pointer;
+}
+
+.next_img {
+    margin-bottom: 41px;
+}
+
+.modal-popup .modal {
+    width: 400px;
+    height: 220px;
+}
 </style>
-  

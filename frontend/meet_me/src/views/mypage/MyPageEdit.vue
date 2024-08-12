@@ -487,7 +487,8 @@ export default {
           { userInfo, access_token: this.$getAccessToken() },
           "POST"
         );
-        await this.getUser();
+        alert('프로필수정이 완료 되었습니다.');
+        this.$router.push({name : 'MyPage'});
 
       } catch (err) {
         console.log(err);
