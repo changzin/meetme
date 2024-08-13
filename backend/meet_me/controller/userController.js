@@ -173,36 +173,40 @@ exports.idolInput = async (req, res) => {
     console.log("타투" + "" + user_idol_tartoo);
     console.log("종교" + "" + user_religion_id);
     console.log("유저" + "" + user_id);
+    del =`DELETE FROM  user_idol WHERE user_id = ?`;
+    query = 
+            `INSERT INTO user_idol 
+                (user_id,user_idol_age_id,
+                user_mbti_id,
+                user_blood_type_id,
+                user_idol_height_id,
+                user_idol_weight_id,
+                user_annual_income_id,
+                user_idol_smoke,user_drinking_id,
+                user_idol_tartoo,user_religion_id)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
 
-    query = `INSERT INTO user_idol 
-            (user_id,user_idol_age_id,
-            user_mbti_id,
-            user_blood_type_id,
-            user_idol_height_id,
-            user_idol_weight_id,
-            user_annual_income_id,
-            user_idol_smoke,user_drinking_id,
-            user_idol_tartoo,user_religion_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-
-    result = await db(conn, query, [
-        user_id,
-        user_idol_age_id,
-        user_mbti_id,
-        user_blood_type_id,
-        user_idol_height_id,
-        user_idol_weight_id,
-        user_annual_income_id,
-        user_idol_smoke,
-        user_drinking_id,
-        user_idol_tartoo,
-        user_religion_id,
-      
+    delect = await db(conn,del,[
+      user_id
+    ])
+    result = await db(conn,query,[
+      user_id,
+      user_idol_age_id,
+      user_mbti_id,
+      user_blood_type_id,
+      user_idol_height_id,
+      user_idol_weight_id,
+      user_annual_income_id,
+      user_idol_smoke,
+      user_drinking_id,
+      user_idol_tartoo,
+      user_religion_id,
     ]);
 
     console.log(result);
     responseBody = {
       status: 200,
+      userIdolClear : delect,
       userIdol: result,
       message: "유저 이상형 정보가 업데이트 되었습니다.",
     };
@@ -595,7 +599,7 @@ exports.sendMatching = async (req, res) => {
     query = `UPDATE user
     SET user_coin = user_coin - ?
     WHERE user_id=?`;
-    result = await db(conn, query, [useCoin , userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
@@ -637,7 +641,7 @@ exports.acceptMatching = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
-    
+
     // 내가 채팅방 개설
     query = `INSERT INTO chat_list(user_id1, user_id2) VALUES(?, ?)`;
     result = await db(conn, query, [userId, userId2]);
@@ -836,14 +840,11 @@ exports.userCoin = async (req, res) => {
             WHERE user_id=?`;
     result = await db(conn, query, [userId]);
 
-    
     responseBody = {
       status: 200,
       userCoin: result[0].user_coin,
-      user_nickname:result[0].user_nickname,
+      user_nickname: result[0].user_nickname,
     };
-    
-    
 
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1131,7 +1132,7 @@ exports.addBlock = async (req, res) => {
   }
 };
 
-exports.reRollList = async(req, res)=>{
+exports.reRollList = async (req, res) => {
   const conn = await getConn();
   try {
     await conn.beginTransaction();
@@ -1148,19 +1149,19 @@ exports.reRollList = async(req, res)=>{
                 WHERE user_id=?`;
     result = await db(conn, query, [userId]);
 
-    if(result[0].last_date==getToday()){
-        throw new Error("이미 결제하였습니다.")
+    if (result[0].last_date == getToday()) {
+      throw new Error("이미 결제하였습니다.");
     }
 
     query = `UPDATE user
               SET user_coin = user_coin - ?,
                   user_reroll = NOW()
               WHERE user_id=?`;
-    result = await db(conn, query, [useCoin , userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     responseBody = {
       status: 200,
-      message: "결제 완료. 추천 리스트 확장"
+      message: "결제 완료. 추천 리스트 확장",
     };
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1175,10 +1176,10 @@ exports.reRollList = async(req, res)=>{
     return res.status(statusCode).json(responseBody);
   } finally {
     conn.release();
-  }  
-}
+  }
+};
 
-function getToday(){
+function getToday() {
   const date = new Date();
   const year = date.getFullYear();
   const month = ("0" + (1 + date.getMonth())).slice(-2);
