@@ -380,6 +380,7 @@
               type="text"
               v-model="userData.user_add"
               class="input-address"
+              disabled
             />
           </div>
           <button type="submit" class="search-button" @click="zipload()">주소 변경</button>

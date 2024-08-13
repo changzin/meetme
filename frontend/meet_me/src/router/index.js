@@ -16,7 +16,6 @@ import ChatList from '../views/chat/ChatList.vue'
 
 import MainPage from '../views/main/MainPage.vue'
 import LoginUser from '../views/nouser/LoginUser.vue'
-// import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
@@ -109,11 +108,6 @@ const routes = [
     name:'userfeature',
     component:UserFeature
   },
-  // {
-  //   path: '/tempview',
-  //   name: 'TempView',
-  //   component: TempView
-  // },
   {
     path: '/reactiveweb',
     name: 'ReactiveWeb',

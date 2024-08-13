@@ -1027,11 +1027,13 @@ exports.regrade = async (req, res) => {
     let responseBody = {};
 
     const userId = req.body.user_id;
+    const useCoin = req.body.useCoin;
 
     query = `UPDATE user
-                    SET user_grade_id = (user_grade_id+1)%3+1
+                    SET user_grade_id = (user_grade_id+1)%3+1,
+                        user_coin = user_coin - ?
                     WHERE user_id= ?`;
-    result = await db(conn, query, [userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     responseBody = {
       status: 200,
