@@ -2,27 +2,22 @@
     <div class="safety_zone">
         <div class="container">
             <div class="title">
-                보낸 좋아요
+                활동 내역
             </div>
             <div class="heart_null" v-if="heartData.length == 0">
-                <h4>보낸 좋아요가 없습니다.</h4>
+                <h4>활동 내역이 없습니다.</h4>
             </div>
             <div class="profile_box" v-for="(heart, i) in heartData" :key="i">
-                <img class="mini_profile" :src="heart.user_image_path ? this.$imageFileFormat(heart.user_image_path) : 'model3.png'">
+                <img class="mini_profile" :src="heart.image_path ? this.$imageFileFormat(heart.image_path) : 'model3.png'">
                 <div class="name_title">
-                    <div class="status">
+                    <div class="status" v-if="(heart.heart)">
                         {{heart.user_nickname}}에게 좋아요를 보냈습니다.
                     </div>
-                </div>
-                <div class="button">
-                    <div class="matching_button" v-if="(!heart.matching)" @click="sendMatching(heart.user_id)">
-                        매칭신청
-                    </div>
-                    <div class="matching_cencel" v-if="(heart.matching)" @click="deleteMatching(heart.user_id)">
-                        매칭취소
+                    <div class="status" v-if="(heart.matching)">
+                        {{heart.user_nickname}}에게 매칭신청을 보냈습니다.
                     </div>
                 </div>
-                    <button class="trash" @click="deleteHeart(heart.user_id)">
+                    <button class="trash" @click="deleteHeart(heart.heart, heart.matching)">
                         <img src="/icon/mypage/like/trash.svg">
                     </button>
             </div>
@@ -62,6 +57,7 @@ export default {
         async getHeart(){
             const result = await this.$api(`/user/getheart`, {access_token : this.$getAccessToken()},"POST");
             this.heartData = result.heart;
+            console.log('ssssssssssssssssssss',this.heartData)
         },
         async deleteMatching(user_id2){
             try{
@@ -71,12 +67,21 @@ export default {
                 alert('매칭취소가 실패 했습니다.')
             }
         },
-        async deleteHeart(user_id2){
-            try{
-                await this.$api(`/user/deleteheart`, {access_token : this.$getAccessToken() , user_id2}, "POST");
-                await this.getHeart();
-            }catch(err){
-                alert('좋아요 삭제 실패');
+        async deleteHeart(heart, matching){
+            if(heart){
+                try{
+                    await this.$api(`/user/deleteheart`, {access_token : this.$getAccessToken() , user_id2 : heart}, "POST");
+                    await this.getHeart();
+                }catch(err){
+                    alert('좋아요 삭제 실패');
+                }
+            }else if(matching){
+                try{
+                    await this.$api(`/user/deletematching`, {access_token : this.$getAccessToken() , user_id2 : matching}, "POST");
+                    await this.getHeart();
+                }catch(err){
+                    alert('매칭취소가 실패 했습니다.')
+                }
             }
         }
     }
@@ -103,6 +108,7 @@ export default {
 .profile_box {
 
     display: flex;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
