@@ -35,7 +35,7 @@
           <div class="gender">
             <div class="sub_title">성별</div>
             <div class="select_gender">
-              <button :class="maleClass" @click="toggleGender('M')" >남</button>
+              <button :class="maleClass" @click="toggleGender('M')">남</button>
               <button :class="femaleClass" @click="toggleGender('F')">
                 여
               </button>
@@ -60,7 +60,6 @@
                 box_tag: activeInput === 'age',
                 visible_box_tag: activeInput !== 'age',
               }"
-              
               >나이</label
             >
             <input
@@ -75,7 +74,6 @@
               }"
               v-model="form.inputAge"
               required
-               
             />
             <label
               for="age"
@@ -114,7 +112,6 @@
                 visible_input: activeInput !== 'height',
               }"
               v-model="form.inputHeight"
-               
             />
             <label
               for="height"
@@ -154,7 +151,6 @@
               }"
               v-model="form.inputWeight"
               required
-               
             />
             <label
               for="weight"
@@ -181,7 +177,6 @@
             }"
             v-model="form.selectAnnualIncome"
             required
-             
           >
             <option class="dropdown_item" value="" selected disabled hidden>
               연봉
@@ -210,9 +205,7 @@
             v-model="form.selectedMbti"
             required
           >
-            <option class="dropdown_item" value=""  disabled hidden>
-              MBTI
-            </option>
+            <option class="dropdown_item" value="" disabled hidden>MBTI</option>
             <option
               class="dropdown_item"
               v-for="(mbti, i) in categoryList.user_mbti_values"
@@ -236,7 +229,7 @@
             v-model="form.selectedBloodType"
             required
           >
-            <option class="dropdown_item" value=""  disabled hidden>
+            <option class="dropdown_item" value="" disabled hidden>
               혈액형
             </option>
             <option
@@ -262,9 +255,7 @@
             v-model="form.selectedReligion"
             required
           >
-            <option class="dropdown_item" value=""  disabled hidden>
-              종교
-            </option>
+            <option class="dropdown_item" value="" disabled hidden>종교</option>
             <option
               class="dropdown_item"
               v-for="(religion, i) in categoryList.user_religion_values"
@@ -288,9 +279,7 @@
             v-model="form.selectedDrinking"
             required
           >
-            <option class="dropdown_item" value=""  disabled hidden>
-              주량
-            </option>
+            <option class="dropdown_item" value="" disabled hidden>주량</option>
             <option
               class="dropdown_item"
               v-for="(drinking, i) in categoryList.user_drinking_values"
@@ -314,7 +303,7 @@
             v-model="form.selectedSmoke"
             required
           >
-            <option class="dropdown_item" value=""  disabled hidden>
+            <option class="dropdown_item" value="" disabled hidden>
               흡연 여부
             </option>
             <option class="dropdown_item" value="T">흡연</option>
@@ -334,11 +323,11 @@
             v-model="form.selectedTartoo"
             required="required"
           >
-            <option class="dropdown_item" value=""  disabled hidden>
+            <option class="dropdown_item" value="" disabled hidden>
               문신 여부
             </option>
             <option class="dropdown_item" value="T">문신 있음</option>
-            <option class="dropdown_item" value="F">문신 </option>
+            <option class="dropdown_item" value="F">문신</option>
           </select>
         </div>
 
@@ -355,15 +344,16 @@
               required
             />
 
-            <button  class="search_address" @click="zipload()">
-              주소찾기
-            </button>
+            <button class="search_address" @click="zipload()">주소찾기</button>
           </div>
         </div>
-        <div class="sub_title3">자기소개
-          <div class="text_count" id="userintroduction"> {{ textLength }} / 최대 300자</div>
+        <div class="sub_title3">
+          자기소개
+          <div class="text_count" id="userintroduction">
+            {{ textLength }} / 최대 300자
+          </div>
         </div>
-       
+
         <textarea
           id="userintroduction"
           class="select_intro"
@@ -377,7 +367,7 @@
             visible_select_intro: activeInput !== 'intro',
           }"
         >
-      </textarea>
+        </textarea>
       </div>
       <div class="container_bottom">
         <!-- <button class="next" @click="validateAndPostProfile()">다음으로</button> -->
@@ -391,14 +381,13 @@ export default {
   components: {},
   data() {
     return {
-      
       activeInput: null,
       categoryList: {},
-      inputDatas : [],
-      inputs:[],
+      inputDatas: [],
+      inputs: [],
       // textLength : "",
       //항목 선택
-      form:{
+      form: {
         activeGender: "M", // 초기 활성화상태 '남'
         selectGender: "M",
         selectAnnualIncome: "",
@@ -416,7 +405,6 @@ export default {
         inputUserIntroduction: "",
         inputUserAddress: "",
       },
-      
     };
   },
   async created() {
@@ -434,10 +422,9 @@ export default {
     femaleClass() {
       return this.form.activeGender === "F" ? "active" : "inactive";
     },
-    textLength(){
+    textLength() {
       return this.form.inputUserIntroduction.length;
-    }
-    
+    },
   },
   methods: {
     async getCategory() {
@@ -451,39 +438,39 @@ export default {
     },
     async postUserProfile() {
       try {
-        console.log(this.form.selectGender)
-        if(this.form.selectGender === undefined){
-          alert("성별을 선택해주세요")
-        }else if(this.form.inputAge <= 19){
-          alert("만 19세 이상 이용가능합니다.")
-        }else if(this.form.inputAge > 100){
-          alert("100세 이하 이용 가능합니다.")
-        }else if(this.form.inputHeight < 100){
-          alert("키 100 이상 입력해주세요")
-        }else if(this.form.inputHeight > 250){
-          alert("키 정보를 다시 입력해주세요")
-        }else if(this.form.inputWeight > 200){
-          alert("몸무게 200 이하 입력해주세요")
-        }else if(this.form.inputUserIntroduction.length > 300){
-          alert("자기소개 300글 이하로 입력해주세요")
-        }else{
+        console.log(this.form.selectGender);
+        if (this.form.selectGender === undefined) {
+          alert("성별을 선택해주세요");
+        } else if (this.form.inputAge <= 19) {
+          alert("만 19세 이상 이용가능합니다.");
+        } else if (this.form.inputAge > 100) {
+          alert("100세 이하 이용 가능합니다.");
+        } else if (this.form.inputHeight < 100) {
+          alert("키 100 이상 입력해주세요");
+        } else if (this.form.inputHeight > 250) {
+          alert("키 정보를 다시 입력해주세요");
+        } else if (this.form.inputWeight > 200) {
+          alert("몸무게 200 이하 입력해주세요");
+        } else if (this.form.inputUserIntroduction.length > 300) {
+          alert("자기소개 300글 이하로 입력해주세요");
+        } else {
           const requestBody = {
-          access_token: this.$getAccessToken(),
-          user_nickname: this.form.inputNickname,
-          user_gender: this.form.selectGender,
-          user_age: this.form.inputAge,
-          user_mbti_id: this.form.selectedMbti,
-          user_blood_type_id: this.form.selectedBloodType,
-          user_height: this.form.inputHeight,
-          user_weight: this.form.inputWeight,
-          user_annual_income_id: this.form.selectAnnualIncome,
-          user_smoke: this.form.selectedSmoke,
-          user_drinking_id: this.form.selectedDrinking,
-          user_tartoo: this.form.selectedTartoo,
-          user_religion_id: this.form.selectedReligion,
-          user_introduction: this.form.inputUserIntroduction,
-          user_add: this.form.inputUserAddress,
-        };
+            access_token: this.$getAccessToken(),
+            user_nickname: this.form.inputNickname,
+            user_gender: this.form.selectGender,
+            user_age: this.form.inputAge,
+            user_mbti_id: this.form.selectedMbti,
+            user_blood_type_id: this.form.selectedBloodType,
+            user_height: this.form.inputHeight,
+            user_weight: this.form.inputWeight,
+            user_annual_income_id: this.form.selectAnnualIncome,
+            user_smoke: this.form.selectedSmoke,
+            user_drinking_id: this.form.selectedDrinking,
+            user_tartoo: this.form.selectedTartoo,
+            user_religion_id: this.form.selectedReligion,
+            user_introduction: this.form.inputUserIntroduction,
+            user_add: this.form.inputUserAddress,
+          };
           const request = await this.$api(
             "/user/profileinput",
             requestBody,
@@ -496,7 +483,6 @@ export default {
             });
           }
         }
-        
       } catch (err) {
         alert("정보를 다시 확인해주세요");
         console.log(err);
@@ -505,13 +491,11 @@ export default {
 
     //성별 선택
     toggleGender(gender) {
-      
       this.form.activeGender = gender;
-       console.log(gender);
-       console.log(this.form.activeGender);
-        this.form.selectGender = this.form.activeGender;
-      
-     
+      console.log(gender);
+      console.log(this.form.activeGender);
+      this.form.selectGender = this.form.activeGender;
+
       console.log(this.form.selectGender);
     },
     loadDaumPostcodeScript() {
@@ -552,39 +536,55 @@ export default {
     setActive(inputName) {
       this.activeInput = inputName;
     },
-    textLengthCheck(){
-      if( this.form.inputUserIntroduction.length > 300)
-      alert("최대 300자까지 입력 가능합니다.")
-        this.form.inputUserIntroduction=this.form.inputUserIntroduction.substring(0,300);
+    textLengthCheck() {
+      if (this.form.inputUserIntroduction.length > 300)
+        alert("최대 300자까지 입력 가능합니다.");
+      this.form.inputUserIntroduction =
+        this.form.inputUserIntroduction.substring(0, 300);
     },
 
-    ageVerification(){
-      if(this.form.inputAge <=19){
-        alert("만 19세 이상 이용 가능합니다")
-        this.activeInput = null;
-      }else if(this.form.inputAge > 100){
-        alert("100세 이하 이용 가능합니다.")
+    ageVerification() {
+      if(!this.form.inputAge){
+        return;
       }
+      if(this.form.inputAge < 19 || this.form.inputAge > 100 ){
+        alert(this.form.inputAge < 19 ? "만 19세 이상 가입 가능합니다." : "100세 이하 가입 가능합니다.")
+      }
+      this.activeInput = null;
     },
-    heightVerification(){
-      if(this.form.inputHeight < 100){
-        alert("키 100 이상 입력해주세요")
-        this.activeInput = null;   
-      }else if(this.form.inputHeight > 250){
-        alert("키 정보를 다시 입력해주세요");
+    heightVerification() {
+      if (!this.form.inputHeight) {
+        return;
       }
+      if (this.form.inputHeight < 100 || this.form.inputHeight > 250) {
+        alert(this.form.inputHeight < 100 ? "키가 100 이상 입력해주세요" : "키 정보를 다시 입력해주세요");
+        this.form.inputHeight = null;
+      }
+      this.activeInput = null;
+      
     },
-    weightVerification(){
-      if(this.form.inputWeight > 200){
-        alert("몸무게 200 이하 입력해주세요")
-        this.activeInput = null;
+
+    weightVerification() {
+      if (!this.form.inputWeight) {
+        return;
       }
+      if (this.form.inputWeight > 200) {
+        alert("몸무게 200 이하 입력해주세요");
+        this.form.inputHeight = null;
+      }
+      this.activeInput = null;
+      
     },
-    nicknameVerification(){
-      if(this.form.inputNickname.length > 12){
-        alert("닉네임 12자 제한입니다.")
-        this.activeInput = null;
+    nicknameVerification() {
+      if (!this.form.inputNickname) {
+        return;
       }
+      if (this.form.inputNickname.length > 12) {
+        alert("닉네임 12자 제한입니다.");
+        this.form.inputNickname = null;
+      }
+      this.activeInput = null;
+      
     },
     // textVerification(){
     //   if(this.inputUserIntroduction.length > 300){
@@ -597,29 +597,40 @@ export default {
       this.assignId();
       console.log(
         "MBTI" +
-          this.form.selectedMbti + " " +
+          this.form.selectedMbti +
+          " " +
           "연봉" +
-          this.form.selectAnnualIncome + " " +
+          this.form.selectAnnualIncome +
+          " " +
           "혈액형" +
-          this.form.selectedBloodType + " " + 
+          this.form.selectedBloodType +
+          " " +
           "종교" +
-          this.form.selectedReligion + " " +
+          this.form.selectedReligion +
+          " " +
           "주량" +
-          this.form.selectedDrinking + " " +
+          this.form.selectedDrinking +
+          " " +
           "나이" +
-          this.form.inputAge + " " +
+          this.form.inputAge +
+          " " +
           "키" +
-          this.form.inputHeight + " " +
+          this.form.inputHeight +
+          " " +
           "몸무게" +
-          this.form.inputWeight + " " +
+          this.form.inputWeight +
+          " " +
           "흡연" +
-          this.form.selectedSmoke + " " +
+          this.form.selectedSmoke +
+          " " +
           "문신" +
-          this.form.selectedTartoo + " " +
+          this.form.selectedTartoo +
+          " " +
           "자기소개" +
-          this.form.inputUserIntroduction + " "+
+          this.form.inputUserIntroduction +
+          " " +
           "성별" +
-          this.form.selectGender  
+          this.form.selectGender
       );
     },
     assignId() {
@@ -673,7 +684,6 @@ div.container0 {
   border: none;
   background: none;
   border-radius: 10px;
-  
 }
 .card_box {
   /* border: 1px solid red; */
@@ -771,8 +781,8 @@ div.sub_title3 {
   margin-left: 17px;
   margin-bottom: 10px;
 }
-.text_count{
-  font-size:12px;
+.text_count {
+  font-size: 12px;
   align-content: center;
   text-align: start;
   color: #848282;
