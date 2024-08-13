@@ -342,6 +342,7 @@
               class="input_address"
               v-model="form.inputUserAddress"
               required
+              disabled
             />
 
             <button class="search_address" @click="zipload()">주소찾기</button>
@@ -495,7 +496,6 @@ export default {
       console.log(gender);
       console.log(this.form.activeGender);
       this.form.selectGender = this.form.activeGender;
-
       console.log(this.form.selectGender);
     },
     loadDaumPostcodeScript() {

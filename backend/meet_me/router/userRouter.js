@@ -40,7 +40,7 @@ router.post('/deletephoto', loginCheck, deletePhoto);
 router.post('/getalarm', loginCheck, getAlarm);
 router.post('/coin', loginCheck, userCoin);
 router.post('/verify', loginCheck, userVerify);
-router.post('/regrade', loginCheck, regrade);
+router.post('/regrade', loginCheck, paymentCheck, regrade);
 router.post('/addreport', loginCheck, addReport);
 router.post('/addblock', loginCheck, addBlock);
 router.post('/reroll', loginCheck, paymentCheck, reRollList);
