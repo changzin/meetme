@@ -37,7 +37,7 @@
                     <div class="mypage_button" @click="this.$router.push({name: 'SendHeart'})">
                         <img class="button_icon_heart" src="/icon/mobile_header/solid-heart.svg" style="width: 57px;">
                         <div class="button_icon">
-                            보낸 좋아요
+                            활동 내역
                         </div>
                     </div>
                     <div class="mypage_button" @click="this.$router.push({name: 'Qna'})">

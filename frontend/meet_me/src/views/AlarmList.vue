@@ -19,6 +19,9 @@
                     <div class="status" v-if="(alarm.alarm_type === 'matching')&&(alarm.matching_success === 'T')">
                         {{alarm.user_nickname}}님과 매칭이 성사되었습니다.
                     </div>
+                    <div class="status" v-if="(alarm.alarm_type === 'matching_success')&&(alarm.matching_success === 'T')">
+                        {{alarm.user_nickname}}님이 매칭을 수락하였습니다.
+                    </div>
                 </div>
                 <div class="button">
                     <div class="matching_button" v-if="(alarm.alarm_type === 'heart')" @click="sendMatching(alarm.send_user_id)">
@@ -75,7 +78,6 @@ export default {
                     this.$router.push({name: 'mypagestore'});
                     return;
                 }
-
                 const result = await this.$api(`/user/sendmatching`, {access_token : this.$getAccessToken() , user_id2, useCoin: 300}, "POST");
                 if(result.status == 400){
                     alert('매칭신청을 이미 보냈습니다.');

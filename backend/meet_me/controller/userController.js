@@ -556,15 +556,26 @@ exports.getHeart = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
-    query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching,
-                (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id ORDER BY i.user_image_id limit 1) AS user_image_path
-                FROM heart as h 
-                JOIN user AS u ON u.user_id = h.user_id2
-				LEFT OUTER JOIN matching AS m ON h.user_id1 = m.user_id1 AND h.user_id2 = m.user_id2
-                WHERE h.user_id1 = ?
-                ORDER BY h.heart_create_date;`;
+    query = `SELECT u.user_nickname, u.user_id AS heart, null AS matching,
+            (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id limit 1) AS image_path,
+            h.heart_create_date AS create_date
+            FROM user AS u
+            JOIN heart AS h ON u.user_id = h.user_id2
+            WHERE h.user_id1 = ?
 
-    result = await db(conn, query, [userId]);
+
+            UNION ALL
+
+            SELECT u.user_nickname, null ,u.user_id AS matching,
+            (SELECT i.user_image_path FROM user_image AS i WHERE m.user_id2 = i.user_id limit 1) AS image_path,
+            m.matching_create_date AS create_date
+            FROM user AS u
+            JOIN matching AS m ON u.user_id = m.user_id2
+            WHERE m.user_id1 = ?
+
+            ORDER BY create_date`;
+
+    result = await db(conn, query, [userId, userId]);
     responseBody = {
       status: 200,
       heart: result,
@@ -645,11 +656,15 @@ exports.acceptMatching = async (req, res) => {
     // 내가 채팅방 개설
     query = `INSERT INTO chat_list(user_id1, user_id2) VALUES(?, ?)`;
     result = await db(conn, query, [userId, userId2]);
+    // 매칭 신청한 사람의 알림창에 등록
+    query = `INSERT INTO alarm(user_id, alarm_type, matching_id) VALUES(?, ? , (SELECT matching_id FROM matching WHERE user_id1 = ? AND user_id2 = ? limit 1))`;
+    result = await db(conn, query, [userId2, 'matching_success', userId2, userId]);
 
     //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
     query = `UPDATE matching SET matching_success = 'T' WHERE user_id1 = ? AND user_id2 = ?`;
 
     result = await db(conn, query, [userId2, userId]);
+
 
     responseBody = {
       status: 200,
@@ -876,14 +891,14 @@ exports.getAlarm = async (req, res) => {
     query = `(SELECT al.*, u.user_nickname, i.user_image_path, m.user_id1 AS send_user_id, m.matching_success
                 FROM alarm AS al
                 JOIN matching AS m ON al.matching_id = m.matching_id
-                JOIN user AS u ON u.user_id = m.user_id1
+                JOIN user AS u ON u.user_id =(CASE WHEN (al.alarm_type='matching_success') then m.user_id2 ELSE m.user_id1 END)
                 JOIN (SELECT user_id, user_image_path
                 FROM user_image AS ui
                 WHERE user_image_id = (
                 SELECT MIN(user_image_id)
                 FROM user_image
                 WHERE user_id = ui.user_id
-                )) AS i ON m.user_id1 = i.user_id
+                )) AS i ON i.user_id = (CASE WHEN (al.alarm_type='matching_success') then m.user_id2 ELSE m.user_id1 END)
                 WHERE al.user_id = ?
                                 
                 UNION 

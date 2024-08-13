@@ -151,21 +151,29 @@ export default {
                         this.$router.push({name: 'mypagestore'});
                         return;
                     }
+                    const userConfirmed = confirm("100코인으로 좋아요신청을 하시겠습니까?");
+                    // 확인을 눌렀을 경우
                     let requestBody = {
                         access_token: this.$getAccessToken(), //user_id = 나
                         user_id2: user.user_id,
                         useCoin: 100
                     };
-
-                    const result = await this.$api(`/main/heart`, requestBody , "POST");
-                    if(result.status == 200){
-                        await this.getMainList();
-                        await this.getCoin();
-                        alert('좋아요 신청 완료.');
+                    if (userConfirmed) {
+                        const result = await this.$api(`/main/heart`, requestBody , "POST");
+                        if(result.status == 200){
+                            await this.getMainList();
+                            await this.getCoin();
+                            alert('좋아요 신청 완료.');
+                        }
+                        else{
+                            alert(result.message)
+                        }
                     }
-                    else{
-                        alert(result.message)
-                    }                       
+                    // 취소를 눌렀을 경우
+                    else {
+                        return;
+                    }
+                                       
                 }
                 catch(err){
                     console.error(err);
@@ -178,14 +186,22 @@ export default {
                         this.$router.push({name: 'mypagestore'});
                         return;
                     }
-                    const result = await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id, useCoin: 300}, "POST");
-                    if (result.status == 200){
-                        await this.getMainList();
-                        await this.getCoin();    
-                        alert('매칭 신청 완료.');
+                    const userConfirmed = confirm("300코인으로 매칭신청을 하시겠습니까?");
+                    // 확인을 눌렀을 경우
+                    if (userConfirmed) {
+                        const result = await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id, useCoin: 300}, "POST");
+                        if (result.status == 200){
+                            await this.getMainList();
+                            await this.getCoin();    
+                            alert('매칭 신청 완료.');
+                        }
+                        else{
+                            alert('에러로 인해 매칭 신청을 보내지 못했습니다.');
+                        }
                     }
-                    else{
-                        alert('에러로 인해 매칭 신청을 보내지 못했습니다.');
+                    // 취소를 눌렀을 경우
+                    else {
+                        return;
                     }
                     
                 }catch(err){
