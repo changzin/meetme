@@ -135,6 +135,10 @@ exports.handleFileUpload = async (req, res, next) => {
             dest = path.join(dest, "profile", userId);
             id = userId;
           } else if (fileType === "chat") {
+            // uploads/chatId/Messageid/20240813-0-fsdjkfhjskdhfjksdfj.jpg
+            // uploads/chatId/Messageid/20240813-1-fsdjkfhjskdhfjksdfj.jpg
+            // uploads/chatId/Messageid/20240813-2-fsdjkfhjskdhfjksdfj.jpg
+            // uploads/chatId/Messageid/20240813-3-gfdjglfdjgkdlfkgjfkdlg.jpg
             dest = path.join(dest, "chats", chatId);
             id = chatId;
           } else {

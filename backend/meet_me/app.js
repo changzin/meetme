@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const fs = require('fs');
 const path = require("path");
-
 const indexRouter = require('./router');
 const socketSetup = require("./util/socket");
 
@@ -18,7 +17,6 @@ let corsOption = {
     origin: 'http://localhost:8080',
     credential: true
 }
-
 // 사진 이미지 넣을 폴더 생성
 let dir = path.join(__dirname, `./uploads`);
 if(!fs.existsSync(dir)){

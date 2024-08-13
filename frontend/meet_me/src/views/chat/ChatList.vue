@@ -1,90 +1,126 @@
 <template>
-    <div class="container0">
-        <MeetHeader />
+  <div class="container0">
+      <MeetHeader />
+      <form @submit.prevent="serachChatList">
         <div class="search">
             <div class="search_icon"><img src="../../../public/icon/chat/search.svg"></div>
-            <input class="search_box" type="text" placeholder="검색" />
+            <input 
+              v-model="searchText" 
+              class="search_box" 
+              type="text" 
+              placeholder="검색" 
+              @input="serachChatList"  
+            />
         </div>    
-        <div class="container_chat">
-          <div v-for="(roomList, index) in roomList" :key="index">
-            <div class="chat_list" @click="clickeToChatRoom(roomList.chat_list_id)">
-                <img class="profile_circle" :src="this.$imageFileFormat(roomList.user_image_path)">
-                <div class="chat_container">
-                    <div class="chat_name">{{ roomList.user_nickname }}</div>
-                    <div class="chat_content">
-                        <div class="chat_contnet_chat">fdsfdsdffdfffdsfdsdffdfffdsfdsdffdfffdsfdsdffdff</div>
-                        <div class="chat_content_time">·2달전</div>
-                    </div>
-                </div>
-            </div>
-          </div>         
-        </div>
-    </div>
+      </form>
+      <div class="container_chat">
+        <!-- 검색 결과가 있으면 searchList를 사용하고, 그렇지 않으면 roomList를 사용 -->
+        <div v-for="(room, index) in (searchText ? searchList : roomList)" :key="index">
+          <div class="chat_list" @click="clickeToChatRoom(room.chat_list_id)">
+              <img class="profile_circle" :src="this.$imageFileFormat(room.user_image_path)">
+              <div class="chat_container">
+                  <div class="chat_name">{{ room.user_nickname }}</div>
+                  <div class="chat_content">
+                      <div class="chat_contnet_chat">{{room.chat_content}}</div>
+                      <div class="chat_content_time">·2달전</div>
+                  </div>
+              </div>
+          </div>
+        </div>         
+      </div>
+  </div>
 </template>
 <script>
 export default {
   data() {
     return {
-      roomList: [], // 보낸 메세지
+      roomList: [], // 기본 채팅방 리스트
+      searchList: [], // 검색 결과 리스트
+      searchText: "", // 검색어
+      messages: [] // 채팅방 별 메시지 저장
     };
   },
   async created() {
     this.connectToServer();
-    this.getchatRoomList(); 
+    await this.getchatRoomList(); 
 
     // receiveMessage 리스너를 설정
     this.$socket.on("receiveMessage", (data) => {
       console.log("New message data:", data);
-      // data.message에서 실제 메시지 문자열을 추출하여 업데이트
-      // this.chatData.push(data.message);
-      // this.scrollToBottom();
+      // 데이터 메시지 처리 로직 추가 가능
+
+      
     });
   },
   beforeUnmount() {
     this.$socket.off("receiveMessage");
     this.$socket.off("connect");
+  },
 
+  watch: {
+    searchText(newValue) {
+      if (newValue.trim()) {
+        this.serachChatList();
+      } else {
+        // 검색어가 비어 있으면 기본 리스트로 복원
+        this.roomList = [];
+        this.getchatRoomList();
+      }
+    }
   },
 
   methods: {
-
     async getchatRoomList() {
-      try{       
-
-      const requestBody = {
+      try {       
+        const requestBody = {
           access_token: this.$getAccessToken()
-        }
+        };
        
-      // 채팅방 리스트 가져오기
-      const response = await this.$api(`/chat/getlist`, requestBody, "post");      
-      this.roomList = response.roomList;
-      console.log("룸리스트", this.roomList);
-    // } 
-    }catch(error){
-      alert("채팅방 리스트를 불러올 수 없습니다");
-      console.error(error);
-
-    }      
+        // 채팅방 리스트 가져오기
+        const response = await this.$api(`/chat/getlist`, requestBody, "post");      
+        this.roomList = response.roomList;
+        console.log("룸리스트", this.roomList);
+      } catch (error) {
+        alert("채팅방 리스트를 불러올 수 없습니다");
+        console.error(error);
+      }      
     },
-    async clickeToChatRoom(chat_list_id){
-            try{
-                await this.$router.push({name : 'Chatroom' , query : {data: this.$encrypt(chat_list_id)}});
-            }
-            catch(err){
-                console.error(err);
-            }
-        },
+
+    async serachChatList() {
+      try {
+        const requestBody = {
+          access_token: this.$getAccessToken(),
+          text: this.searchText
+        };
+
+        // 서치 결과 가져오기
+        const response = await this.$api(`/chat/search`, requestBody, "post");     
+        this.searchList = response.searchList; // 검색 결과를 searchList에 저장
+        console.log("서치결과", response);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+
+    
+    async clickeToChatRoom(chat_list_id) {
+      try {
+        await this.$router.push({ name: 'Chatroom', query: { data: this.$encrypt(chat_list_id) } });
+      } catch (err) {
+        console.error(err);
+      }
+    },
 
     connectToServer() {
       this.$socket.on("connect", () => {
-        console.log("Connected to server");
+        console.log("채팅방 리스트에 입장");
       });
     }
   }
 };
-
-
 </script>
+
 <style scoped>
        /* font */
        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 

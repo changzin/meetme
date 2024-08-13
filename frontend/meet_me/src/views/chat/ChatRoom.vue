@@ -22,7 +22,7 @@
           <!-- 상대방의 메시지일 경우 -->
           <div v-if="myuserId !== messageList.user_id">
             <div class="middle_left">
-              <img class="profile_circle" :src="this.$imageFileFormat(this.otherUserImage)">
+              <img class="profile_circle" :src="this.$imageFileFormat(this.otherUserImage)" @click="clickeToprofile(this.otherUserId)" >
               <div class="middle_left_content">
                 <div class="left_name">{{ messageList.user_nickname }}</div>
                 <div class="middle_left_content2">
@@ -37,7 +37,6 @@
               </div>
             </div>
           </div>
-
           <!-- 사용자의 메시지일 경우 -->
           <div v-else>
             <div class="middle_right">
@@ -70,7 +69,6 @@
               </div>
             </div>
           </div>
-
           <!-- 사용자의 메시지일 경우 -->
           <div v-else>
             <div class="middle_right">
@@ -88,8 +86,15 @@
     <form id="chat-form" @submit.prevent="sendChat">
       <div class="container_bottom">
         <div class="container_bottom_box">
-          <div class="gallery_icon">
+          <div class="gallery_icon" @click="triggerFileInput">
             <img src="../../../public/icon/chat/gallery.svg" />
+            <input 
+              type="file" 
+              ref="fileInput" 
+              accept="image/*" 
+              @change="handleFileChange" 
+              style="display: none;" 
+            />
           </div>
           <input
             class="box_chat"
@@ -105,6 +110,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   data() {
@@ -114,16 +120,28 @@ export default {
       userSocketId: "", // 현재 사용자의 socketId
       userData: {},
       myuserId: "",
-      chatUserId : "",
-      chatDate : "",
+      chatUserId: "",
+      chatDate: "",
       messageList: [],
       otherUserName: "",
-      otherUserImage:""
-
+      otherUserImage: "",
+      otherUserId: "",
+      chatListId: "", // 현재 채팅방 ID를 저장할 변수
+      imagePath: ""
     };
   },
+
   async created() {
     this.connectToServer();
+
+    // chatListId를 복호화하여 설정
+    let chat_list_id = this.$route.query.data;
+    chat_list_id = this.$decrypt(chat_list_id);
+    this.chatListId = chat_list_id;
+
+    // 특정 채팅방에 join
+    this.$socket.emit("join", { room: this.chatListId }); // 추가된 부분
+
     this.getUserId();
     this.getMessageList();
     this.getOtherUserInfo();
@@ -136,116 +154,123 @@ export default {
     // receiveMessage 리스너를 설정
     this.$socket.on("receiveMessage", (data) => {
       console.log("New message data:", data);
-      // data.message에서 실제 메시지 문자열을 추출하여 업데이트
       this.chatData.push(data.message);
       this.scrollToBottom();
     });
   },
+
   beforeUnmount() {
     this.$socket.off("receiveMessage");
     this.$socket.off("connect");
   },
-  
+
   methods: {
     chatModal() {
       this.$store.commit("setModalOn");
     },
 
-    async getUserId(){
-        try{
+    async getUserId() {
+      try {
         const requestBody = {
-          access_token : this.$getAccessToken()
+          access_token: this.$getAccessToken()
         };
 
-        const response = await this.$api(`/chat/finduser`, requestBody, "post"); 
+        const response = await this.$api(`/chat/finduser`, requestBody, "post");
         console.log("유저아이디", response);
         this.myuserId = response.userId;
-        }catch(error){
-          console.error("로그인 상태가 아닙니다");
-        }
+      } catch (error) {
+        console.error("로그인 상태가 아닙니다");
+      }
     },
+
     async getOtherUserInfo() {
-      try{       
+      try {
+        const requestBody = {
+          access_token: this.$getAccessToken(),
+          chatListId: this.chatListId
+        };
 
-      const requestBody = {
-          access_token: this.$getAccessToken()
-        }
-       
-      // 상대 유저 정보 가져오기
-      const response = await this.$api(`/chat/getotheruserinfo`, requestBody, "post");      
-      this.otherUserInfo = response.otherUserInfo[0];
-      this.otherUserName =  this.otherUserInfo.user_nickname;   
-      this.otherUserImage = this.otherUserInfo.user_image_path;
-      console.log(this.otherUserInfo);
-    
-    // } 
-    }catch(error){
-      alert("잘못된 접근입니다");
-      console.error(error);
+        // 상대 유저 정보 가져오기
+        const response = await this.$api(`/chat/getotheruserinfo`, requestBody, "post");
+        this.otherUserInfo = response.otherUserInfo[0];
+        this.otherUserName = this.otherUserInfo.user_nickname;
+        this.otherUserImage = this.otherUserInfo.user_image_path;
+        this.otherUserId = this.otherUserInfo.opponent_user_id;
 
-    }      
+        console.log(this.otherUserInfo);
+      } catch (error) {
+        alert("잘못된 접근입니다");
+        console.error(error);
+      }
     },
-    
+
     async getMessageList() {
-    try {
-      let chat_list_id = this.$route.query.data
-      chat_list_id = this.$decrypt(chat_list_id)
-      
-      const requestBody = {
-        chatListId : chat_list_id,
+      try {
+        const requestBody = {
+          chatListId: this.chatListId, // chatListId 설정된 후 사용
+          access_token: this.$getAccessToken()
+        };
 
-        access_token : this.$getAccessToken()
-      };
+        const response = await this.$api(`/chat/getmessage`, requestBody, "post");
+        this.messageList = response.messageList;
+        console.log("메세지리스트", this.messageList);
+        this.scrollToBottom();
+      } catch (error) {
+        console.error("Error in sendChat:", error);
+      }
+    },
+    async clickeToprofile(user_id){
+      try {
+        await this.$router.push({ name: 'ProfileDetail', query: { data: this.$encrypt(user_id) } });
+      } catch (err) {
+        console.error(err);
+      }
+    },
 
-      const response = await this.$api(`/chat/getmessage`, requestBody, "post");   
-      this.messageList = response.messageList;
-      console.log("메세지리스트", this.messageList);
-      this.scrollToBottom();
-    } catch (error) {
-      console.error("Error in sendChat:", error);
-    }
+  triggerFileInput() {
+    this.$refs.fileInput.click(); // file input을 강제로 클릭하여 파일 선택 창을 엽니다.
   },
-    
+
 
     async sendChat() {
-   try {
-    // 먼저 getUserId 메소드를 호출하여 userId를 가져옵니다.
-    await this.getUserId();
+      try {
+        // 먼저 getUserId 메소드를 호출하여 userId를 가져옵니다.
+        await this.getUserId();
 
-    const now = new Date();
-    const chatDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-    
-    // message 객체에 userId를 포함시킵니다.
-    const message = {
-      text: this.newChat,
-      image: "",
-      userId: this.myuserId, // 가져온 userId를 여기에 포함합니다.
-      chatDate
-      
-    };
+        const now = new Date();
+        const chatDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
-    // 소켓을 통해 message 객체를 전송합니다.
-    this.$socket.emit("sendMessage", { message });
+        // message 객체에 userId와 chatListId를 포함시킵니다.
+        const message = {
+          text: this.newChat,
+          image: this.imagePath,
+          userId: this.myuserId,
+          chatDate,
+          room: this.chatListId // 채팅방 ID를 포함 - 수정된 부분
+        };
 
-    this.scrollToBottom();
+        // 소켓을 통해 message 객체를 특정 방으로 전송합니다.
+        this.$socket.emit("sendMessage", { message, room: this.chatListId }); // 수정된 부분
 
-    const requestBody = {
-      roomId: "1",
-      access_token: this.$getAccessToken(),
-      chatDate: chatDate,
-      text: this.newChat,
-      chatView: "T",
-      image: ""
-    };
-    console.log("지금챗", this.newChat);
+        this.scrollToBottom();
 
-    const response = await this.$api(`/chat/saveChat`, requestBody, "post");   
-    this.chatUserId = response.userId;
-    this.newChat = "";
-  } catch (error) {
-    console.error("Error in sendChat:", error);
-  }
-  },
+        const requestBody = {
+          roomId: this.chatListId, // 채팅방 ID 사용
+          access_token: this.$getAccessToken(),
+          chatDate: chatDate,
+          text: this.newChat,
+          chatView: "T",
+          image: ""
+        };
+        console.log("지금챗", this.newChat);
+
+        const response = await this.$api(`/chat/saveChat`, requestBody, "post");
+        this.chatUserId = response.userId;
+        this.newChat = "";
+      } catch (error) {
+        console.error("Error in sendChat:", error);
+      }
+    },
 
     scrollToBottom() {
       this.$nextTick(() => {
@@ -253,12 +278,12 @@ export default {
         container.scrollTop = container.scrollHeight;
       });
     },
+
     connectToServer() {
       this.$socket.on("connect", () => {
         console.log("Connected to server");
       });
-    },
-    
+    }
   }
 };
 </script>
@@ -347,20 +372,26 @@ export default {
       cursor: pointer;
       }
       div.middle_left_content{
-        /* border: 1px solid orange; */
+        /* border: 1px solid blue; */
         max-width: 405px;
+        display: flex;
+        flex-direction: column;
+
      }
      div.left_name{
+      margin-top: 5px;
         text-align: left;
         font-weight: bold;
+        /* border: 1px solid red; */
      }
      div.middle_left_content2{
         /* border: 1px solid red; */
         display: flex;
         gap: 5px;
         align-items: flex-end;
-        margin-top: 10px;
+        margin-top: 5px;
         word-break: break-all;
+        /* border: 1px solid red; */
      }
      .box_content_left{
         width: auto;
@@ -376,11 +407,16 @@ export default {
      }
      .time{
        color: #888888;
+       font-size: 12px;
+      
     }
     .check_icon{
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
+        margin-bottom: 5px;
+        
         /* background-color: aqua; */
+        /* border: 1px solid violet */
      }
 
      /* 나의 채팅 */
@@ -400,18 +436,11 @@ export default {
      }
 
 
-
-
-
      div.middle_left_hidden{
         display: grid;
         grid-template-columns: 80px auto;
         /* border: 1px solid red; */
      }
-     
- 
-
-
 
      div.left_name_hidden{
         font-weight: bold;

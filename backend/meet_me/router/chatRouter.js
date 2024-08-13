@@ -1,5 +1,5 @@
 const express = require('express');
-const {getChatRoomList, saveChat, findUser, getMessageList,getOtherUserInfo } = require('../controller/chatController');
+const {getChatRoomList, saveChat, findUser, getMessageList,getOtherUserInfo,searchChat } = require('../controller/chatController');
 const { loginCheck } = require('../middleware/login.js');
 
 const router = express.Router();
@@ -10,6 +10,7 @@ router.post('/savechat', loginCheck, saveChat);
 router.post('/finduser', loginCheck, findUser);
 router.post('/getmessage', loginCheck, getMessageList);
 router.post('/getotheruserinfo',loginCheck, getOtherUserInfo);
+router.post('/search', loginCheck, searchChat);
 
 
 module.exports = router;
