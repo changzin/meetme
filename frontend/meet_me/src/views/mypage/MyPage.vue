@@ -52,7 +52,7 @@
                             밋미 사연 보내기
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'DeleteUser'})">
                         <img class="button_icon_warning" src="/icon/mypage/main/warning.svg" width="60">
                         <div class="button_icon">
                             회원탈퇴
