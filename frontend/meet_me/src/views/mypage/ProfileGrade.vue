@@ -74,17 +74,17 @@ export default {
         },
         async makeReGrade(){
             try{
+                const userConfirmed = confirm("300코인으로 등급을 재측정하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
                     return;
                 }
 
-                const userConfirmed = confirm("300코인으로 등급을 재측정하시겠습니까?");
-                // 확인을 눌렀을 경우
-                if (!userConfirmed) {
-                    return;
-                }
                 
                 const result = await this.$api('/user/regrade', {access_token: this.$getAccessToken(), useCoin: 300}, "POST");
                 if (result.status == 200){

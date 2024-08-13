@@ -591,7 +591,7 @@ exports.sendMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
     const useCoin = req.body.useCoin;
-
+    console.log(useCoin);
     query = `UPDATE user
     SET user_coin = user_coin - ?
     WHERE user_id=?`;
