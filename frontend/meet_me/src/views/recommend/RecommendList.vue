@@ -154,6 +154,11 @@ export default {
             this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
             try{
+                const userConfirmed = confirm("100코인으로 좋아요를 보내시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 100){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
@@ -180,6 +185,11 @@ export default {
         },
         async sendMatching(user_id2) {
             try {
+                const userConfirmed = confirm("300코인으로 매칭 신청하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
@@ -243,6 +253,11 @@ export default {
         },
         async reroll(){
             try{
+                const userConfirmed = confirm("300코인으로 추천 리스트를 추가하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
