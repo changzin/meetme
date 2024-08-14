@@ -6,7 +6,7 @@
             </div>
             <div class="profile_box">
                 <div>
-                    <img src="/B.png">
+                    <img class="jpg" src="/KakaoTalk_20240814_161650916.jpg">
                 </div>
                 <div class="store_subtitle">
                     <div class="regular_black_font">
@@ -278,5 +278,8 @@ export default {
     width:100%;
     justify-content: space-between;
     display: flex;
+}
+.jpg{
+    width: 568px;
 }
 </style>
