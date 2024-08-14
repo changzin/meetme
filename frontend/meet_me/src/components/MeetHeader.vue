@@ -160,7 +160,6 @@ export default {
       }
     },
     async verifyUser(){
-      console.log('asdhkasblajsfblajfb')
       try{
         const requestBody = {
           access_token: this.$getAccessToken()

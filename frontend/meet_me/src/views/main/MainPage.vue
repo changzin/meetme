@@ -103,10 +103,6 @@ export default {
                         const result = await this.$api(`/main/list`, requestBody , "POST");
                         
                         this.List = result.mainList
-                        console.log(this.List);
-
-                        // this.recommendList = result;
-                        // this.results = result.results;
                         let heartList = result.getHeart;
                         let matchingList = result.getMatching
                         this.List = result.mainList.map(user => {
@@ -128,9 +124,6 @@ export default {
                                 }                                                                
                             }                            
                         }
-                        
-                        console.log("recommendList>>>>>>" ,this.recommendList)
-                        
                     }
                     catch(err){
                         console.error(err);
@@ -138,11 +131,8 @@ export default {
             },
             
             async heart(user){  
-                // this.visibleModal = !this.visibleModal;
-                // this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
-
                 try{
-                    if (this.userCoin < 100){
+                    if (this.userCoin < 100){   
                         alert("사용자의 보유 코인이 모자랍니다!")
                         this.$router.push({name: 'mypagestore'});
                         return;

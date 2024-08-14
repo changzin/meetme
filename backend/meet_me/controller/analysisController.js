@@ -61,10 +61,6 @@ exports.analysis = async(req, res)=>{
 
         const monthlyMatchingData = await db(conn, query);
 
-        console.log(genderRateData);
-        console.log(genderAgeData);
-        console.log(monthlyProfitData);
-        console.log(monthlyMatchingData);
         responseBody = {
             status: 200,
             genderRateData: genderRateData,

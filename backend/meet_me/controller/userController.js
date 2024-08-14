@@ -814,7 +814,6 @@ exports.enterPhoto = async (req, res) => {
       result = await db(conn, query, [userId, imagePath]);
     }
 
-    console.log(score);
     query = `UPDATE user 
                 SET user_profile_entered='T', user_grade_id=?
                 WHERE user_id=?`;
