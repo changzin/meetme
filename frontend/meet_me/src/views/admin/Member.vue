@@ -223,7 +223,6 @@ export default {
     },
     async created(){
         await this.getUserList();
-        console.log(this.detailData)
     }
 }
 </script>

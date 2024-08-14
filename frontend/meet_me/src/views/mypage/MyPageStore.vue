@@ -32,7 +32,6 @@
     </div>
 </template>
 <script>
-// import axios from 'axios';
 export default {	
     data() {
         return {
@@ -89,7 +88,6 @@ export default {
                     access_token: this.$getAccessToken(),                                
                     coin_product_id: coinProduct.coin_product_id,
                     coinUpdate: coinProduct.coin_product_price,
-
                 };
                 await this.$api("/payment/intopayment", requestBody, "POST");
             } catch (err) {
@@ -118,17 +116,13 @@ export default {
                 },
                 async (rsp) => {  // 콜백 함수에 async 추가
                     if (rsp.success) {
-                        console.log("rsp>>>", rsp);
                         try {
                             let requestBody = {
                                 access_token: this.$getAccessToken(),
                                 coin_product_id: this.coin_product.coin_product_id,
                                 payment_id: this.payment.payment_id,
                             };
-
-                            
                             let result = await this.$api("/payment/intopayment", requestBody, "POST");
-                            console.log("requestBody>>>", requestBody);
                             console.log(result);
                         } catch (err) {
                             console.error("결제 처리 중 오류:", err);

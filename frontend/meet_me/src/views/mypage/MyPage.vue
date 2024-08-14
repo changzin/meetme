@@ -86,8 +86,6 @@ export default {
             try{
                 const result = await this.$api(`/user/mypageprofile`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
-                
-                console.log(this.userData)
             }catch(err){
                 console.log(err);
             }
