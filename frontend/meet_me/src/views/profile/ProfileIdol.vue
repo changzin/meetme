@@ -293,7 +293,6 @@ export default {
       try {
         const result = await this.$api(`/user/idollist`, {}, "POST");
         this.idolList = result.idolList;
-        console.log(this.idolList);
       } catch (err) {
         console.log(err);
       }

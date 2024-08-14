@@ -69,7 +69,6 @@ export default {
             // if(index === 1){
             //     this.selectedIds.
             // }
-            console.log(this.selectedIds);
             
         },
 
@@ -80,11 +79,9 @@ export default {
         async fetchFeature(){
             const requestBody = {}
             const response = await this.$api(`/userFeature/list`,requestBody,"GET")
-            console.log(response);
             
             if(response.status == 200){
                 this.userFeature = response.userFeature;
-                console.log(this.userFeature);
             }
 
         },
@@ -97,7 +94,6 @@ export default {
                 access_token: this.$getAccessToken(),
                 user_feature_id : this.selectedIds
                 }
-                console.log(this.access_token);
                 const featureId = await this.$api("/userFeature/insert",requestBody,"POST") 
                 console.log(featureId);
                 //다음 페이지로 넘어가는 함수 추가 
