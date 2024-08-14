@@ -75,7 +75,6 @@ export default {
         async getHeart(){
             const result = await this.$api(`/user/getheart`, {access_token : this.$getAccessToken()},"POST");
             this.heartData = result.heart;
-            console.log('ssssssssssssssssssss',this.heartData)
         },
         async deleteMatching(user_id2){
             try{

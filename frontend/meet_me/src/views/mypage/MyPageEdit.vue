@@ -470,7 +470,6 @@ export default {
           }
         }
         // this.profile = result.user.user_image_paths;
-        console.log(this.userData);
       } catch (err) {
         console.log(err);
       }
@@ -495,7 +494,6 @@ export default {
     },
     async edit() {
       const userInfo = this.userData;
-      console.log(userInfo);
       try {
         await this.$api(
           `/user/updateprofile`,
@@ -522,7 +520,6 @@ export default {
             if(!this.userData.user_add){
                 new window.daum.Postcode({
                     oncomplete: (data) => {
-                    console.log(data);
                     const add1 = data.sido;
                     const add2 = data.sigungu;
                     this.userData.user_add = `${add1} ${add2}`;
@@ -531,7 +528,6 @@ export default {
             }else {
                 new window.daum.Postcode({
                     oncomplete: (data) => {
-                    console.log(data)
                     const add1 = data.sido;
                     const add2 = data.sigungu;
                     this.userData.user_add = `${add1} ${add2}`;

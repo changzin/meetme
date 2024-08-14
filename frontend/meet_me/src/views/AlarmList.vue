@@ -110,8 +110,6 @@ export default {
             try{
                 const result = await this.$api(`/user/getalarm`, {access_token: this.$getAccessToken()}, "POST");
                 this.alarmData = result.alarm;
-                console.log('getAlarm', this.alarmData)
-
             }catch(err){
                 console.log(err)
             }
