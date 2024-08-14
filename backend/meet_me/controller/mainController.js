@@ -14,8 +14,10 @@ exports.main = async(req, res)=>{
                 FROM user AS u
                 JOIN main_list AS m 
                 ON u.user_id = m.user_id
-                AND u.user_gender != (SELECT user_gender FROM user WHERE user_id = ?)`;
-        results = await db(conn, query, [user_id1]);
+                AND u.user_gender != (SELECT user_gender FROM user WHERE user_id = ?)
+                AND u.user_id NOT IN (SELECT user_id1 AS user_id FROM user_block WHERE user_id2=?)
+                AND u.user_id NOT IN (SELECT user_id2 AS user_id FROM user_block WHERE user_id1=?)`;
+        results = await db(conn, query, [user_id1 , user_id1 , user_id1]);
 
         
         query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;

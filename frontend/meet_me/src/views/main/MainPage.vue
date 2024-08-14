@@ -38,12 +38,8 @@
                             <img v-if="!user.giveMatching" src="/icon/main_recommend/airplane.svg" @click="sendMatching(user)" class="airplane">
                             <img v-if="user.giveMatching" src="/icon/main_recommend/airplane_delete.svg" class="airplane">
 
-
                             <img v-if="!user.giveHeart" src="/icon/main_recommend/heart.svg" alt="Image 1" @click="heart(user)" class="heart" />
                             <img v-if="user.giveHeart" src="icon/main_recommend/heart_delete.svg" alt="Image 2" class="heart"/>
-
-
-                            <img src="/icon/main_recommend/delete.svg" @click="userDelete(user.user_id)" class="delete">
                         </div>
                     </div>
                 </div>
@@ -189,26 +185,6 @@ export default {
                     }
                     
                 }catch(err){
-                    console.error(err);
-                }
-            },
-            async userDelete(user_id2){  
-                try{
-                    let requestBody = {
-                        access_token: this.$getAccessToken(),
-                        user_id2
-                    };
-
-                    const result = await this.$api(`/main/userdelete`, requestBody , "POST");
-                    this.delete = result,
-                    this.message = result.message;
-
-                    this.List = this.List.filter((user) => {
-                        // 함수의 매개변수로 받은 user_id를 가지고 있는 놈만 false가 나오도록 짜면됨.
-                        return user.user_id != user_id2;
-                    });
-                }
-                catch(err){
                     console.error(err);
                 }
             },
@@ -399,6 +375,7 @@ export default {
     margin-top: 11px;
 }
 .action_btn_container {
+    margin-right: 40px;
     position: absolute;
     z-index: 5;
     bottom: 15px;
@@ -415,9 +392,6 @@ export default {
     cursor: pointer;
 }
 .heart{
-    cursor: pointer;
-}
-.delete{
     cursor: pointer;
 }
 .next_img{
