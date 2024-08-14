@@ -17,7 +17,7 @@
     </div>
     <div class="container_white">
       <div class="container_middle" ref="containerMiddle">
-        <!--불러온 채팅-->
+        <!-- 불러온 채팅 -->
         <div v-for="(messageList, index) in messageList" :key="index">
           <!-- 상대방의 메시지일 경우 -->
           <div v-if="myuserId !== messageList.user_id">
@@ -28,6 +28,7 @@
                 <div class="middle_left_content2">
                   <div class="box_content_left">
                     {{ messageList.chat_content }}
+                    <img v-if="messageList.image" :src="'data:image/jpeg;base64,' + messageList.image" class="chat-image"/>
                   </div>
                   <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
                   <div class="check_icon">
@@ -43,13 +44,16 @@
               <div class="middle_right_content">
                 <div class="check_icon"></div>
                 <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
-                <div class="box_content_right"> {{ messageList.chat_content }}</div>
+                <div class="box_content_right">
+                  {{ messageList.chat_content }}
+                  <img v-if="messageList.image" :src="'data:image/jpeg;base64,' + messageList.image" class="chat-image"/>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!--실시간 채팅-->
+        <!-- 실시간 채팅 -->
         <div v-for="(chatData, index) in chatData" :key="index">
           <!-- 상대방의 메시지일 경우 -->
           <div v-if="myuserId !== chatData.userId">
@@ -59,7 +63,8 @@
                 <div class="left_name">{{ this.otherUserName }}</div>
                 <div class="middle_left_content2">
                   <div class="box_content_left">
-                    {{ chatData.text }}
+                    {{ chatData.text }}   
+                    <img v-if="chatData.image" :src="'data:image/jpeg;base64,' + chatData.image" class="chat-image"/>                
                   </div>
                   <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
                   <div class="check_icon">
@@ -75,7 +80,10 @@
               <div class="middle_right_content">
                 <div class="check_icon"></div>
                 <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
-                <div class="box_content_right">{{ chatData.text }}</div>
+                <div class="box_content_right">
+                  {{ chatData.text }}
+                  <img v-if="chatData.image" :src="'data:image/jpeg;base64,' + chatData.image" class="chat-image"/>
+                </div>
               </div>
             </div>
           </div>
@@ -84,34 +92,38 @@
     </div>
 
     <form id="chat-form" @submit.prevent="sendChat">
-      <div class="container_bottom">
-        <div class="container_bottom_box">
-          <div class="gallery_icon" @click="triggerFileInput">
-            <img src="../../../public/icon/chat/gallery.svg" />
-            <input 
-              type="file" 
-              ref="fileInput" 
-              accept="image/*" 
-              @change="handleFileChange" 
-              style="display: none;" 
-            />
-          </div>
-          <input
-            class="box_chat"
-            v-model="newChat"
-            placeholder="메시지를 입력하세요"
-          />
-          <div class="send_icon" @click="sendChat">
-            <img src="../../../public/icon/chat/send.svg" />
-          </div>
-        </div>
+  <div class="container_bottom">
+    <div class="container_bottom_box">
+      <div class="gallery_icon" @click="triggerFileInput">
+        <img src="../../../public/icon/chat/gallery.svg" />
+        <input 
+          type="file" 
+          ref="fileInput" 
+          accept="image/*" 
+          @change="handleFileChange" 
+          style="display: none;" 
+        />
       </div>
-    </form>
+      <textarea
+        class="box_chat"
+        v-model="newChat"
+        placeholder="메시지를 입력하세요"
+        @keydown.enter.prevent="sendChat"
+      ></textarea>
+      <div v-if="imagePath" class="chat-image">
+        <img :src="'data:image/jpeg;base64,' + imagePath" alt="Image preview" class="preview-image"/>
+      </div>
+      <div class="send_icon" @click="sendChat">
+        <img src="../../../public/icon/chat/send.svg" />
+      </div>
+    </div>
+  </div>
+</form>
   </div>
 </template>
 
-
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -127,7 +139,8 @@ export default {
       otherUserImage: "",
       otherUserId: "",
       chatListId: "", // 현재 채팅방 ID를 저장할 변수
-      imagePath: ""
+      imagePath: "",  // Base64 인코딩된 이미지 데이터
+      photo: null
     };
   },
 
@@ -231,6 +244,89 @@ export default {
     this.$refs.fileInput.click(); // file input을 강제로 클릭하여 파일 선택 창을 엽니다.
   },
 
+  async handleFileChange(event) {
+    const file = event.target.files[0];
+    
+    this.imagePath = await this.$base64(file);
+    console.log(this.imagePath);
+},
+dataURLtoBlob(dataURL) {
+      const parts = dataURL.split(",");
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    },
+    // Blob처리 해서 요청을 보낸다.
+
+  async clickToPost() {
+      let photoList = [];
+
+      
+      photoList.push(this.dataURLtoBlob(this.imagePath));
+      
+      await this.patchRequestForMulter("/chat/uploadimage", photoList, {
+        access_token: this.$getAccessToken(),
+        fileType: "profile",
+      });
+    },
+    // axios로 요청을 보내고 받음.
+    /**
+     *
+     * @param endpoint : url이 들어감.
+     * @param payload : formdata가 들어감
+     * @param importantHeaders : Content-type: multipart/form-data
+     */
+    async patchRequest(endpoint, payload = null, importantHeaders = {}) {
+      try {
+        const config = { headers: importantHeaders };
+        const response = await axios.post(endpoint, payload, config);
+        console.log(response);
+        if (response.status >= 400) {
+          this.$router.push({
+            name: "ErrorPage",
+            query: { message: response.data.message },
+          });
+        } else {
+          this.$router.push({
+            name: "MainPage",
+          });
+        }
+        return response.data;
+      } catch (error) {
+        alert("예기치 못한 에러가 발생하였습니다.");
+      }
+    },
+    // 요청을 보내기 위한 HTTP request 디자인 + HTTP 요청을 보내는 함수 발동
+    async patchRequestForMulter(url, images, additionalInfo) {
+      const formData = this.makeFormDataForMulter(images, additionalInfo);
+      await this.patchRequest(url, formData, {
+        "Content-Type": "multipart/form-data",
+      });
+    },
+    makeFormDataForMulter(images, additionalInfo) {
+      const formData = new FormData();
+
+      if (Array.isArray(images)) {
+        images.forEach((image, index) => {
+          formData.append("image", image, `image${index}.png`);
+        });
+      } else {
+        formData.append("image", images, "image.png");
+        formData.append("imageIndex", 0);
+      }
+      if (additionalInfo) {
+        Object.keys(additionalInfo).forEach((key) => {
+          formData.append(key, additionalInfo[key]);  
+        });
+      }
+      return formData;
+    },
+
 
     async sendChat() {
       try {
@@ -266,7 +362,13 @@ export default {
 
         const response = await this.$api(`/chat/saveChat`, requestBody, "post");
         this.chatUserId = response.userId;
-        this.newChat = "";
+        // 상태 리셋
+      this.chatUserId = response.userId;
+      this.newChat = "";
+      this.imagePath = ""; // 이미지 경로 초기화
+
+      // 미리보기 이미지 삭제
+      this.$refs.fileInput.value = ""; // 파일 입력 초기화
       } catch (error) {
         console.error("Error in sendChat:", error);
       }
@@ -283,7 +385,10 @@ export default {
       this.$socket.on("connect", () => {
         console.log("Connected to server");
       });
-    }
+    },
+
+    // 이미지 저장
+    
   }
 };
 </script>
@@ -564,6 +669,12 @@ export default {
       border-radius: 50px;
       background-color: #f5f5f5;
       visibility: hidden;
+      }
+      .chat-image{
+        max-width: 100%; /* 부모 요소의 너비에 맞게 이미지 크기 조절 */
+        max-height: 200px; /* 이미지의 최대 높이 설정 (필요에 따라 조정) */
+        object-fit: contain; /* 이미지의 비율을 유지하면서 박스에 맞게 조절 */
+
       }
   
 </style>

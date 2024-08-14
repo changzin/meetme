@@ -26,7 +26,7 @@ dir = path.join(__dirname, `./uploads/profile`);
 if(!fs.existsSync(dir)){
     fs.mkdirSync(dir);
 }
-dir = path.join(__dirname, `./uploads/chat`);
+dir = path.join(__dirname, `./uploads/chats`);
 if(!fs.existsSync(dir)){
     fs.mkdirSync(dir);
 }
