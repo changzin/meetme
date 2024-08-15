@@ -16,7 +16,7 @@
     <div class="card">
       <h2 class="card-title">관리 중인 서비스들은 해지되지 않아요</h2>
       <p class="card-description">
-        믹미를 탈퇴해도 믹미에서 관리 중인 구독 서비스와 생활 지출은 해지되지
+        탈퇴해도 MEETME에서 관리 중인 구독 서비스와 생활 지출은 해지되지
         않아요. <br />
         서비스 해지를 원해 탈퇴하는 거라면 절대 탈퇴하시면 안 돼요.
       </p>
@@ -49,11 +49,11 @@ export default {
 
   methods: {
     clickToCancel() {
-      this.$router.push({ name: "loginuser" });
+      this.$router.push({ name: "MyPage" });
     },
     clickToDelete() {
       // "정말로 취소하겠습니까?"라는 메세지와 확인 + 취소 버튼이 뜸
-      const userConfirmed = confirm("정말로 취소하겠습니까?");
+      const userConfirmed = confirm("정말로 탈퇴하겠습니까?");
       // 확인을 눌렀을 경우
       if (userConfirmed) {
         this.gotoDelete();
