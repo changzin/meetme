@@ -327,7 +327,7 @@
               문신 여부
             </option>
             <option class="dropdown_item" value="T">문신 있음</option>
-            <option class="dropdown_item" value="F">문신</option>
+            <option class="dropdown_item" value="F">문신 없음</option>
           </select>
         </div>
 
@@ -549,6 +549,7 @@ export default {
       }
       if(this.form.inputAge < 19 || this.form.inputAge > 100 ){
         alert(this.form.inputAge < 19 ? "만 19세 이상 가입 가능합니다." : "100세 이하 가입 가능합니다.")
+        this.form.inputAge = null;
       }
       this.activeInput = null;
     },
@@ -570,7 +571,7 @@ export default {
       }
       if (this.form.inputWeight > 200) {
         alert("몸무게 200 이하 입력해주세요");
-        this.form.inputHeight = null;
+        this.form.inputWeight = null;
       }
       this.activeInput = null;
       
