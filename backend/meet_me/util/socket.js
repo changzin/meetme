@@ -30,7 +30,6 @@ const socketSetup = (server) => {
             console.log(`sendMessage to room ${room}:`, message);
 
             // 여기서 저장
-
             const image = message.image;
 
             if (image){
@@ -64,7 +63,10 @@ const socketSetup = (server) => {
                 console.log("-------------------------------------")
 
                 // 여기서 insert문 작성
-                console.log(filePath);
+                const dbFilePath = path.relative('uploads', filePath);
+
+                // message 객체에 dbfilepath를 저장
+                message.filePath = dbFilePath;
                 // 
 
             }                        

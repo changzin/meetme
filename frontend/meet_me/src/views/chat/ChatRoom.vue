@@ -27,13 +27,10 @@
                 <div class="left_name">{{ messageList.user_nickname }}</div>
                 <div class="middle_left_content2">
                   <div class="box_content_left">
-                    {{ messageList.chat_content }}
-                    <img v-if="messageList.image" :src="'data:image/jpeg;base64,' + messageList.image" class="chat-image"/>
+                    <img v-if="messageList.chat_image_path" :src="$imageFileFormat(messageList.chat_image_path)" class="chat-image"/>
+                    {{ messageList.chat_content }}         
                   </div>
                   <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
-                  <div class="check_icon">
-                    <img src="../../../public/icon/chat/check.svg" />
-                  </div>
                 </div>
               </div>
             </div>
@@ -42,17 +39,18 @@
           <div v-else>
             <div class="middle_right">
               <div class="middle_right_content">
-                <div class="check_icon"></div>
+                <div class="check_icon">
+                    <img src="../../../public/icon/chat/check.svg" />
+                  </div>
                 <div class="time">{{ $timeFormatChat(messageList.chat_create_date)}}</div>
                 <div class="box_content_right">
+                  <img v-if="messageList.chat_image_path" :src="$imageFileFormat(messageList.chat_image_path)" class="chat-image"/>
                   {{ messageList.chat_content }}
-                  <img v-if="messageList.image" :src="'data:image/jpeg;base64,' + messageList.image" class="chat-image"/>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <!-- 실시간 채팅 -->
         <div v-for="(chatData, index) in chatData" :key="index">
           <!-- 상대방의 메시지일 경우 -->
@@ -62,14 +60,11 @@
               <div class="middle_left_content">
                 <div class="left_name">{{ this.otherUserName }}</div>
                 <div class="middle_left_content2">
-                  <div class="box_content_left">
-                    {{ chatData.text }}   
-                    <img v-if="chatData.image" :src="'data:image/jpeg;base64,' + chatData.image" class="chat-image"/>                
+                  <div class="box_content_left"> 
+                    <img v-if="chatData.image" :src="`${chatData.image.split(',')[0]},${chatData.image.split(',')[1]}`" class="chat-image"/>       
+                    {{ chatData.text }}  
                   </div>
                   <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
-                  <div class="check_icon">
-                    <img src="../../../public/icon/chat/check.svg" />
-                  </div>
                 </div>
               </div>
             </div>
@@ -78,11 +73,13 @@
           <div v-else>
             <div class="middle_right">
               <div class="middle_right_content">
-                <div class="check_icon"></div>
+                <div class="check_icon">
+                    <img src="../../../public/icon/chat/check.svg" />
+                  </div>
                 <div class="time">{{ $timeFormatChat(chatData.chatDate)}}</div>
                 <div class="box_content_right">
-                  {{ chatData.text }}
-                  <img v-if="chatData.image" :src="'data:image/jpeg;base64,' + chatData.image" class="chat-image"/>
+                  <img v-if="chatData.image" :src="`${chatData.image.split(',')[0]},${chatData.image.split(',')[1]}`" class="chat-image"/>       
+                  {{ chatData.text }}  
                 </div>
               </div>
             </div>
@@ -97,7 +94,7 @@
       <div class="gallery_icon" @click="triggerFileInput">
         <img src="../../../public/icon/chat/gallery.svg" />
         <input 
-          type="file" 
+          type="file"
           ref="fileInput" 
           accept="image/*" 
           @change="handleFileChange" 
@@ -107,23 +104,38 @@
       <textarea
         class="box_chat"
         v-model="newChat"
-        placeholder="메시지를 입력하세요"
+        placeholder="메세지를 입력하세요"
         @keydown.enter.prevent="sendChat"
-      ></textarea>
-      <div v-if="imagePath" class="chat-image">
-        <img :src="'data:image/jpeg;base64,' + imagePath" alt="Image preview" class="preview-image"/>
-      </div>
+      >      
+    </textarea>
       <div class="send_icon" @click="sendChat">
         <img src="../../../public/icon/chat/send.svg" />
       </div>
     </div>
   </div>
 </form>
+    <!-- 이미지 모달 -->
+    <div
+      v-if="imagePath" 
+      class="modal-overlay"
+      @click="handleOverlayClick"
+    >
+      <div class="modal-popup" ref="modalPopup" @click.stop>
+        <div class="modal-title">선택된 사진</div>
+        <div class="modal-description">
+          <img v-if="imagePath" :src="imagePath" class="chat-image"/>       
+        </div>
+        <div class="modal-divider"></div>
+        <div class="modal-select-div">
+          <div class="modal-select-left" style="cursor: pointer;" @click="no_click">취소</div>
+          <div class="modal-select-right" style="cursor: pointer;" @click="sendChat">전송</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 export default {
   data() {
     return {
@@ -140,12 +152,16 @@ export default {
       otherUserId: "",
       chatListId: "", // 현재 채팅방 ID를 저장할 변수
       imagePath: "",  // Base64 인코딩된 이미지 데이터
-      photo: null
+      filePath: "",
+      isModalVisible: true, // 모달
+      placeholder: "메세지를 입력하세요"
+
     };
   },
 
   async created() {
     this.connectToServer();
+    
 
     // chatListId를 복호화하여 설정
     let chat_list_id = this.$route.query.data;
@@ -153,21 +169,17 @@ export default {
     this.chatListId = chat_list_id;
 
     // 특정 채팅방에 join
-    this.$socket.emit("join", { room: this.chatListId }); // 추가된 부분
+    this.$socket.emit("join", { room: this.chatListId });
 
-    this.getUserId();
-    this.getMessageList();
-    this.getOtherUserInfo();
+    await this.getUserId();
+    await this.getMessageList();
+    await this.getOtherUserInfo();
 
-    // socketId 확인
-    this.$socket.on("connect", () => {
-      this.userSocketId = this.$socket.id;
-    });
 
     // receiveMessage 리스너를 설정
     this.$socket.on("receiveMessage", (data) => {
-      console.log("New message data:", data);
       this.chatData.push(data.message);
+      this.filePath = data.message.filePath || ""; // filePath가 없으면 빈 문자열로 설정
       this.scrollToBottom();
     });
   },
@@ -188,7 +200,7 @@ export default {
           access_token: this.$getAccessToken()
         };
 
-        const response = await this.$api(`/chat/finduser`, requestBody, "post");
+        const response = await this.$api('/chat/finduser', requestBody, "post");
         console.log("유저아이디", response);
         this.myuserId = response.userId;
       } catch (error) {
@@ -204,7 +216,7 @@ export default {
         };
 
         // 상대 유저 정보 가져오기
-        const response = await this.$api(`/chat/getotheruserinfo`, requestBody, "post");
+        const response = await this.$api('/chat/getotheruserinfo', requestBody, "post");
         this.otherUserInfo = response.otherUserInfo[0];
         this.otherUserName = this.otherUserInfo.user_nickname;
         this.otherUserImage = this.otherUserInfo.user_image_path;
@@ -220,19 +232,21 @@ export default {
     async getMessageList() {
       try {
         const requestBody = {
-          chatListId: this.chatListId, // chatListId 설정된 후 사용
+          chatListId: this.chatListId,
           access_token: this.$getAccessToken()
         };
 
-        const response = await this.$api(`/chat/getmessage`, requestBody, "post");
+        const response = await this.$api('/chat/getmessage', requestBody, "post");
         this.messageList = response.messageList;
         console.log("메세지리스트", this.messageList);
+
         this.scrollToBottom();
       } catch (error) {
-        console.error("Error in sendChat:", error);
+        console.error("Error in getMessageList:", error);
       }
     },
-    async clickeToprofile(user_id){
+
+    async clickeToprofile(user_id) {
       try {
         await this.$router.push({ name: 'ProfileDetail', query: { data: this.$encrypt(user_id) } });
       } catch (err) {
@@ -240,96 +254,30 @@ export default {
       }
     },
 
-  triggerFileInput() {
-    this.$refs.fileInput.click(); // file input을 강제로 클릭하여 파일 선택 창을 엽니다.
-  },
-
-  async handleFileChange(event) {
-    const file = event.target.files[0];
-    
-    this.imagePath = await this.$base64(file);
-    console.log(this.imagePath);
-},
-dataURLtoBlob(dataURL) {
-      const parts = dataURL.split(",");
-      const mime = parts[0].match(/:(.*?);/)[1];
-      const bstr = atob(parts[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new Blob([u8arr], { type: mime });
-    },
-    // Blob처리 해서 요청을 보낸다.
-
-  async clickToPost() {
-      let photoList = [];
-
-      
-      photoList.push(this.dataURLtoBlob(this.imagePath));
-      
-      await this.patchRequestForMulter("/chat/uploadimage", photoList, {
-        access_token: this.$getAccessToken(),
-        fileType: "profile",
-      });
-    },
-    // axios로 요청을 보내고 받음.
-    /**
-     *
-     * @param endpoint : url이 들어감.
-     * @param payload : formdata가 들어감
-     * @param importantHeaders : Content-type: multipart/form-data
-     */
-    async patchRequest(endpoint, payload = null, importantHeaders = {}) {
-      try {
-        const config = { headers: importantHeaders };
-        const response = await axios.post(endpoint, payload, config);
-        console.log(response);
-        if (response.status >= 400) {
-          this.$router.push({
-            name: "ErrorPage",
-            query: { message: response.data.message },
-          });
-        } else {
-          this.$router.push({
-            name: "MainPage",
-          });
-        }
-        return response.data;
-      } catch (error) {
-        alert("예기치 못한 에러가 발생하였습니다.");
-      }
-    },
-    // 요청을 보내기 위한 HTTP request 디자인 + HTTP 요청을 보내는 함수 발동
-    async patchRequestForMulter(url, images, additionalInfo) {
-      const formData = this.makeFormDataForMulter(images, additionalInfo);
-      await this.patchRequest(url, formData, {
-        "Content-Type": "multipart/form-data",
-      });
-    },
-    makeFormDataForMulter(images, additionalInfo) {
-      const formData = new FormData();
-
-      if (Array.isArray(images)) {
-        images.forEach((image, index) => {
-          formData.append("image", image, `image${index}.png`);
-        });
-      } else {
-        formData.append("image", images, "image.png");
-        formData.append("imageIndex", 0);
-      }
-      if (additionalInfo) {
-        Object.keys(additionalInfo).forEach((key) => {
-          formData.append(key, additionalInfo[key]);  
-        });
-      }
-      return formData;
+    triggerFileInput() {
+      this.$refs.fileInput.click(); // file input을 강제로 클릭하여 파일 선택 창을 엽니다.
     },
 
+    async handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+      this.imagePath = await this.$base64(file);
+      console.log(this.imagePath);
+      this.isModalVisible = true;
+
+      // 파일 선택 후 입력 필드 초기화
+      this.$refs.fileInput.value = ""; // 파일 입력 초기화
+    }
+    },
 
     async sendChat() {
       try {
+
+        if(!this.newChat && !this.imagePath){
+        alert("메세지를 입력 해 주세요")
+
+
+        } else{       
         // 먼저 getUserId 메소드를 호출하여 userId를 가져옵니다.
         await this.getUserId();
 
@@ -342,56 +290,89 @@ dataURLtoBlob(dataURL) {
           image: this.imagePath,
           userId: this.myuserId,
           chatDate,
-          room: this.chatListId // 채팅방 ID를 포함 - 수정된 부분
+          room: this.chatListId,
+          filePath: this.filePath || ""  // filePath가 없으면 빈 문자열로 설정
         };
 
-        // 소켓을 통해 message 객체를 특정 방으로 전송합니다.
-        this.$socket.emit("sendMessage", { message, room: this.chatListId }); // 수정된 부분
+        // 새 Promise를 생성하여 receiveMessage 이벤트를 기다리게 합니다.
+        await new Promise((resolve) => {
+          // receiveMessage 이벤트 리스너를 설정합니다.
+          this.$socket.once("receiveMessage", (data) => {
+            // 데이터가 수신되면 filePath를 업데이트합니다.
+            if (data.message.filePath) {
+            this.filePath = data.message.filePath.replace(/\\/g, '/'); // '\\'를 '/'로 변환
+            }
+            resolve();
+          });
+
+          // 소켓을 통해 message 객체를 특정 방으로 전송합니다.
+          this.$socket.emit("sendMessage", { message, room: this.chatListId });
+        });
+
+        console.log("파일패스경로", this.filePath);
 
         this.scrollToBottom();
 
         const requestBody = {
-          roomId: this.chatListId, // 채팅방 ID 사용
+          roomId: this.chatListId,
           access_token: this.$getAccessToken(),
           chatDate: chatDate,
-          text: this.newChat,
+          text: this.newChat, 
           chatView: "T",
-          image: ""
+          filePath: this.filePath 
         };
-        console.log("지금챗", this.newChat);
 
-        const response = await this.$api(`/chat/saveChat`, requestBody, "post");
+        const response = await this.$api('/chat/saveChat', requestBody, "post");
         this.chatUserId = response.userId;
-        // 상태 리셋
-      this.chatUserId = response.userId;
-      this.newChat = "";
-      this.imagePath = ""; // 이미지 경로 초기화
 
-      // 미리보기 이미지 삭제
-      this.$refs.fileInput.value = ""; // 파일 입력 초기화
+        // 상태 리셋
+        this.newChat = "";
+        this.imagePath = ""; // 이미지 경로 초기화
+        this.filePath = ""; // filePath 초기화
+
+        // 미리보기 이미지 삭제
+        this.$refs.fileInput.value = ""; // 파일 입력 초기화
+      }
       } catch (error) {
         console.error("Error in sendChat:", error);
       }
+      
     },
 
     scrollToBottom() {
       this.$nextTick(() => {
         const container = this.$refs.containerMiddle;
-        container.scrollTop = container.scrollHeight;
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
       });
     },
 
     connectToServer() {
       this.$socket.on("connect", () => {
-        console.log("Connected to server");
+        console.log("채팅룸에 입장");
       });
     },
 
-    // 이미지 저장
-    
+   // 모달
+   no_click() {
+      this.imagePath = ""; // 수정된 부분: 이미지 경로 초기화
+      this.isModalVisible = false; // 모달을 숨김
+    },
+    ok_click() {
+      this.imagePath = ""; // 수정된 부분: 이미지 경로 초기화
+      this.isModalVisible = false; // 모달을 숨김
+    },
+    handleOverlayClick(event) {
+      if (!this.$refs.modalPopup.contains(event.target)) {
+        this.imagePath = ""; // 수정된 부분: 이미지 경로 초기화
+        this.isModalVisible = false; // 모달을 숨김
+      }
+    },
   }
 };
 </script>
+
 
 <style scoped>
     /* hidden 속성들은 추후 자바스크립트로 합침*/
@@ -403,9 +384,19 @@ dataURLtoBlob(dataURL) {
     font-size: 14px;
     color:#555555;
     }
-    input::placeholder{
+
+    textarea{
+      resize: none;
+      padding-top: 15px; /* padding 값은 텍스트를 중앙에 배치하기 위해 조정 필요 */
+
+    }
+
+    textarea::placeholder{
         font-family: 'Noto Sans KR', sans-serif;
     }
+    textarea::-webkit-scrollbar {
+        display: none;
+    }   
     .header_font{
       font-size: 16px;
     }
@@ -495,6 +486,7 @@ dataURLtoBlob(dataURL) {
         gap: 5px;
         align-items: flex-end;
         margin-top: 5px;
+        margin-bottom: 10px;
         word-break: break-all;
         /* border: 1px solid red; */
      }
@@ -502,7 +494,8 @@ dataURLtoBlob(dataURL) {
         width: auto;
         max-width: 280px;
         background-color: #f5f5f5;
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
         padding: 10px;
         box-sizing: border-box;
         border-top-right-radius: 5px;
@@ -537,6 +530,7 @@ dataURLtoBlob(dataURL) {
         gap: 5px;
         align-items: flex-end;
         margin-top: 10px;
+        margin-bottom: 10px;
         word-break: break-all;
      }
 
@@ -587,7 +581,8 @@ dataURLtoBlob(dataURL) {
         width: auto;
         max-width: 280px;
         background-color: #f5f5f5;
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
         padding: 10px;
         box-sizing: border-box;
         border-top-left-radius: 5px;
@@ -676,6 +671,90 @@ dataURLtoBlob(dataURL) {
         object-fit: contain; /* 이미지의 비율을 유지하면서 박스에 맞게 조절 */
 
       }
+
+      /* 모달 */
+      .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* backdrop-filter: blur(5px); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* 배경을 덮도록 z-index 설정 */
+}
+
+.modal-popup {
+  width: 400px;
+  height: 400px;
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0px 32px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(60px);
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  border-radius: 15px;
+
+  padding: 20px 0px;
+  padding-bottom: 0px;
+  /* visibility: collapse; */
+  flex-direction: column;
+  /* border: 1px solid red; */
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 500;
+  color: #000;
+  /* border: 1px solid blue; */
+}
+
+.modal-description {
+  font-size: 13px;
+  color: #000;
+  padding: 0px 16px;
+  /* border: 1px solid violet; */
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
+
+.modal-divider {
+  padding: 15px 0px;
+  padding-bottom: 0px;
+  border-bottom: 1px solid #898989;
+  /* border: 1px solid red; */
+}
+
+.modal-select-div {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  /* border: 1px solid blue; */
+}
+
+.modal-select-left {
+  flex: 1;
+  color: #0e72ed;
+  font-size: 17px;
+  border-right: 1px solid #898989;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 1px solid orange; */
+}
+
+.modal-select-right {
+  flex: 1;
+  color: #e30909;
+  font-size: 17px;
+  font-weight: 500;
+  /* border: 1px solid orange; */
+}
   
 </style>
 

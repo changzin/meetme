@@ -349,7 +349,7 @@ exports.saveChat = async(req, res) =>{
         const chatDate = req.body.chatDate;
         const text = req.body.text;
         const chatView = req.body.chatView;
-        const imagepath = req.body.image;
+        const imagepath = req.body.filePath;
 
 
         query = `INSERT INTO chat 
