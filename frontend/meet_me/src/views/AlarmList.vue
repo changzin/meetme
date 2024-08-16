@@ -42,7 +42,7 @@
                     </button>
             </div>
         </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'heart'" />
     </div>
 </template>
 <script>

@@ -58,7 +58,7 @@
                     <span class="class">더 추천받기 상태가 활성화된 상태입니다.</span>
                 </div>
             </div>
-            <MeetHeader />
+            <MeetHeader :activeIcon="'recommend'" />
         </div>
     </div>
 </template>

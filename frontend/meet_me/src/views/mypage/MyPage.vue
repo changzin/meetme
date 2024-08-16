@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'user'" />
     </div>
 </template>
 <script>
@@ -87,7 +87,7 @@ export default {
                 const result = await this.$api(`/user/mypageprofile`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
                 
-                console.log(this.userData)
+                console.log('asdlnasldknasd', this.userData)
             }catch(err){
                 console.log(err);
             }

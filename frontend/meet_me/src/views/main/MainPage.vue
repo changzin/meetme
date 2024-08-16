@@ -48,7 +48,7 @@
                     </div>
                 </div>
             </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'main'" />
     </div>
 </div>
 </template>
