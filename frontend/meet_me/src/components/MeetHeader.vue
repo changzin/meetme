@@ -214,7 +214,7 @@ export default {
         alert("예기치 못한 오류가 발생하였습니다.")
       }
     }
-
+  }
 };
 </script>
 
