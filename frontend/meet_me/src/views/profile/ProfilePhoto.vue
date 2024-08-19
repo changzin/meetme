@@ -41,7 +41,7 @@
               alt="example"
             />
           </div>
-          <img v-if="photo" :src="photo" class="uploaded-photo" />
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
         </div>
       </div>
 

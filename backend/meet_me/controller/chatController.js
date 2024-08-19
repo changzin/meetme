@@ -12,26 +12,86 @@ exports.getChatRoomList = async(req, res)=>{
 
         const userId = req.body.user_id;
 
-        query = `SELECT 
-    CASE 
-        WHEN cl.user_id1 = ? THEN cl.user_id2 
-        ELSE cl.user_id1 
+        query = `WITH user_chat AS (
+    SELECT 
+        CASE 
+            WHEN cl.user_id1 = ? THEN cl.user_id2 
+            ELSE cl.user_id1 
         END AS opponent_user_id, 
         u.user_nickname,          
-        ui.user_image_path ,
         cl.chat_list_id    
-    FROM -- 첫번째로 실행: chat_list 테이블에서 데이터를 가져옴
+    FROM 
         chat_list cl
-    JOIN  -- 세번째로 실행: user 테이블과 연결함 상대방의 user_id와 일치하는 행을 찾아 연결
+    JOIN  
         user u ON u.user_id = CASE 
                                 WHEN cl.user_id1 = ? THEN cl.user_id2 
                                 ELSE cl.user_id1 
-                            END
-    JOIN -- 네번째로 실행: user_image 테이블과 연결함 상대방의 user_id와 일치하는 행을 찾아 연결
-        user_image ui ON ui.user_id = u.user_id
-    WHERE  -- 두번째로 실행: chat_list 테이블에서 현재 사용자의 user_id가 user_id1 또는 user_id2에 있는 행만 선택
+                              END
+    WHERE 
         (cl.user_id1 = ? OR cl.user_id2 = ?)
-    LIMIT 1;`;
+),
+ranked_images AS (
+    SELECT 
+        uc.opponent_user_id,
+        uc.user_nickname,
+        ui.user_image_path,
+        uc.chat_list_id,
+        ROW_NUMBER() OVER (PARTITION BY uc.opponent_user_id ORDER BY ui.user_image_path) AS rn
+    FROM 
+        user_chat uc
+    JOIN 
+        user_image ui ON ui.user_id = uc.opponent_user_id
+),
+latest_messages AS (
+    SELECT 
+        c.chat_list_id,
+        MAX(c.chat_create_date) AS latest_date
+    FROM 
+        chat c
+    GROUP BY 
+        c.chat_list_id
+),
+latest_chat_content AS (
+    SELECT 
+        c.chat_list_id,
+        c.chat_content,
+        c.chat_create_date
+    FROM 
+        chat c
+    JOIN 
+        latest_messages lm
+    ON 
+        c.chat_list_id = lm.chat_list_id AND c.chat_create_date = lm.latest_date
+),
+user_chat_with_messages AS (
+    SELECT
+        uc.opponent_user_id,
+        uc.user_nickname,
+        ri.user_image_path,
+        uc.chat_list_id,
+        lcc.chat_content,
+        lcc.chat_create_date
+    FROM
+        user_chat uc
+    JOIN
+        ranked_images ri ON ri.opponent_user_id = uc.opponent_user_id AND ri.chat_list_id = uc.chat_list_id
+    LEFT JOIN
+        latest_chat_content lcc ON lcc.chat_list_id = uc.chat_list_id
+    WHERE
+        ri.rn = 1
+)
+SELECT 
+    opponent_user_id,
+    user_nickname,
+    user_image_path,
+    chat_list_id,
+    chat_content,
+    chat_create_date
+FROM 
+    user_chat_with_messages
+ORDER BY
+    chat_create_date DESC;
+`;
 
         result = await db(conn, query, [userId, userId, userId, userId]);
 
@@ -68,6 +128,8 @@ exports.getOtherUserInfo = async(req, res)=>{
         let responseBody = {};
 
         const userId = req.body.user_id;
+        const roomId = req.body.chatListId;
+        // const roomId = req.body.roomId;
         console.log("유저아이디", userId);
 
         query = `SELECT 
@@ -88,10 +150,10 @@ exports.getOtherUserInfo = async(req, res)=>{
             user_image ui ON ui.user_id = u.user_id
         WHERE
             (cl.user_id1 = ? OR cl.user_id2 = ?) AND
-            cl.chat_list_id = 1
+            cl.chat_list_id = ?
         LIMIT 1`;
 
-         result = await db(conn, query, [userId, userId, userId, userId]);
+         result = await db(conn, query, [userId, userId, userId, userId, roomId ]);
         responseBody = {
             status: 200,
             otherUserInfo: result,
@@ -114,6 +176,128 @@ exports.getOtherUserInfo = async(req, res)=>{
         conn.release();
     }   
 }
+
+exports.searchChat = async(req, res) =>{
+
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const userId = req.body.user_id;
+        const text = req.body.text
+
+        query = `WITH user_chat AS (
+    SELECT 
+        CASE 
+            WHEN cl.user_id1 = ? THEN cl.user_id2 
+            ELSE cl.user_id1 
+        END AS opponent_user_id, 
+        u.user_nickname,          
+        cl.chat_list_id    
+    FROM 
+        chat_list cl
+    JOIN  
+        user u ON u.user_id = CASE 
+                                WHEN cl.user_id1 = ? THEN cl.user_id2 
+                                ELSE cl.user_id1 
+                              END
+    WHERE 
+        (cl.user_id1 = ? OR cl.user_id2 = ?)
+),
+    ranked_images AS (
+        SELECT 
+            uc.opponent_user_id,
+            uc.user_nickname,
+            ui.user_image_path,
+            uc.chat_list_id,
+            ROW_NUMBER() OVER (PARTITION BY uc.opponent_user_id ORDER BY ui.user_image_path) AS rn
+        FROM 
+            user_chat uc
+        JOIN 
+            user_image ui ON ui.user_id = uc.opponent_user_id
+    ),
+    filtered_chats AS (
+        SELECT 
+            c.chat_list_id,
+            MAX(c.chat_create_date) AS latest_date
+        FROM 
+            chat c
+        JOIN 
+            user_chat uc ON uc.chat_list_id = c.chat_list_id
+        WHERE 
+            uc.user_nickname LIKE CONCAT('%', ?, '%') -- 사용자 닉네임에 검색어가 포함된 경우
+            OR c.chat_content LIKE CONCAT('%', ?, '%') -- 채팅 내용에 검색어가 포함된 경우
+        GROUP BY 
+            c.chat_list_id
+    ),
+    latest_chat_content AS (
+        SELECT 
+            c.chat_list_id,
+            c.chat_content,
+            c.chat_create_date
+        FROM 
+            chat c
+        JOIN 
+            filtered_chats fc ON c.chat_list_id = fc.chat_list_id AND c.chat_create_date = fc.latest_date
+    ),
+    user_chat_with_messages AS (
+        SELECT
+            uc.opponent_user_id,
+            uc.user_nickname,
+            ri.user_image_path,
+            uc.chat_list_id,
+            lcc.chat_content,
+            lcc.chat_create_date
+        FROM
+            user_chat uc
+        JOIN
+            ranked_images ri ON ri.opponent_user_id = uc.opponent_user_id AND ri.chat_list_id = uc.chat_list_id
+        JOIN
+            latest_chat_content lcc ON lcc.chat_list_id = uc.chat_list_id
+        WHERE
+            ri.rn = 1
+    )
+    SELECT 
+        opponent_user_id,
+        user_nickname,
+        user_image_path,
+        chat_list_id,
+        chat_content,
+        chat_create_date
+    FROM 
+        user_chat_with_messages
+    ORDER BY
+    chat_create_date DESC;
+                    `;
+
+        result = await db(conn, query, [userId, userId, userId, userId, text, text]);
+
+        responseBody = {
+            status: 200,
+            searchList: result,
+
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+},
 
 exports.findUser = async(req, res) =>{
 
@@ -165,7 +349,7 @@ exports.saveChat = async(req, res) =>{
         const chatDate = req.body.chatDate;
         const text = req.body.text;
         const chatView = req.body.chatView;
-        const imagepath = req.body.image;
+        const imagepath = req.body.filePath;
 
 
         query = `INSERT INTO chat 
@@ -197,6 +381,54 @@ exports.saveChat = async(req, res) =>{
 
 }
 
+exports.deleteChat = async(req, res) =>{
+
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const roomId = req.body.room;
+
+        console.log("roomId : ", roomId);
+        
+
+
+        query = `DELETE FROM chat
+                WHERE chat_list_id = ?;`;
+        result = await db(conn, query, [roomId]);
+
+        query = `DELETE FROM chat_list
+                WHERE chat_list_id = ?;`;
+        result = await db(conn, query, [roomId]);
+
+
+        responseBody = {
+            status: 200,
+            message: "채팅방 삭제 완료",
+        };
+        await conn.commit();
+        return res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+
+}
+
 exports.getMessageList = async(req, res) =>{
 
     const conn = await getConn();
@@ -210,21 +442,76 @@ exports.getMessageList = async(req, res) =>{
         const chatListId = req.body.chatListId;
 
         query = `
-       SELECT 
+            SELECT * FROM (SELECT 
             user.user_nickname, 
+            chat_id,
             chat_list_id, 
             chat.user_id, 
             chat_create_date, 
             chat_content, 
             chat_view, 
             chat_image_path, 
-            MIN(user_image.user_image_path) AS user_image_path
-        FROM chat
-        JOIN user ON chat.user_id = user.user_id
-        JOIN user_image ON user.user_id = user_image.user_id
-        WHERE chat_list_id = 1
-        GROUP BY user.user_nickname, chat_list_id, chat.user_id, chat_create_date, chat_content, chat_view, chat_image_path
-        LIMIT 0, 1000`;
+            (SELECT user_image_path FROM user_image WHERE user_id=chat.user_id limit 1) AS user_image_path
+            FROM chat
+            JOIN user ON chat.user_id = user.user_id
+            WHERE chat_list_id = ?
+            ORDER BY chat_create_date DESC
+            LIMIT 0, 1000) a
+            ORDER BY a.chat_id`;
+        result = await db(conn, query, [chatListId]);
+
+        responseBody = {
+            status: 200,
+            message: "채팅 목록 불러오기 완료",
+            messageList: result
+        };
+        await conn.commit();
+        res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+
+}
+exports.uploadimage = async(req, res) =>{
+
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const chatListId = req.body.chatListId;
+
+        query = `
+            SELECT * FROM (SELECT 
+            user.user_nickname, 
+            chat_id,
+            chat_list_id, 
+            chat.user_id, 
+            chat_create_date, 
+            chat_content, 
+            chat_view, 
+            chat_image_path, 
+            (SELECT user_image_path FROM user_image WHERE user_id=chat.user_id limit 1) AS user_image_path
+            FROM chat
+            JOIN user ON chat.user_id = user.user_id
+            WHERE chat_list_id = ?
+            ORDER BY chat_create_date DESC
+            LIMIT 0, 1000) a
+            ORDER BY a.chat_id`;
         result = await db(conn, query, [chatListId]);
 
         responseBody = {

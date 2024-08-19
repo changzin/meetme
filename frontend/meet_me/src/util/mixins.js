@@ -130,15 +130,13 @@ export default{
                 period = "오후";
                 hour = hour > 12 ? hour - 12 : hour;
             }
-            if (hour < 10) 
-                hour = '0' + hour;
         
             // 분 처리
             var min = format.getMinutes();
             if (min < 10) 
                 min = '0' + min;
                 
-            return period + " " + hour + "시 " + min + "분";
+            return period + " " + hour + ":" + min ;
         },
 
         $imageFileFormat(image_path){
