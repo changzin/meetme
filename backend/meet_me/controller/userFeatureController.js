@@ -50,8 +50,6 @@ exports.FeatureInsert = async (req,res) =>{
   let user_id = req.body.user_id
   let user_feature_ids = req.body.user_feature_id;
   let user_feature_id 
-    console.log(user_id)
-    console.log(user_feature_ids);
  
     
   try{

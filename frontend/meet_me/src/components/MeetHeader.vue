@@ -182,11 +182,39 @@ export default {
         this.$router.push({ name: "MyPage" });
       }
     },
+
     async countAlarm(){
       const result = await this.$api('/user/countAlarm', {access_token : this.$getAccessToken()}, "POST");
       this.alarm = result.alarm;
+    },
+    async verifyUser(){
+      try{
+        const requestBody = {
+          access_token: this.$getAccessToken()
+        }
+
+        const result = await this.$api("/user/verify", requestBody, "POST");
+        
+        if(result.status == 200){
+          if (result.userCoin.user_block == 'F' && result.userCoin.user_email_verified == 'T' && result.userCoin.user_profile_entered=='T')
+            console.log("인증성공")
+          else if (result.userCoin.user_block == 'F' && result.userCoin.user_type  != 'local' && result.userCoin.user_profile_entered=='T')
+            console.log("인증성공")
+          else{
+            alert("로그인 상태가 아닙니다.");
+            this.$router.push({name: "loginuser" });
+          }
+        }else{
+          alert('유저 정보를 가져올 수 없습니다.');
+          this.$router.push({name: "loginuser" });          
+        }
+      }
+      catch(err){
+        console.error(err);
+        alert("예기치 못한 오류가 발생하였습니다.")
+      }
     }
-  },
+
 };
 </script>
 

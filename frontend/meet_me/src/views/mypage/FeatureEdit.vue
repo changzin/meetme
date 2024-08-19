@@ -69,7 +69,6 @@ export default {
             // if(index === 1){
             //     this.selectedIds.
             // }
-            console.log(this.selectedIds);
             
         },
         async getUser() {
@@ -77,7 +76,6 @@ export default {
                 const result = await this.$api(`/user/profileinfo`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user.user_feature_ids.map(id => Number(id));
                 this.selectedIds = this.userData;
-                console.log(this.selectedIds);
             } catch (err) {
             console.log(err);
             }

@@ -27,9 +27,11 @@ exports.recommend = async(req, res)=>{
                 JOIN user u1 ON rc.user_id1 = u1.user_id
                 JOIN user u2 ON rc.user_id2 = u2.user_id
                 WHERE rc.user_id1 = ?
+                AND rc.user_id2 NOT IN (SELECT user_id1 AS user_id FROM user_block WHERE user_id2=?)
+                AND rc.user_id2 NOT IN (SELECT user_id2 AS user_id FROM user_block WHERE user_id1=?)
                 ORDER BY recommend_list_id ASC
                 LIMIT ?`;
-        results = await db(conn, query, [user_id1, offset]);
+        results = await db(conn, query, [user_id1, user_id1, user_id1, offset]);
         
         query = `SELECT user_id2 AS heart_status from heart where user_id1 = ?`;
         getHeart = await db(conn, query, [user_id1]);

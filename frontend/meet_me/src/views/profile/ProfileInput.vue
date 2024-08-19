@@ -327,7 +327,7 @@
               문신 여부
             </option>
             <option class="dropdown_item" value="T">문신 있음</option>
-            <option class="dropdown_item" value="F">문신</option>
+            <option class="dropdown_item" value="F">문신 없음</option>
           </select>
         </div>
 
@@ -432,7 +432,6 @@ export default {
       try {
         const result = await this.$api(`/user/profile`, {}, "POST");
         this.categoryList = result.categoryList;
-        console.log(this.categoryList);
       } catch (err) {
         console.log(err);
       }
@@ -493,10 +492,7 @@ export default {
     //성별 선택
     toggleGender(gender) {
       this.form.activeGender = gender;
-      console.log(gender);
-      console.log(this.form.activeGender);
       this.form.selectGender = this.form.activeGender;
-      console.log(this.form.selectGender);
     },
     loadDaumPostcodeScript() {
       const script = document.createElement("script");
@@ -512,17 +508,14 @@ export default {
         if (!this.form.inputUserAddress) {
           new window.daum.Postcode({
             oncomplete: (data) => {
-              console.log(data);
               const add1 = data.sido;
               const add2 = data.sigungu;
               this.form.inputUserAddress = `${add1} ${add2}`;
-              console.log(this.form.inputUserAddress);
             },
           }).open();
         } else {
           new window.daum.Postcode({
             oncomplete: (data) => {
-              console.log(data);
               const add1 = data.sido;
               const add2 = data.sigungu;
               this.inputUserAddress = `${add1} ${add2}`;
@@ -549,6 +542,7 @@ export default {
       }
       if(this.form.inputAge < 19 || this.form.inputAge > 100 ){
         alert(this.form.inputAge < 19 ? "만 19세 이상 가입 가능합니다." : "100세 이하 가입 가능합니다.")
+        this.form.inputAge = null;
       }
       this.activeInput = null;
     },
@@ -570,7 +564,7 @@ export default {
       }
       if (this.form.inputWeight > 200) {
         alert("몸무게 200 이하 입력해주세요");
-        this.form.inputHeight = null;
+        this.form.inputWeight = null;
       }
       this.activeInput = null;
       

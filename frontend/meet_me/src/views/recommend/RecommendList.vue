@@ -67,22 +67,12 @@
 export default {	
     data() {
         return {
-            // visibleModal: false,
             isImageTwoVisible: false, //이미지
             isImageTwoVisible2: false, //이미지
-            // recommendList: [],
             user_id1: '',
             user_id2: '',
             results:[],
             sampleData : '',
-            // user_image : [
-            //     "/model3.png",
-            //     "/model.jpg",
-            //     "/model2.jpg",
-            //     "/model5.jpg",
-            //     "/model6.jpg",
-            //     "/images.jpg"
-            // ],
             index: 0,
             heartData: {},
             userCoin: 0
@@ -207,7 +197,6 @@ export default {
         async getHeart(){
             const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
             this.heartData = result.heart;
-            console.log("this.heartData" ,this.heartData)
         },
         async userDelete(user_id2){  
             try{

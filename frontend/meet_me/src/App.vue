@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <!-- <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/mypage">MyPage</router-link>  |
@@ -13,7 +13,7 @@
     <router-link to="/profiledetail">ProfileDetail</router-link>  |
     <router-link to="/sendstory">SendStory</router-link>  |
     <router-link to="/alarmlist">AlarmList</router-link>  |
-  </nav>
+  </nav> -->
   
   <router-view />
 </template>
