@@ -38,13 +38,15 @@ export default {
             sampleData : '',
             userImage : [],
             index: 0,
-            userData: {}
+            userData: {},
+            userCoin: 0,
         };
         
     },
     beforeCreate() {},
     async created() {
-        this.getUser();
+        await this.getUser();
+        await this.getCoin();
     },
     beforeMount() {},
     mounted() {},
@@ -66,17 +68,28 @@ export default {
                 const result = await this.$api(`/user/profileinfo`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
                 this.userImage = this.userData.user_image_paths;
-                console.log(this.userData)
-                console.log(this.userImage)
             }catch(err){
                 console.log(err);
             }
         },
         async makeReGrade(){
             try{
-                const result = await this.$api('/user/regrade', {access_token: this.$getAccessToken()}, "POST");
+                const userConfirmed = confirm("300코인으로 등급을 재측정하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
+                if (this.userCoin < 300){
+                    alert("보유 코인이 모자랍니다")
+                    this.$router.push({name: 'mypagestore'});
+                    return;
+                }
+
+                
+                const result = await this.$api('/user/regrade', {access_token: this.$getAccessToken(), useCoin: 300}, "POST");
                 if (result.status == 200){
                     await this.getUser();
+                    await this.getCoin();
                     alert("재측정 완료되었습니다.")
                 }
                 else{
@@ -87,7 +100,22 @@ export default {
                 alert("재측정에 실패하였습니다. 다시 시도해 주세요.");
                 console.log(err);
             }
-        }
+        },
+        async getCoin(){
+            try{
+                const result = await this.$api('/user/coin', {access_token: this.$getAccessToken()}, "POST");
+                if (result.status == 200){
+                    this.userCoin = result.userCoin;    
+                }
+                else{
+                    alert("유저의 코인 정보를 불러올 수 없습니다.");
+                }
+            }
+            catch(err){
+                alert("유저의 코인 정보를 불러올 수 없습니다.");
+                console.log(err);
+            }
+        },
     }
 }
 </script>

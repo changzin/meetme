@@ -1,6 +1,5 @@
 <template>
   <div>
-    <MeetHeader />
     <div class="safety_zone">
       <div class="heade_div">사진 등록하기</div>
       <div class="sub_div">프로필 사진 1장을 추가 해주세요(필수)</div>

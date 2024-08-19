@@ -58,7 +58,7 @@
                     <span class="class">더 추천받기 상태가 활성화된 상태입니다.</span>
                 </div>
             </div>
-            <MeetHeader />
+            <MeetHeader :activeIcon="'recommend'" />
         </div>
     </div>
 </template>
@@ -67,22 +67,12 @@
 export default {	
     data() {
         return {
-            // visibleModal: false,
             isImageTwoVisible: false, //이미지
             isImageTwoVisible2: false, //이미지
-            // recommendList: [],
             user_id1: '',
             user_id2: '',
             results:[],
             sampleData : '',
-            // user_image : [
-            //     "/model3.png",
-            //     "/model.jpg",
-            //     "/model2.jpg",
-            //     "/model5.jpg",
-            //     "/model6.jpg",
-            //     "/images.jpg"
-            // ],
             index: 0,
             heartData: {},
             userCoin: 0
@@ -154,6 +144,11 @@ export default {
             this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
 
             try{
+                const userConfirmed = confirm("100코인으로 좋아요를 보내시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 100){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
@@ -180,6 +175,11 @@ export default {
         },
         async sendMatching(user_id2) {
             try {
+                const userConfirmed = confirm("300코인으로 매칭 신청하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});
@@ -197,7 +197,6 @@ export default {
         async getHeart(){
             const result = await this.$api(`/user/getheart`, {access_token: this.$getAccessToken()},"POST");
             this.heartData = result.heart;
-            console.log("this.heartData" ,this.heartData)
         },
         async userDelete(user_id2){  
             try{
@@ -243,6 +242,11 @@ export default {
         },
         async reroll(){
             try{
+                const userConfirmed = confirm("300코인으로 추천 리스트를 추가하시겠습니까?");
+                // 확인을 눌렀을 경우
+                if (!userConfirmed) {
+                    return;
+                }
                 if (this.userCoin < 300){
                     alert("보유 코인이 모자랍니다")
                     this.$router.push({name: 'mypagestore'});

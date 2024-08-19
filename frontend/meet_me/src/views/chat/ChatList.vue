@@ -1,6 +1,6 @@
 <template>
   <div class="container0">
-      <MeetHeader />
+      <MeetHeader :activeIcon="'chat'" />
       <form @submit.prevent="serachChatList">
         <div class="search">
             <div class="search_icon"><img src="../../../public/icon/chat/search.svg"></div>

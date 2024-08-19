@@ -2,9 +2,14 @@
   <div>
     <div class="header-container">
       <div class="header-content">
-        <img @click="clickIcon('main');" src="/icon/header/headerIcon.svg" alt="Logo" class="logo" />
+        <img
+          @click="clickIcon('main')"
+          src="/icon/header/headerIcon.svg"
+          alt="Logo"
+          class="logo"
+        />
         <div @click="clickIcon('recommend')" class="menu-item">추천페이지</div>
-        <div @click="clickIcon('heart')" class="menu-item">알람</div>
+        <div @click="clickIcon('heart')" class="menu-item">알람<img src="/icon/mobile_header/RedDotIconHeight24.svg" v-if="activeIcon !== 'heart' && this.alarm"></div>
         <div @click="clickIcon('chat')" class="menu-item">채팅</div>
         <div @click="clickIcon('user')" class="menu-item">마이페이지</div>
       </div>
@@ -16,7 +21,7 @@
           class="menu-item"
           @mouseenter="hoverIcon('main', true)"
           @mouseleave="hoverIcon('main', false)"
-          @click="clickIcon('main');"
+          @click="clickIcon('main')"
         >
           <img
             v-if="activeIcon !== 'main' && !hoveredIcon.main"
@@ -60,13 +65,31 @@
           @click="clickIcon('heart')"
         >
           <img
-            v-if="activeIcon !== 'heart' && !hoveredIcon.heart"
+            v-if="activeIcon !== 'heart' && !this.alarm && !hoveredIcon.heart"
             src="/icon/mobile_header/solid-heart.svg"
             alt="Heart"
             class="footer-icon"
           />
           <img
-            v-else
+            v-if="activeIcon !== 'heart' && !this.alarm && hoveredIcon.heart"
+            src="/icon/mobile_header/heart.svg"
+            alt="Heart"
+            class="footer-icon"
+          />
+          <img
+            v-if="activeIcon !== 'heart' && this.alarm && !hoveredIcon.heart"
+            src="/icon/mobile_header/unSelectedAlramRedDot.svg"
+            alt="Heart"
+            class="footer-icon"
+          />
+          <img
+            v-if="activeIcon !== 'heart' && this.alarm && hoveredIcon.heart"
+            src="/icon/mobile_header/SelectedAlramRedDot.svg"
+            alt="Heart"
+            class="footer-icon"
+          />
+          <img
+            v-if="activeIcon == 'heart'"
             src="/icon/mobile_header/heart.svg"
             alt="Heart"
             class="footer-icon"
@@ -121,9 +144,14 @@
  
 <script>
 export default {
+  props: {
+    activeIcon: {
+      type: String,
+      default: "main",
+    },
+  },
   data() {
     return {
-      activeIcon: null,
       hoveredIcon: {
         main: false,
         recommend: false,
@@ -131,33 +159,33 @@ export default {
         chat: false,
         user: false,
       },
+      alarm: null,
     };
   },
-  async created(){
-    await this.verifyUser();
+  async created() {
+    await this.countAlarm();
   },
   methods: {
     hoverIcon(icon, isHovered) {
       this.hoveredIcon[icon] = isHovered;
     },
     clickIcon(icon) {
-      this.activeIcon = icon;
+      if (icon === "main") {
+        this.$router.push({ name: "MainPage" });
+      } else if (icon === "recommend") {
+        this.$router.push({ name: "RecommendList" });
+      } else if (icon === "heart") {
+        this.$router.push({ name: "AlarmList" });
+      } else if (icon === "chat") {
+        this.$router.push({ name: "Chatlist" });
+      } else if (icon === "user") {
+        this.$router.push({ name: "MyPage" });
+      }
+    },
 
-      if (icon ==='main'){
-        this.$router.push({name: 'MainPage'});
-      }
-      else if (icon === 'recommend'){
-        this.$router.push({name: 'RecommendList'});
-      }
-      else if (icon === 'heart'){
-        this.$router.push({name: 'AlarmList'});
-      }
-      else if (icon ==='chat'){
-        this.$router.push({name: 'Chatlist'});
-      }
-      else if (icon ==='user'){
-        this.$router.push({name: 'MyPage'});
-      }
+    async countAlarm(){
+      const result = await this.$api('/user/countAlarm', {access_token : this.$getAccessToken()}, "POST");
+      this.alarm = result.alarm;
     },
     async verifyUser(){
       try{
@@ -172,10 +200,13 @@ export default {
             console.log("인증성공")
           else if (result.userCoin.user_block == 'F' && result.userCoin.user_type  != 'local' && result.userCoin.user_profile_entered=='T')
             console.log("인증성공")
-        } 
-        else{
-          alert("로그인 상태가 아닙니다.");
-          this.$router.push({name: "loginuser" });
+          else{
+            alert("로그인 상태가 아닙니다.");
+            this.$router.push({name: "loginuser" });
+          }
+        }else{
+          alert('유저 정보를 가져올 수 없습니다.');
+          this.$router.push({name: "loginuser" });          
         }
       }
       catch(err){
@@ -183,9 +214,10 @@ export default {
         alert("예기치 못한 오류가 발생하였습니다.")
       }
     }
-  },
+
 };
 </script>
+
 
 <style scoped>
 .header-container {

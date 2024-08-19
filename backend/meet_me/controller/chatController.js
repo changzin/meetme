@@ -356,7 +356,6 @@ exports.saveChat = async(req, res) =>{
         (chat_list_id, user_id, chat_create_date, chat_content, chat_view, chat_image_path) 
         value (?,?,?,?,?,?)`;
         result = await db(conn, query, [roomId, userId, chatDate, text, chatView, imagepath ]);
-        console.log("Executing query with values:", [roomId, userId, chatDate, text, chatView, imagepath]);
 
         responseBody = {
             status: 200,

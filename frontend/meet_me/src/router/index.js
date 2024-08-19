@@ -16,7 +16,6 @@ import ChatList from '../views/chat/ChatList.vue'
 
 import MainPage from '../views/main/MainPage.vue'
 import LoginUser from '../views/nouser/LoginUser.vue'
-// import TempView from '../views/TempView.vue'
 import SignUpTerms from '../views/nouser/SignUpTerms.vue'
 import SignUp from '../views/nouser/SignUp.vue'
 import EmailCheck from '../views/nouser/EmailCheck.vue'
@@ -34,6 +33,7 @@ import ProfilePhoto from '../views/profile/ProfilePhoto.vue'
 import ForgotPassword from '../views/nouser/ForgotPassword.vue'
 import AlarmList from '../views/AlarmList.vue'
 import MyPageStore from '../views/mypage/MyPageStore.vue'
+import DeleteUser from '../views/mypage/DeleteUser.vue'
 
 const routes = [
   {
@@ -109,11 +109,6 @@ const routes = [
     name:'userfeature',
     component:UserFeature
   },
-  // {
-  //   path: '/tempview',
-  //   name: 'TempView',
-  //   component: TempView
-  // },
   {
     path: '/reactiveweb',
     name: 'ReactiveWeb',
@@ -193,6 +188,11 @@ const routes = [
     path: '/alarmlist',
     name: 'AlarmList',
     component: AlarmList
+  },
+  {
+    path: '/deleteuser',
+    name: 'DeleteUser',
+    component: DeleteUser
   }
 ]
 

@@ -42,7 +42,6 @@
             getNaverUser(){
                 this.naverLogin.getLoginStatus(async (status)=>{                        
                         if(status){
-                            console.log(this.naverLogin.user);
                             var email = this.naverLogin.user.getEmail();
                             if (email == undefined || email == null){
                                 alert("이메일은 필수 정보입니다. 정보 제공해줘");

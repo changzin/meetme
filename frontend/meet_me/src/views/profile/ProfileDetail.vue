@@ -119,7 +119,7 @@ export default {
 
                 await this.$api(`/user/addblock`, {access_token: this.$getAccessToken(), user_id2 }, "POST"); //17에 this.$route.query({ ... }) 넣으세요
                 alert('유저를 차단하였습니다.');
-                this.$router.push({name: 'MainPage'});
+                this.$router.push({name: 'RecommendList'});
             }catch(err){
                 console.log(err)
             }

@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm, idolList, idolInput, userCoin, userVerify, regrade, profileDetail, addReport, addBlock, reRollList} = require('../controller/userController.js');
+const { mypageProfile, profileInfo, getHeart, sendMatching, acceptMatching, deleteMatching, deleteHeart, deleteAlarm, enterPhoto, getCategory, updateProfile, deletePhoto, getProfile,profileInput, featureEdit, getAlarm, countAlarm, idolList, idolInput, userCoin, userVerify, regrade, profileDetail, addReport, addBlock, reRollList, deleteUser} = require('../controller/userController.js');
 const { userLogin, emailDuplicateCheck, signup, emailIsVerified } = require("../controller/authController.js")
 const { userList, userBlock, userUnblock, userReport, userPayment, adminUserDetail } = require("../controller/adminController.js")
 
@@ -38,12 +38,14 @@ router.post('/getcategory', getCategory);
 router.post('/updateprofile', loginCheck, updateProfile);
 router.post('/deletephoto', loginCheck, deletePhoto);
 router.post('/getalarm', loginCheck, getAlarm);
+router.post('/countalarm', loginCheck, countAlarm);
 router.post('/coin', loginCheck, userCoin);
 router.post('/verify', loginCheck, userVerify);
-router.post('/regrade', loginCheck, regrade);
+router.post('/regrade', loginCheck, paymentCheck, regrade);
 router.post('/addreport', loginCheck, addReport);
 router.post('/addblock', loginCheck, addBlock);
 router.post('/reroll', loginCheck, paymentCheck, reRollList);
+router.post('/deleteuser', loginCheck, deleteUser);
 
 router.post('/profile',getProfile);
 router.post('/profileinput',loginCheck,profileInput)

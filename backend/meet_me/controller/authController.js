@@ -89,7 +89,6 @@ exports.userLogin = async(req, res)=>{
                         INTO user(user_email, user_type, user_email_verified)
                         VALUES(?, ?, 'T')`;
                 result = await db(conn, query, [email, loginType]);
-                console.log(email, loginType, result);
 
                 query = "UPDATE user SET user_access_token = ? WHERE user_email = ?";
                 result = await db(conn, query, [accessToken, email]);

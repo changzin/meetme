@@ -50,24 +50,27 @@ exports.FeatureInsert = async (req,res) =>{
   let user_id = req.body.user_id
   let user_feature_ids = req.body.user_feature_id;
   let user_feature_id 
-    console.log(user_id)
-    console.log(user_feature_ids);
-
+ 
     
   try{
       await conn.beginTransaction();
       //user 없어서 대충 넣기 
 
+      del =`DELETE FROM user_feature_bridge WHERE user_id = ?;`
+      delect = await db(conn,del,[user_id]);
         for(let i=0; i< user_feature_ids.length; i++){
              user_feature_id = user_feature_ids[i]; 
+            
             query = `INSERT INTO user_feature_bridge (user_id,user_feature_id) VALUES (?,?)`;
+            
             result = await db(conn,query,[user_id,user_feature_id]);
         }
         
-
+        
         const responseBody = {
             status : 200,
             featureIn : result,
+            featuredel : delect,
             message : "userfeature 인서트 성공"
         }
         await conn.commit();

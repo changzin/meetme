@@ -74,8 +74,9 @@
         <div class="live">
           {{ userData.user_add }}
         </div>
-        <div class="introduce">
-          <input type="text" v-model="userData.user_introduction" />
+        <div class="introduce" id="container">
+          <textarea type="text" id="auto-resize" v-model="userData.user_introduction"/>
+          {{this.userData.user_introduction.length}}/300자
         </div>
       </div>
       <div class="sub_title3">필수 입력</div>
@@ -380,6 +381,7 @@
               type="text"
               v-model="userData.user_add"
               class="input-address"
+              disabled
             />
           </div>
           <button type="submit" class="search-button" @click="zipload()">주소 변경</button>
@@ -409,7 +411,9 @@ export default {
   data() {
     return {
       sampleData: "",
-      userData: {},
+      userData: {
+        user_introduction: '',
+      },
       activeInput: null,
       categoryList: {},
       featureList: {},
@@ -427,7 +431,7 @@ export default {
   },
   beforeMount() {},
   mounted() {
-    this.loadDaumPostcodeScript() 
+    this.loadDaumPostcodeScript();
   },
   beforeUpdate() {},
   updated() {},
@@ -440,6 +444,17 @@ export default {
     },
   },
   methods: {
+    // async resize(){
+    //   const textarea = document.getElementById('auto-resize');
+
+    //   textarea.addEventListener('input', function(){
+    //     this.style.height = 'auto';
+    //     this.style.height = this.scrollHeight + 'px';
+
+    //   const container = document.getElementById('container');
+    //   container.style.height = 'auto';
+    //   })
+    // },
     async getUser() {
       try {
         const result = await this.$api(
@@ -455,7 +470,6 @@ export default {
           }
         }
         // this.profile = result.user.user_image_paths;
-        console.log(this.userData);
       } catch (err) {
         console.log(err);
       }
@@ -480,7 +494,6 @@ export default {
     },
     async edit() {
       const userInfo = this.userData;
-      console.log(userInfo);
       try {
         await this.$api(
           `/user/updateprofile`,
@@ -507,7 +520,6 @@ export default {
             if(!this.userData.user_add){
                 new window.daum.Postcode({
                     oncomplete: (data) => {
-                    console.log(data);
                     const add1 = data.sido;
                     const add2 = data.sigungu;
                     this.userData.user_add = `${add1} ${add2}`;
@@ -516,7 +528,6 @@ export default {
             }else {
                 new window.daum.Postcode({
                     oncomplete: (data) => {
-                    console.log(data)
                     const add1 = data.sido;
                     const add2 = data.sigungu;
                     this.userData.user_add = `${add1} ${add2}`;
@@ -756,11 +767,20 @@ textarea:focus {
 .introduce {
   border-radius: 10px;
   background-color: #f1eff6;
+  width: 540px;
   padding: 20px;
+  height: auto;
+  display: inline-block;
   text-align: left;
 }
 
-.introduce input {
+.introduce textarea {
+  width: 500px;
+  padding: 0px;
+  height: 240px;
+  display: inline-block;
+  overflow-y: hidden;
+  resize: none;
   background-color: rgba(216, 191, 216, 0);
   cursor: pointer;
 }

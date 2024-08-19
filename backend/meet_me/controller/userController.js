@@ -162,47 +162,39 @@ exports.idolInput = async (req, res) => {
     let user_idol_tartoo = req.body.user_idol_tartoo;
     let user_religion_id = req.body.user_religion_id;
 
-    console.log("나이" + "" + user_idol_age_id);
-    console.log("mbti" + "" + user_mbti_id);
-    console.log("혈액형" + "" + user_blood_type_id);
-    console.log("키" + user_idol_height_id);
-    console.log("몸무게" + "" + user_idol_weight_id);
-    console.log("연봉" + "" + user_annual_income_id);
-    console.log("흡연" + "" + user_idol_smoke);
-    console.log("주량" + "" + user_drinking_id);
-    console.log("타투" + "" + user_idol_tartoo);
-    console.log("종교" + "" + user_religion_id);
-    console.log("유저" + "" + user_id);
+    del =`DELETE FROM  user_idol WHERE user_id = ?`;
+    query = 
+            `INSERT INTO user_idol 
+                (user_id,user_idol_age_id,
+                user_mbti_id,
+                user_blood_type_id,
+                user_idol_height_id,
+                user_idol_weight_id,
+                user_annual_income_id,
+                user_idol_smoke,user_drinking_id,
+                user_idol_tartoo,user_religion_id)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
 
-    query = `INSERT INTO user_idol 
-            (user_id,user_idol_age_id,
-            user_mbti_id,
-            user_blood_type_id,
-            user_idol_height_id,
-            user_idol_weight_id,
-            user_annual_income_id,
-            user_idol_smoke,user_drinking_id,
-            user_idol_tartoo,user_religion_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
-
-    result = await db(conn, query, [
-        user_id,
-        user_idol_age_id,
-        user_mbti_id,
-        user_blood_type_id,
-        user_idol_height_id,
-        user_idol_weight_id,
-        user_annual_income_id,
-        user_idol_smoke,
-        user_drinking_id,
-        user_idol_tartoo,
-        user_religion_id,
-      
+    delect = await db(conn,del,[
+      user_id
+    ])
+    result = await db(conn,query,[
+      user_id,
+      user_idol_age_id,
+      user_mbti_id,
+      user_blood_type_id,
+      user_idol_height_id,
+      user_idol_weight_id,
+      user_annual_income_id,
+      user_idol_smoke,
+      user_drinking_id,
+      user_idol_tartoo,
+      user_religion_id,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
+      userIdolClear : delect,
       userIdol: result,
       message: "유저 이상형 정보가 업데이트 되었습니다.",
     };
@@ -229,7 +221,6 @@ exports.profileInput = async (req, res) => {
     let query = "";
     let result = [];
     let responseBody = {};
-    console.log("requestBody" + JSON.stringify(req.body));
     //ProfileInput에서 불러옴
     let user_id = req.body.user_id;
     let user_nickname = req.body.user_nickname;
@@ -247,21 +238,6 @@ exports.profileInput = async (req, res) => {
     let user_introduction = req.body.user_introduction;
     let user_add = req.body.user_add;
 
-    console.log("닉네임" + "" + user_nickname);
-    console.log("성별" + "" + user_gender);
-    console.log("나이" + "" + user_age);
-    console.log("mbti" + "" + user_mbti_id);
-    console.log("혈액형" + "" + user_blood_type_id);
-    console.log("키" + user_height);
-    console.log("몸무게" + "" + user_weight);
-    console.log("주소" + "" + user_add);
-    console.log("연봉" + "" + user_annual_income_id);
-    console.log("흡연" + "" + user_smoke);
-    console.log("주량" + "" + user_drinking_id);
-    console.log("타투" + "" + user_tartoo);
-    console.log("종교" + "" + user_religion_id);
-    console.log("자기소개" + "" + user_introduction);
-    console.log("유저" + "" + user_id);
 
     query = `UPDATE user
         SET
@@ -299,7 +275,6 @@ exports.profileInput = async (req, res) => {
       user_id,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
       profile: result,
@@ -443,7 +418,6 @@ exports.updateProfile = async (req, res) => {
       userId,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
     };
@@ -507,7 +481,6 @@ exports.featureEdit = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const feature_id = req.body.user_feature_ids;
-    console.log(feature_id.length);
 
     query = `SELECT user_feature_id FROM user_feature_bridge WHERE user_id = ?`;
 
@@ -552,15 +525,26 @@ exports.getHeart = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
-    query = `SELECT u.user_nickname , u.user_id, m.user_id2 as matching,
-                (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id ORDER BY i.user_image_id limit 1) AS user_image_path
-                FROM heart as h 
-                JOIN user AS u ON u.user_id = h.user_id2
-				LEFT OUTER JOIN matching AS m ON h.user_id1 = m.user_id1 AND h.user_id2 = m.user_id2
-                WHERE h.user_id1 = ?
-                ORDER BY h.heart_create_date;`;
+    query = `SELECT u.user_nickname, u.user_id AS heart, null AS matching,
+            (SELECT i.user_image_path FROM user_image AS i WHERE h.user_id2 = i.user_id limit 1) AS image_path,
+            h.heart_create_date AS create_date
+            FROM user AS u
+            JOIN heart AS h ON u.user_id = h.user_id2
+            WHERE h.user_id1 = ?
 
-    result = await db(conn, query, [userId]);
+
+            UNION ALL
+
+            SELECT u.user_nickname, null ,u.user_id AS matching,
+            (SELECT i.user_image_path FROM user_image AS i WHERE m.user_id2 = i.user_id limit 1) AS image_path,
+            m.matching_create_date AS create_date
+            FROM user AS u
+            JOIN matching AS m ON u.user_id = m.user_id2
+            WHERE m.user_id1 = ?
+
+            ORDER BY create_date`;
+
+    result = await db(conn, query, [userId, userId]);
     responseBody = {
       status: 200,
       heart: result,
@@ -591,11 +575,10 @@ exports.sendMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
     const useCoin = req.body.useCoin;
-
     query = `UPDATE user
     SET user_coin = user_coin - ?
     WHERE user_id=?`;
-    result = await db(conn, query, [useCoin , userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     query = `SELECT user_id1, user_id2 FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
@@ -637,15 +620,19 @@ exports.acceptMatching = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
-    
+
     // 내가 채팅방 개설
     query = `INSERT INTO chat_list(user_id1, user_id2) VALUES(?, ?)`;
     result = await db(conn, query, [userId, userId2]);
+    // 매칭 신청한 사람의 알림창에 등록
+    query = `INSERT INTO alarm(user_id, alarm_type, matching_id) VALUES(?, ? , (SELECT matching_id FROM matching WHERE user_id1 = ? AND user_id2 = ? limit 1))`;
+    result = await db(conn, query, [userId2, 'matching_success', userId2, userId]);
 
     //내가 누른 좋아요나 매칭을 한 사람 정보를 가져오는것
     query = `UPDATE matching SET matching_success = 'T' WHERE user_id1 = ? AND user_id2 = ?`;
 
     result = await db(conn, query, [userId2, userId]);
+
 
     responseBody = {
       status: 200,
@@ -677,7 +664,6 @@ exports.deleteMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
 
-    console.log(userId, userId2);
     query = `DELETE FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
     result = await db(conn, query, [userId, userId2]);
@@ -795,7 +781,6 @@ exports.enterPhoto = async (req, res) => {
       result = await db(conn, query, [userId, imagePath]);
     }
 
-    console.log(score);
     query = `UPDATE user 
                 SET user_profile_entered='T', user_grade_id=?
                 WHERE user_id=?`;
@@ -836,14 +821,11 @@ exports.userCoin = async (req, res) => {
             WHERE user_id=?`;
     result = await db(conn, query, [userId]);
 
-    
     responseBody = {
       status: 200,
       userCoin: result[0].user_coin,
-      user_nickname:result[0].user_nickname,
+      user_nickname: result[0].user_nickname,
     };
-    
-    
 
     await conn.commit();
     res.status(200).json(responseBody);
@@ -868,6 +850,7 @@ exports.getAlarm = async (req, res) => {
 
     let query = "";
     let result = [];
+    let results = [];
     let responseBody = {};
 
     const userId = req.body.user_id;
@@ -875,17 +858,17 @@ exports.getAlarm = async (req, res) => {
     query = `(SELECT al.*, u.user_nickname, i.user_image_path, m.user_id1 AS send_user_id, m.matching_success
                 FROM alarm AS al
                 JOIN matching AS m ON al.matching_id = m.matching_id
-                JOIN user AS u ON u.user_id = m.user_id1
+                JOIN user AS u ON u.user_id =(CASE WHEN (al.alarm_type='matching_success') then m.user_id2 ELSE m.user_id1 END)
                 JOIN (SELECT user_id, user_image_path
                 FROM user_image AS ui
                 WHERE user_image_id = (
                 SELECT MIN(user_image_id)
                 FROM user_image
                 WHERE user_id = ui.user_id
-                )) AS i ON m.user_id1 = i.user_id
+                )) AS i ON i.user_id = (CASE WHEN (al.alarm_type='matching_success') then m.user_id2 ELSE m.user_id1 END)
                 WHERE al.user_id = ?
                                 
-                UNION 
+                UNION
 
                 SELECT al.*, u.user_nickname, i.user_image_path, h.user_id1 AS send_user_id, null
                 FROM alarm AS al
@@ -899,11 +882,50 @@ exports.getAlarm = async (req, res) => {
                 WHERE user_id = ui.user_id
                 )) AS i ON h.user_id1 = i.user_id
                 WHERE al.user_id = ?) ORDER BY alarm_create_date`;
+
     result = await db(conn, query, [userId, userId]);
+
+    query = `UPDATE alarm SET alarm_view = 'T' WHERE user_id = ?`
+
+    results = await db(conn, query, [userId]);
 
     responseBody = {
       status: 200,
       alarm: result,
+    };
+    await conn.commit();
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    await conn.rollback();
+    const statusCode = err.status ? err.status : 400;
+    responseBody = {
+      status: statusCode,
+      message: err.message,
+    };
+    return res.status(statusCode).json(responseBody);
+  } finally {
+    conn.release();
+  }
+};
+
+exports.countAlarm = async (req, res) => {
+  const conn = await getConn();
+  try {
+    await conn.beginTransaction();
+
+    let query = "";
+    let result = [];
+    let responseBody = {};
+
+    const userId = req.body.user_id;
+
+    query = `SELECT COUNT(*) AS count FROM alarm WHERE user_id = ? AND alarm_view = 'F'`
+
+    result = await db(conn, query, [userId]);
+    responseBody = {
+      status: 200,
+      alarm: result[0].count,
     };
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1027,11 +1049,13 @@ exports.regrade = async (req, res) => {
     let responseBody = {};
 
     const userId = req.body.user_id;
+    const useCoin = req.body.useCoin;
 
     query = `UPDATE user
-                    SET user_grade_id = (user_grade_id+1)%3+1
+                    SET user_grade_id = (user_grade_id+1)%3+1,
+                        user_coin = user_coin - ?
                     WHERE user_id= ?`;
-    result = await db(conn, query, [userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     responseBody = {
       status: 200,
@@ -1129,7 +1153,7 @@ exports.addBlock = async (req, res) => {
   }
 };
 
-exports.reRollList = async(req, res)=>{
+exports.reRollList = async (req, res) => {
   const conn = await getConn();
   try {
     await conn.beginTransaction();
@@ -1146,19 +1170,19 @@ exports.reRollList = async(req, res)=>{
                 WHERE user_id=?`;
     result = await db(conn, query, [userId]);
 
-    if(result[0].last_date==getToday()){
-        throw new Error("이미 결제하였습니다.")
+    if (result[0].last_date == getToday()) {
+      throw new Error("이미 결제하였습니다.");
     }
 
     query = `UPDATE user
               SET user_coin = user_coin - ?,
                   user_reroll = NOW()
               WHERE user_id=?`;
-    result = await db(conn, query, [useCoin , userId]);
+    result = await db(conn, query, [useCoin, userId]);
 
     responseBody = {
       status: 200,
-      message: "결제 완료. 추천 리스트 확장"
+      message: "결제 완료. 추천 리스트 확장",
     };
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1173,10 +1197,10 @@ exports.reRollList = async(req, res)=>{
     return res.status(statusCode).json(responseBody);
   } finally {
     conn.release();
-  }  
-}
+  }
+};
 
-function getToday(){
+function getToday() {
   const date = new Date();
   const year = date.getFullYear();
   const month = ("0" + (1 + date.getMonth())).slice(-2);
@@ -1184,3 +1208,37 @@ function getToday(){
 
   return `${year}-${month}-${day}`;
 }
+
+exports.deleteUser = async (req, res) => {
+  const conn = await getConn();
+  try {
+    await conn.beginTransaction();
+
+    let query = "";
+    let result = [];
+    let responseBody = {};
+
+    const userId = req.body.user_id;
+
+    query = `UPDATE user SET user_email_verified = 'F', user_profile_entered = 'F', user_block = 'T' WHERE user_id = ?`;
+    result = await db(conn, query, [userId]);
+
+    responseBody = {
+      status: 200,
+      reportList: result,
+    };
+    await conn.commit();
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    await conn.rollback();
+    const statusCode = err.status ? err.status : 400;
+    responseBody = {
+      status: statusCode,
+      message: err.message,
+    };
+    return res.status(statusCode).json(responseBody);
+  } finally {
+    conn.release();
+  }
+};

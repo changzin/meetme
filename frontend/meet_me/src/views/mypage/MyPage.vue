@@ -37,7 +37,7 @@
                     <div class="mypage_button" @click="this.$router.push({name: 'SendHeart'})">
                         <img class="button_icon_heart" src="/icon/mobile_header/solid-heart.svg" style="width: 57px;">
                         <div class="button_icon">
-                            보낸 좋아요
+                            활동 내역
                         </div>
                     </div>
                     <div class="mypage_button" @click="this.$router.push({name: 'Qna'})">
@@ -52,7 +52,7 @@
                             밋미 사연 보내기
                         </div>
                     </div>
-                    <div class="mypage_button">
+                    <div class="mypage_button" @click="this.$router.push({name: 'DeleteUser'})">
                         <img class="button_icon_warning" src="/icon/mypage/main/warning.svg" width="60">
                         <div class="button_icon">
                             회원탈퇴
@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'user'" />
     </div>
 </template>
 <script>
@@ -86,8 +86,6 @@ export default {
             try{
                 const result = await this.$api(`/user/mypageprofile`, {access_token: this.$getAccessToken()}, "POST");
                 this.userData = result.user;
-                
-                console.log(this.userData)
             }catch(err){
                 console.log(err);
             }

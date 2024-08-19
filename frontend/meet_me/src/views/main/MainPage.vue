@@ -38,17 +38,13 @@
                             <img v-if="!user.giveMatching" src="/icon/main_recommend/airplane.svg" @click="sendMatching(user)" class="airplane">
                             <img v-if="user.giveMatching" src="/icon/main_recommend/airplane_delete.svg" class="airplane">
 
-
                             <img v-if="!user.giveHeart" src="/icon/main_recommend/heart.svg" alt="Image 1" @click="heart(user)" class="heart" />
                             <img v-if="user.giveHeart" src="icon/main_recommend/heart_delete.svg" alt="Image 2" class="heart"/>
-
-
-                            <img src="/icon/main_recommend/delete.svg" @click="userDelete(user.user_id)" class="delete">
                         </div>
                     </div>
                 </div>
             </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'main'" />
     </div>
 </div>
 </template>
@@ -107,10 +103,6 @@ export default {
                         const result = await this.$api(`/main/list`, requestBody , "POST");
                         
                         this.List = result.mainList
-                        console.log(this.List);
-
-                        // this.recommendList = result;
-                        // this.results = result.results;
                         let heartList = result.getHeart;
                         let matchingList = result.getMatching
                         this.List = result.mainList.map(user => {
@@ -132,9 +124,6 @@ export default {
                                 }                                                                
                             }                            
                         }
-                        
-                        console.log("recommendList>>>>>>" ,this.recommendList)
-                        
                     }
                     catch(err){
                         console.error(err);
@@ -142,30 +131,35 @@ export default {
             },
             
             async heart(user){  
-                // this.visibleModal = !this.visibleModal;
-                // this.isImageTwoVisible = !this.isImageTwoVisible; //이미지 변경
-
                 try{
-                    if (this.userCoin < 100){
+                    if (this.userCoin < 100){   
                         alert("사용자의 보유 코인이 모자랍니다!")
                         this.$router.push({name: 'mypagestore'});
                         return;
                     }
+                    const userConfirmed = confirm("100코인으로 좋아요신청을 하시겠습니까?");
+                    // 확인을 눌렀을 경우
                     let requestBody = {
                         access_token: this.$getAccessToken(), //user_id = 나
                         user_id2: user.user_id,
                         useCoin: 100
                     };
-
-                    const result = await this.$api(`/main/heart`, requestBody , "POST");
-                    if(result.status == 200){
-                        await this.getMainList();
-                        await this.getCoin();
-                        alert('좋아요 신청 완료.');
+                    if (userConfirmed) {
+                        const result = await this.$api(`/main/heart`, requestBody , "POST");
+                        if(result.status == 200){
+                            await this.getMainList();
+                            await this.getCoin();
+                            alert('좋아요 신청 완료.');
+                        }
+                        else{
+                            alert(result.message)
+                        }
                     }
-                    else{
-                        alert(result.message)
-                    }                       
+                    // 취소를 눌렀을 경우
+                    else {
+                        return;
+                    }
+                                       
                 }
                 catch(err){
                     console.error(err);
@@ -178,37 +172,25 @@ export default {
                         this.$router.push({name: 'mypagestore'});
                         return;
                     }
-                    const result = await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id, useCoin: 300}, "POST");
-                    if (result.status == 200){
-                        await this.getMainList();
-                        await this.getCoin();    
-                        alert('매칭 신청 완료.');
+                    const userConfirmed = confirm("300코인으로 매칭신청을 하시겠습니까?");
+                    // 확인을 눌렀을 경우
+                    if (userConfirmed) {
+                        const result = await this.$api(`/main/sendmatching`, {access_token : this.$getAccessToken() , user_id2: user.user_id, useCoin: 300}, "POST");
+                        if (result.status == 200){
+                            await this.getMainList();
+                            await this.getCoin();    
+                            alert('매칭 신청 완료.');
+                        }
+                        else{
+                            alert('에러로 인해 매칭 신청을 보내지 못했습니다.');
+                        }
                     }
-                    else{
-                        alert('에러로 인해 매칭 신청을 보내지 못했습니다.');
+                    // 취소를 눌렀을 경우
+                    else {
+                        return;
                     }
                     
                 }catch(err){
-                    console.error(err);
-                }
-            },
-            async userDelete(user_id2){  
-                try{
-                    let requestBody = {
-                        access_token: this.$getAccessToken(),
-                        user_id2
-                    };
-
-                    const result = await this.$api(`/main/userdelete`, requestBody , "POST");
-                    this.delete = result,
-                    this.message = result.message;
-
-                    this.List = this.List.filter((user) => {
-                        // 함수의 매개변수로 받은 user_id를 가지고 있는 놈만 false가 나오도록 짜면됨.
-                        return user.user_id != user_id2;
-                    });
-                }
-                catch(err){
                     console.error(err);
                 }
             },
@@ -399,6 +381,7 @@ export default {
     margin-top: 11px;
 }
 .action_btn_container {
+    margin-right: 40px;
     position: absolute;
     z-index: 5;
     bottom: 15px;
@@ -415,9 +398,6 @@ export default {
     cursor: pointer;
 }
 .heart{
-    cursor: pointer;
-}
-.delete{
     cursor: pointer;
 }
 .next_img{
