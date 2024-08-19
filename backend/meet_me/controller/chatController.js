@@ -79,6 +79,18 @@ user_chat_with_messages AS (
         latest_chat_content lcc ON lcc.chat_list_id = uc.chat_list_id
     WHERE
         ri.rn = 1
+),
+ranked_chat AS (
+    SELECT
+        opponent_user_id,
+        user_nickname,
+        user_image_path,
+        chat_list_id,
+        chat_content,
+        chat_create_date,
+        ROW_NUMBER() OVER (PARTITION BY user_nickname ORDER BY chat_create_date DESC) AS rn
+    FROM
+        user_chat_with_messages
 )
 SELECT 
     opponent_user_id,
@@ -88,9 +100,11 @@ SELECT
     chat_content,
     chat_create_date
 FROM 
-    user_chat_with_messages
+    ranked_chat
+WHERE 
+    rn = 1
 ORDER BY
-    chat_create_date DESC;
+    chat_create_date DESC
 `;
 
         result = await db(conn, query, [userId, userId, userId, userId]);

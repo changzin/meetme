@@ -163,6 +163,7 @@ export default {
     };
   },
   async created() {
+    await this.verifyUser();
     await this.countAlarm();
   },
   methods: {
@@ -205,7 +206,7 @@ export default {
             this.$router.push({name: "loginuser" });
           }
         }else{
-          alert('유저 정보를 가져올 수 없습니다.');
+          alert('로그인 상태가 아닙니다.');
           this.$router.push({name: "loginuser" });          
         }
       }
