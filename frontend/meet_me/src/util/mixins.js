@@ -209,16 +209,20 @@ export default{
 
         // 암호화 함수
         $encrypt(data){
+            // 암호화 할 데이터를 객체 형태로 만듦
             const beforeData = {data: data}
+            // .env 파일에 저장된 secret key를 사용해 암호화 진행
             const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(beforeData), process.env.VUE_APP_CRYPTO_SECRET_KEY).toString();
-
+            // 암호화된 데이터 반환
             return encryptedData;
         },
 
         // 복호화 함수
         $decrypt(encryptedData){
+            // secret key를 이용하여 복호화 진행
             const bytes  = CryptoJS.AES.decrypt(encryptedData, process.env.VUE_APP_CRYPTO_SECRET_KEY);
             const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            // 복호화된 객체에서 데이터를 꺼내 반환환
             return decryptedData['data'];
         }
     }
