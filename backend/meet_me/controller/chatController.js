@@ -382,6 +382,54 @@ exports.saveChat = async(req, res) =>{
 
 }
 
+exports.deleteChat = async(req, res) =>{
+
+    const conn = await getConn();
+    try{
+        await conn.beginTransaction();
+
+        let query = '';
+        let result = [];
+        let responseBody = {};
+
+        const roomId = req.body.room;
+
+        console.log("roomId : ", roomId);
+        
+
+
+        query = `DELETE FROM chat
+                WHERE chat_list_id = ?;`;
+        result = await db(conn, query, [roomId]);
+
+        query = `DELETE FROM chat_list
+                WHERE chat_list_id = ?;`;
+        result = await db(conn, query, [roomId]);
+
+
+        responseBody = {
+            status: 200,
+            message: "채팅방 삭제 완료",
+        };
+        await conn.commit();
+        return res.status(200).json(responseBody);
+    }
+    catch(err){
+        console.error(err);
+        await conn.rollback();
+        const statusCode = (err.status) ? err.status : 400;
+        responseBody = {
+            status: statusCode,
+            message: err.message
+        }
+        return res.status(statusCode).json(responseBody);
+    }
+    finally{
+        conn.release();
+    }   
+
+}
+
 exports.getMessageList = async(req, res) =>{
 
     const conn = await getConn();

@@ -1,5 +1,5 @@
 const express = require('express');
-const {getChatRoomList, saveChat, findUser, getMessageList,getOtherUserInfo,searchChat,uploadimage } = require('../controller/chatController');
+const {getChatRoomList, saveChat, findUser, getMessageList,getOtherUserInfo,searchChat,uploadimage,deleteChat } = require('../controller/chatController');
 const { loginCheck } = require('../middleware/login.js');
 const { handleFileUpload} = require('../middleware/imageHandler.js')
 const router = express.Router();
@@ -12,6 +12,7 @@ router.post('/getmessage', loginCheck, getMessageList);
 router.post('/getotheruserinfo',loginCheck, getOtherUserInfo);
 router.post('/search', loginCheck, searchChat);
 router.post('/uploadimage', handleFileUpload, uploadimage);
+router.delete('/del',deleteChat);
 
 
 module.exports = router;

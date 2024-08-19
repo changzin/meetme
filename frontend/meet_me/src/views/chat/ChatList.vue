@@ -15,6 +15,9 @@
       </form>
       <div class="container_chat">  
         <!-- 검색 결과가 있으면 searchList를 사용하고, 그렇지 않으면 roomList를 사용 -->
+        <div v-if="(searchText ? searchList : roomList).length === 0" class="no-chats">
+          <h4>받은 채팅이 없습니다</h4>
+        </div>
         <div v-for="(room, index) in (searchText ? searchList : roomList)" :key="index">
           <div class="chat_list" @click="clickeToChatRoom(room.chat_list_id)">
               <img class="profile_circle" :src="this.$imageFileFormat(room.user_image_path)">
@@ -150,6 +153,10 @@ export default {
 
       // 날짜를 읽기 쉬운 형식으로 변환하는 메서드
       formatDate(dateString) {
+
+        if (!dateString) {
+      return ''; // 날짜가 없으면 빈 문자열 반환
+    }
       const now = new Date();
       const date = new Date(dateString);
       const diff = now - date; // 시간 차이 (밀리초 단위)

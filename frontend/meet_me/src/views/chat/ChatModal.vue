@@ -22,6 +22,12 @@
 
 <script>
 export default {
+  props: {
+    chatListId: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       isModalVisible: true,
@@ -31,8 +37,20 @@ export default {
     no_click() {
       this.$store.commit("setModalOff");
     },
-    ok_click() {
-      this.$store.commit("setModalOff");
+    async ok_click() {
+    try {
+      const requestBody = {
+        room: this.chatListId
+      };
+
+      const response = await this.$api('/chat/del', requestBody, "delete");
+      console.log(response);
+      alert("채팅방이 삭제되었습니다.");
+      this.$router.push({ path: '/chatlist/' })
+
+    } catch (error) {
+      console.error("잘못된 접근입니다");
+    }
     },
     handleOverlayClick(event) {
       // 모달 팝업이 아닌 영역을 클릭한 경우 모달을 닫음

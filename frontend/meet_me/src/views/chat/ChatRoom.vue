@@ -1,7 +1,7 @@
 <template>
   <div class="container0">
     <MeetHeader class="header_font" />
-    <ChatModal />
+    <ChatModal :chatListId="chatListId" />
     <div class="container_top">
       <div class="box_name">
         <div class="container_top_content">
@@ -154,8 +154,6 @@ export default {
       imagePath: "",  // Base64 인코딩된 이미지 데이터
       filePath: "",
       isModalVisible: true, // 모달
-      placeholder: "메세지를 입력하세요"
-
     };
   },
 
@@ -318,7 +316,7 @@ export default {
           access_token: this.$getAccessToken(),
           chatDate: chatDate,
           text: this.newChat, 
-          chatView: "T",
+          chatView: "F",
           filePath: this.filePath 
         };
 
@@ -356,10 +354,6 @@ export default {
 
    // 모달
    no_click() {
-      this.imagePath = ""; // 수정된 부분: 이미지 경로 초기화
-      this.isModalVisible = false; // 모달을 숨김
-    },
-    ok_click() {
       this.imagePath = ""; // 수정된 부분: 이미지 경로 초기화
       this.isModalVisible = false; // 모달을 숨김
     },
@@ -512,6 +506,7 @@ export default {
         width: 14px;
         height: 14px;
         margin-bottom: 5px;
+        visibility: hidden;
         
         /* background-color: aqua; */
         /* border: 1px solid violet */
@@ -617,6 +612,7 @@ export default {
             height: 36px;
             margin-left: 20px;
             cursor: pointer;
+            visibility: hidden;
         }
      .out_icon{
         margin-top: 6px;
