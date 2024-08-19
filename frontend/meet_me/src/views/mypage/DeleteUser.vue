@@ -51,20 +51,18 @@ export default {
     clickToCancel() {
       this.$router.push({ name: "MyPage" });
     },
-    clickToDelete() {
+    async clickToDelete() {
       // "정말로 취소하겠습니까?"라는 메세지와 확인 + 취소 버튼이 뜸
       const userConfirmed = confirm("정말로 탈퇴하겠습니까?");
       // 확인을 눌렀을 경우
       if (userConfirmed) {
-        this.gotoDelete();
+        await this.$api(`/user/deleteuser`, {access_token: this.$getAccessToken()}, "POST");
+        alert('회원탈퇴가 완료되었습니다.');
+        this.$cookies.remove("meetMeCookie")
+        this.$store.commit("user", null);            
+        this.$router.push({name: "loginuser"})
       }
       // 취소를 눌렀을 경우
-      else {
-        this.clickToCancel();
-      }
-    },
-    gotoDelete() {
-      console.log("계정 삭제를 진행합니다.");
     },
   },
 };

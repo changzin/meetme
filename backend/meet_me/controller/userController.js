@@ -162,17 +162,6 @@ exports.idolInput = async (req, res) => {
     let user_idol_tartoo = req.body.user_idol_tartoo;
     let user_religion_id = req.body.user_religion_id;
 
-    console.log("나이" + "" + user_idol_age_id);
-    console.log("mbti" + "" + user_mbti_id);
-    console.log("혈액형" + "" + user_blood_type_id);
-    console.log("키" + user_idol_height_id);
-    console.log("몸무게" + "" + user_idol_weight_id);
-    console.log("연봉" + "" + user_annual_income_id);
-    console.log("흡연" + "" + user_idol_smoke);
-    console.log("주량" + "" + user_drinking_id);
-    console.log("타투" + "" + user_idol_tartoo);
-    console.log("종교" + "" + user_religion_id);
-    console.log("유저" + "" + user_id);
     del =`DELETE FROM  user_idol WHERE user_id = ?`;
     query = 
             `INSERT INTO user_idol 
@@ -203,7 +192,6 @@ exports.idolInput = async (req, res) => {
       user_religion_id,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
       userIdolClear : delect,
@@ -233,7 +221,6 @@ exports.profileInput = async (req, res) => {
     let query = "";
     let result = [];
     let responseBody = {};
-    console.log("requestBody" + JSON.stringify(req.body));
     //ProfileInput에서 불러옴
     let user_id = req.body.user_id;
     let user_nickname = req.body.user_nickname;
@@ -251,21 +238,6 @@ exports.profileInput = async (req, res) => {
     let user_introduction = req.body.user_introduction;
     let user_add = req.body.user_add;
 
-    console.log("닉네임" + "" + user_nickname);
-    console.log("성별" + "" + user_gender);
-    console.log("나이" + "" + user_age);
-    console.log("mbti" + "" + user_mbti_id);
-    console.log("혈액형" + "" + user_blood_type_id);
-    console.log("키" + user_height);
-    console.log("몸무게" + "" + user_weight);
-    console.log("주소" + "" + user_add);
-    console.log("연봉" + "" + user_annual_income_id);
-    console.log("흡연" + "" + user_smoke);
-    console.log("주량" + "" + user_drinking_id);
-    console.log("타투" + "" + user_tartoo);
-    console.log("종교" + "" + user_religion_id);
-    console.log("자기소개" + "" + user_introduction);
-    console.log("유저" + "" + user_id);
 
     query = `UPDATE user
         SET
@@ -303,7 +275,6 @@ exports.profileInput = async (req, res) => {
       user_id,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
       profile: result,
@@ -447,7 +418,6 @@ exports.updateProfile = async (req, res) => {
       userId,
     ]);
 
-    console.log(result);
     responseBody = {
       status: 200,
     };
@@ -511,7 +481,6 @@ exports.featureEdit = async (req, res) => {
     await conn.beginTransaction();
     const userId = req.body.user_id;
     const feature_id = req.body.user_feature_ids;
-    console.log(feature_id.length);
 
     query = `SELECT user_feature_id FROM user_feature_bridge WHERE user_id = ?`;
 
@@ -606,7 +575,6 @@ exports.sendMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
     const useCoin = req.body.useCoin;
-    console.log(useCoin);
     query = `UPDATE user
     SET user_coin = user_coin - ?
     WHERE user_id=?`;
@@ -696,7 +664,6 @@ exports.deleteMatching = async (req, res) => {
     const userId = req.body.user_id;
     const userId2 = req.body.user_id2;
 
-    console.log(userId, userId2);
     query = `DELETE FROM matching
                 WHERE user_id1 = ? AND user_id2 = ?`;
     result = await db(conn, query, [userId, userId2]);
@@ -883,6 +850,7 @@ exports.getAlarm = async (req, res) => {
 
     let query = "";
     let result = [];
+    let results = [];
     let responseBody = {};
 
     const userId = req.body.user_id;
@@ -900,7 +868,7 @@ exports.getAlarm = async (req, res) => {
                 )) AS i ON i.user_id = (CASE WHEN (al.alarm_type='matching_success') then m.user_id2 ELSE m.user_id1 END)
                 WHERE al.user_id = ?
                                 
-                UNION 
+                UNION
 
                 SELECT al.*, u.user_nickname, i.user_image_path, h.user_id1 AS send_user_id, null
                 FROM alarm AS al
@@ -914,11 +882,50 @@ exports.getAlarm = async (req, res) => {
                 WHERE user_id = ui.user_id
                 )) AS i ON h.user_id1 = i.user_id
                 WHERE al.user_id = ?) ORDER BY alarm_create_date`;
+
     result = await db(conn, query, [userId, userId]);
+
+    query = `UPDATE alarm SET alarm_view = 'T' WHERE user_id = ?`
+
+    results = await db(conn, query, [userId]);
 
     responseBody = {
       status: 200,
       alarm: result,
+    };
+    await conn.commit();
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    await conn.rollback();
+    const statusCode = err.status ? err.status : 400;
+    responseBody = {
+      status: statusCode,
+      message: err.message,
+    };
+    return res.status(statusCode).json(responseBody);
+  } finally {
+    conn.release();
+  }
+};
+
+exports.countAlarm = async (req, res) => {
+  const conn = await getConn();
+  try {
+    await conn.beginTransaction();
+
+    let query = "";
+    let result = [];
+    let responseBody = {};
+
+    const userId = req.body.user_id;
+
+    query = `SELECT COUNT(*) AS count FROM alarm WHERE user_id = ? AND alarm_view = 'F'`
+
+    result = await db(conn, query, [userId]);
+    responseBody = {
+      status: 200,
+      alarm: result[0].count,
     };
     await conn.commit();
     res.status(200).json(responseBody);
@@ -1201,3 +1208,37 @@ function getToday() {
 
   return `${year}-${month}-${day}`;
 }
+
+exports.deleteUser = async (req, res) => {
+  const conn = await getConn();
+  try {
+    await conn.beginTransaction();
+
+    let query = "";
+    let result = [];
+    let responseBody = {};
+
+    const userId = req.body.user_id;
+
+    query = `UPDATE user SET user_email_verified = 'F', user_profile_entered = 'F', user_block = 'T' WHERE user_id = ?`;
+    result = await db(conn, query, [userId]);
+
+    responseBody = {
+      status: 200,
+      reportList: result,
+    };
+    await conn.commit();
+    res.status(200).json(responseBody);
+  } catch (err) {
+    console.error(err);
+    await conn.rollback();
+    const statusCode = err.status ? err.status : 400;
+    responseBody = {
+      status: statusCode,
+      message: err.message,
+    };
+    return res.status(statusCode).json(responseBody);
+  } finally {
+    conn.release();
+  }
+};

@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <MeetHeader />
+        <MeetHeader :activeIcon="'user'" />
     </div>
 </template>
 <script>
